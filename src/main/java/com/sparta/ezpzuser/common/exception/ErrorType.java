@@ -10,7 +10,7 @@ public enum ErrorType {
 
     // JWT
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다. 다시 로그인 해주세요."),
-    CARD_ACCESS_FORBIDDEN(HttpStatus.FORBIDDEN, "카드 작성자 및 매니저만 접근할 수 있습니다.");
+    CARD_ACCESS_FORBIDDEN(HttpStatus.FORBIDDEN, "카드 작성자 및 매니저만 접근할 수 있습니다."),
 
     // User
 
@@ -22,7 +22,8 @@ public enum ErrorType {
 
     // Reservation
 
-    //
+    // Cart
+    INSUFFICIENT_STOCK(HttpStatus.BAD_REQUEST, "재고량이 부족합니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
