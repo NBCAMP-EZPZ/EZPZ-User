@@ -1,5 +1,6 @@
 package com.sparta.ezpzuser.domain.cart.entity;
 
+import com.sparta.ezpzuser.common.entity.Timestamped;
 import com.sparta.ezpzuser.domain.item.entity.Item;
 import com.sparta.ezpzuser.domain.user.entity.User;
 import jakarta.persistence.Column;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Cart {
+public class Cart extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,7 +54,7 @@ public class Cart {
      * @param quantity 장바구니에 담을 굿즈의 개수
      * @param user     장바구니를 생성하는 사용자
      * @param item     장바구니에 담을 굿즈
-     * @return
+     * @return cart
      */
     public static Cart of(Long quantity, User user, Item item) {
         return new Cart(quantity, user, item);

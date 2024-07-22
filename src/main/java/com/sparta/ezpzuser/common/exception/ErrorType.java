@@ -23,7 +23,8 @@ public enum ErrorType {
     // Reservation
 
     // Cart
-    INSUFFICIENT_STOCK(HttpStatus.BAD_REQUEST, "재고량이 부족합니다.");
+    INSUFFICIENT_STOCK(HttpStatus.BAD_REQUEST, "재고량이 부족합니다."),
+    STOCK_UNAVAILABLE(HttpStatus.BAD_REQUEST, "장바구니에 담긴 상품의 재고가 현재 없거나 부족합니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

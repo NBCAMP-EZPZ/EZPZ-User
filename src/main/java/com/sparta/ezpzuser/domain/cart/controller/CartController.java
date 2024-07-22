@@ -7,6 +7,7 @@ import com.sparta.ezpzuser.domain.cart.dto.CartCreateRequestDto;
 import com.sparta.ezpzuser.domain.cart.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,5 +24,10 @@ public class CartController {
     public ResponseEntity<CommonResponse<?>> createCart(
             @RequestBody CartCreateRequestDto requestDto) {
         return ControllerUtil.getResponseEntity(cartService.createCart(requestDto), "장바구니 추가 성공");
+    }
+
+    @GetMapping
+    public ResponseEntity<CommonResponse<?>> findCartsAll() {
+        return ControllerUtil.getResponseEntity(cartService.findCartsAll(), "장바구니 조회 성공");
     }
 }

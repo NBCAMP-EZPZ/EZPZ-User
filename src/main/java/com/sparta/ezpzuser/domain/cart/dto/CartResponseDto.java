@@ -15,7 +15,7 @@ public class CartResponseDto {
      * @param cart
      */
     private CartResponseDto(Cart cart) {
-        this.itemId = cart.getItem().getItemId();
+        this.itemId = cart.getItem().getId();
         this.quantity = cart.getQuantity();
     }
 
