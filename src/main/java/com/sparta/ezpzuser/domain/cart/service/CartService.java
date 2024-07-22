@@ -90,4 +90,19 @@ public class CartService {
         cart.updateCart(requestDto.getQuantity());
         return CartResponseDto.of(cart);
     }
+
+    @Transactional
+    public void deleteCart(Long cartId) {
+        User user = userRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new CustomException(ErrorType.CART_NOT_FOUND));
+
+        // 본인의 장바구니가 아닌데 삭제하려고 할 때의 예외 처리
+        if (!user.getId().equals(cart.getUser().getId())) {
+            throw new CustomException(ErrorType.UNAUTHORIZED_CART_ACCESS);
+        }
+        cartRepository.delete(cart);
+    }
 }

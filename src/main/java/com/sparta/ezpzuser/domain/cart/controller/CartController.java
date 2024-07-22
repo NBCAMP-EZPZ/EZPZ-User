@@ -8,6 +8,7 @@ import com.sparta.ezpzuser.domain.cart.dto.CartUpdateRequestDto;
 import com.sparta.ezpzuser.domain.cart.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,5 +41,12 @@ public class CartController {
             @RequestBody CartUpdateRequestDto requestDto) {
         return ControllerUtil.getResponseEntity(cartService.updateCart(cartId, requestDto),
                 "장바구니 수량 변경 성공");
+    }
+
+    @DeleteMapping("/{cartId}")
+    public ResponseEntity<CommonResponse<?>> deleteCart(
+            @PathVariable("cartId") Long cartId) {
+        cartService.deleteCart(cartId);
+        return ControllerUtil.getResponseEntity("장바구니 삭제 성공");
     }
 }
