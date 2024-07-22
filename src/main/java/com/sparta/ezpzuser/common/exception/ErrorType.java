@@ -24,7 +24,9 @@ public enum ErrorType {
 
     // Cart
     INSUFFICIENT_STOCK(HttpStatus.BAD_REQUEST, "재고량이 부족합니다."),
-    STOCK_UNAVAILABLE(HttpStatus.BAD_REQUEST, "장바구니에 담긴 상품의 재고가 현재 없거나 부족합니다.");
+    STOCK_UNAVAILABLE(HttpStatus.BAD_REQUEST, "장바구니에 담긴 상품의 재고가 현재 없거나 부족합니다."),
+    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 장바구니 내역입니다."),
+    UNAUTHORIZED_CART_ACCESS(HttpStatus.FORBIDDEN, "본인의 장바구니만 수정할 수 있습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

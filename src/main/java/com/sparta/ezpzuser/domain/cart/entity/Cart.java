@@ -59,4 +59,13 @@ public class Cart extends Timestamped {
     public static Cart of(Long quantity, User user, Item item) {
         return new Cart(quantity, user, item);
     }
+
+    /**
+     * Cart 수량 변경 메서드
+     *
+     * @param quantity 변경할 수량
+     */
+    public void updateCart(Long quantity) {
+        this.quantity = quantity;
+    }
 }
