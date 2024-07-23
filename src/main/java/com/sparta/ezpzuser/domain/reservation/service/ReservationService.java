@@ -1,5 +1,7 @@
 package com.sparta.ezpzuser.domain.reservation.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +35,7 @@ public class ReservationService {
 	 */
 	@Transactional
 	public ReservationResponseDto createReservation(ReservationRequestDto requestDto, User user) {
-		Slot slot = slotRepository.findSlotByIdWithPopup(requestDto.getSlotId());
+		Slot slot = getSlotByIdWithPopup(requestDto.getSlotId());
 		
 		existReservation(user, slot.getPopup());
 		validateSlotStatus(slot);
@@ -49,6 +51,22 @@ public class ReservationService {
 	
 	
 	/* UTIL */
+	
+	/**
+	 * 슬롯 조회
+	 *
+	 * @param slotId 슬롯 ID
+	 * @return 슬롯 정보
+	 */
+	private Slot getSlotByIdWithPopup(Long slotId) {
+		Optional<Slot> slot = slotRepository.findSlotByIdWithPopup(slotId);
+		
+		if (slot.isEmpty()) {
+			throw new CustomException(ErrorType.SLOT_NOT_FOUND);
+		}
+		
+		return slot.get();
+	}
 	
 	
 	/**

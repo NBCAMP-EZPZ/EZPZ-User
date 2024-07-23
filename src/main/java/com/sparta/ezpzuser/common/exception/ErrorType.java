@@ -26,6 +26,7 @@ public enum ErrorType {
     
     // Slot
     SLOT_RESERVATION_FINISHED(HttpStatus.BAD_REQUEST, "예약이 마감된 슬롯입니다."),
+    SLOT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 슬롯을 찾을 수 없습니다."),
     
     // Page
     INVALID_PAGE(HttpStatus.BAD_REQUEST, "페이지 번호가 올바르지 않습니다."),

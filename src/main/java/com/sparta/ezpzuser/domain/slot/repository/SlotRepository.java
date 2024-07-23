@@ -1,5 +1,7 @@
 package com.sparta.ezpzuser.domain.slot.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +14,7 @@ import com.sparta.ezpzuser.domain.slot.entity.Slot;
 @Repository
 public interface SlotRepository extends JpaRepository<Slot, Long> {
 	@Query("SELECT s FROM Slot s JOIN FETCH s.popup WHERE s.id = :slotId")
-	Slot findSlotByIdWithPopup(@Param("slotId") Long slotId);
+	Optional<Slot> findSlotByIdWithPopup(@Param("slotId") Long slotId);
 	
 	Page<Slot> findByPopupId(Long popupId, Pageable pageable);
 	
