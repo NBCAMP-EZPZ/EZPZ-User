@@ -12,10 +12,10 @@ import org.springframework.data.redis.core.index.Indexed;
 public class RefreshToken {
 
     @Id
-    private String username;
+    private final String username;
 
     @Indexed
-    private String refreshToken;
+    private final String refreshToken;
 
     @TimeToLive
     @Value("${jwt.refresh-token.ttl}")
@@ -23,10 +23,6 @@ public class RefreshToken {
 
     public RefreshToken(String username, String refreshToken) {
         this.username = username;
-        this.refreshToken = refreshToken;
-    }
-
-    public void update(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 
