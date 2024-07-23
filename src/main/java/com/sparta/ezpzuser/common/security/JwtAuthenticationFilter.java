@@ -61,6 +61,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String accessToken = tokenProvider.createAccessToken(username);
         String refreshToken = UUID.randomUUID().toString();
 
+        // 헤더에 액세스 토큰 추가
+        res.addHeader(TokenProvider.ACCESS_TOKEN_HEADER, accessToken);
+
         // 쿠키에 리프레시 토큰 추가
         tokenProvider.saveRefreshTokenToCookie(refreshToken, res);
 
