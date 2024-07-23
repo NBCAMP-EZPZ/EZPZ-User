@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.ezpzuser.common.dto.CommonResponse;
+import com.sparta.ezpzuser.common.security.UserDetailsImpl;
 import com.sparta.ezpzuser.domain.reservation.dto.ReservationRequestDto;
 import com.sparta.ezpzuser.domain.reservation.dto.ReservationResponseDto;
 import com.sparta.ezpzuser.domain.reservation.service.ReservationService;
@@ -32,9 +33,8 @@ public class ReservationController {
 	 */
 	@PostMapping
 	public ResponseEntity<CommonResponse<?>> createReservation(
-		@Valid @RequestBody ReservationRequestDto requestDto
-		@AuthenticationPrincipal UserDetailsImpl userDetails
-	) {
+		@Valid @RequestBody ReservationRequestDto requestDto,
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
 		
 		ReservationResponseDto responseDto = reservationService.createReservation(requestDto, userDetails.getUser());
 		
