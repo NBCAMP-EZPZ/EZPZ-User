@@ -28,10 +28,7 @@ public class CartService {
     private final UserRepository userRepository;
 
     @Transactional
-    public CartResponseDto createCart(CartCreateRequestDto requestDto) {
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-
+    public CartResponseDto createCart(CartCreateRequestDto requestDto, User user) {
         Item item = itemRepository.findById(requestDto.getItemId()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 상품입니다.") // 에러코드 만들어주시면 수정
         );
@@ -50,10 +47,7 @@ public class CartService {
         return CartResponseDto.of(cart);
     }
 
-    public List<CartResponseDto> findCartsAll() {
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-
+    public List<CartResponseDto> findCartsAll(User user) {
         List<Cart> cartList = cartRepository.findAllByUserIdOrderByCreatedAtDesc(
                 user.getId());
 
@@ -67,10 +61,7 @@ public class CartService {
     }
 
     @Transactional
-    public CartResponseDto updateCart(Long cartId, CartUpdateRequestDto requestDto) {
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-
+    public CartResponseDto updateCart(Long cartId, CartUpdateRequestDto requestDto, User user) {
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new CustomException(ErrorType.CART_NOT_FOUND));
 
@@ -92,10 +83,7 @@ public class CartService {
     }
 
     @Transactional
-    public void deleteCart(Long cartId) {
-        User user = userRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-
+    public void deleteCart(Long cartId, User user) {
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new CustomException(ErrorType.CART_NOT_FOUND));
 
