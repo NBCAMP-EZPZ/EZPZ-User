@@ -13,6 +13,7 @@ public enum ErrorType {
     CARD_ACCESS_FORBIDDEN(HttpStatus.FORBIDDEN, "카드 작성자 및 매니저만 접근할 수 있습니다."),
 
     // User
+    DUPLICATED_USERNAME(HttpStatus.BAD_REQUEST, "이미 존재하는 사용자 아이디입니다."),
 
     // Popup
 
@@ -34,6 +35,7 @@ public enum ErrorType {
     
     //
 
+    ;
     private final HttpStatus httpStatus;
     private final String message;
 
