@@ -1,16 +1,16 @@
 package com.sparta.ezpzuser.domain.user.dto;
 
 import com.sparta.ezpzuser.domain.user.entity.User;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class UserResponseDto {
 
-    private Long id;
-    private String username;
-    private String name;
-    private String email;
-    private String phoneNumber;
+    private final Long id;
+    private final String username;
+    private final String name;
+    private final String email;
+    private final String phoneNumber;
 
     private UserResponseDto(User user) {
         this.id = user.getId();
