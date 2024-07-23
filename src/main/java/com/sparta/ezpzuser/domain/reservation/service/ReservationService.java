@@ -10,7 +10,6 @@ import com.sparta.ezpzuser.domain.reservation.dto.ReservationRequestDto;
 import com.sparta.ezpzuser.domain.reservation.dto.ReservationResponseDto;
 import com.sparta.ezpzuser.domain.reservation.entity.Reservation;
 import com.sparta.ezpzuser.domain.reservation.repository.ReservationRepository;
-import com.sparta.ezpzuser.domain.reservation.repository.UserRepository;
 import com.sparta.ezpzuser.domain.slot.entity.Slot;
 import com.sparta.ezpzuser.domain.slot.enums.SlotStatus;
 import com.sparta.ezpzuser.domain.slot.repository.SlotRepository;
@@ -24,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 public class ReservationService {
 	private final ReservationRepository reservationRepository;
 	private final SlotRepository slotRepository;
-	private final UserRepository userRepository;
 	
 	/**
 	 * 예약 생성
