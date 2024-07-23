@@ -21,10 +21,16 @@ public enum ErrorType {
     // Item
 
     // Reservation
-
+    RESERVATION_EXCEEDS_AVAILABLE_SLOTS(HttpStatus.BAD_REQUEST, "예약 가능 인원을 초과하였습니다."),
+    RESERVATION_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 예약한 내역이 존재합니다."),
+    
+    // Slot
+    SLOT_RESERVATION_FINISHED(HttpStatus.BAD_REQUEST, "예약이 마감된 슬롯입니다."),
+    
     // Page
     INVALID_PAGE(HttpStatus.BAD_REQUEST, "페이지 번호가 올바르지 않습니다."),
     NOT_FOUND_PAGE(HttpStatus.NOT_FOUND, "페이지가 존재하지 않습니다.");
+    
     //
 
     private final HttpStatus httpStatus;
