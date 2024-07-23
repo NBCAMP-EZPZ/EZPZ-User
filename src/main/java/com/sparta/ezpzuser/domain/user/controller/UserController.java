@@ -31,7 +31,9 @@ public class UserController {
      * @return 회원가입된 이용자 정보와 응답 메시지를 포함한 ResponseEntity
      */
     @PostMapping("/signup")
-    public ResponseEntity<CommonResponse<?>> signup(@Valid @RequestBody SignupRequestDto dto) {
+    public ResponseEntity<CommonResponse<?>> signup(
+            @Valid @RequestBody SignupRequestDto dto) {
+
         User user = userService.signup(dto);
         return getResponseEntity(UserResponseDto.of(user), "회원가입 성공");
     }
@@ -43,9 +45,11 @@ public class UserController {
      * @return 응답 메시지만 포함한 ResponseEntity
      */
     @PostMapping("/logout")
-    public ResponseEntity<CommonResponse<?>> logout(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<CommonResponse<?>> logout(
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
         userService.logout(userDetails.getUser());
-        return getResponseEntity(null, "로그아웃 성공");
+        return getResponseEntity("로그아웃 성공");
     }
 
 }
