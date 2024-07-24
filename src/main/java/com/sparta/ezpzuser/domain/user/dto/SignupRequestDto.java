@@ -28,7 +28,7 @@ public class SignupRequestDto {
     private String email;
 
     @NotBlank(message = "전화번호는 공백일 수 없습니다.")
-    @Pattern(regexp = "^010-\\d{4}-\\d{4}$", message = "전화번호 형식이 맞지 않습니다.")
+    @Pattern(regexp = "^010\\d{4}\\d{4}$", message = "전화번호 형식이 맞지 않습니다.")
     private String phoneNumber;
 
 }

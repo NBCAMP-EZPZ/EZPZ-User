@@ -68,6 +68,7 @@ public class WebSecurityConfig {
                 .requestMatchers("api/v1/signup").permitAll()
                 .requestMatchers(HttpMethod.GET, "api/popups/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "api/coupons/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "api/v1/popups/**").permitAll()
                 .anyRequest().authenticated()
         );
 
