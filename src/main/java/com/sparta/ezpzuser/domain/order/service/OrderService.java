@@ -5,14 +5,15 @@ import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.cart.entity.Cart;
 import com.sparta.ezpzuser.domain.cart.repository.CartRepository;
 import com.sparta.ezpzuser.domain.cart.service.CartService;
-import com.sparta.ezpzuser.domain.order.dto.OrderCreateResponseDto;
 import com.sparta.ezpzuser.domain.order.dto.OrderFindAllResponseDto;
 import com.sparta.ezpzuser.domain.order.dto.OrderRequestDto;
+import com.sparta.ezpzuser.domain.order.dto.OrderResponseDto;
 import com.sparta.ezpzuser.domain.order.entity.Order;
 import com.sparta.ezpzuser.domain.order.enums.OrderStatus;
 import com.sparta.ezpzuser.domain.order.repository.OrderRepository;
 import com.sparta.ezpzuser.domain.orderline.dto.OrderlineResponseDto;
 import com.sparta.ezpzuser.domain.orderline.entity.Orderline;
+import com.sparta.ezpzuser.domain.orderline.repository.OrderlineRepository;
 import com.sparta.ezpzuser.domain.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class OrderService {
     private final CartService cartService;
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
+    private final OrderlineRepository orderlineRepository;
 
 
     /**
@@ -40,7 +42,7 @@ public class OrderService {
      * @return 완료된 주문 정보
      */
     @Transactional
-    public OrderCreateResponseDto createOrder(OrderRequestDto requestDto, User user) {
+    public OrderResponseDto createOrder(OrderRequestDto requestDto, User user) {
 
         // 요청받은 장바구니 정보 조회
         List<Cart> cartList = findCartsByIds(requestDto.getCartIdRequestList(), user.getId());
@@ -66,7 +68,7 @@ public class OrderService {
 
         // 사용된 장바구니 삭제
         cartList.stream().forEach(cart -> cartRepository.delete(cart));
-        return OrderCreateResponseDto.of(order, orderlineResponseDtoList);
+        return OrderResponseDto.of(order, orderlineResponseDtoList);
     }
 
     /**
@@ -80,6 +82,23 @@ public class OrderService {
         Page<Order> orderPages = orderRepository.findAllByUserId(user.getId(), pageable);
         return orderPages.map(OrderFindAllResponseDto::of);
     }
+
+    /**
+     * 주문 상세 조회
+     *
+     * @param orderId 조회할 주문 id
+     * @param user    요청한 사용자
+     * @return 주문 상세 정보
+     */
+    public OrderResponseDto findOrder(Long orderId, User user) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new CustomException(ErrorType.ORDER_NOT_FOUND));
+        List<OrderlineResponseDto> orderlineResponseDtoList = orderlineRepository.findAllByOrderId(
+                orderId).stream().map(OrderlineResponseDto::of).toList();
+
+        return OrderResponseDto.of(order, orderlineResponseDtoList);
+    }
+
 
     /* UTIL */
 
@@ -111,4 +130,5 @@ public class OrderService {
             cartService.validateStock(cart.getItem(), cart.getQuantity());
         }
     }
+
 }

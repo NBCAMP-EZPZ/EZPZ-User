@@ -7,27 +7,27 @@ import java.util.List;
 import lombok.Getter;
 
 @Getter
-public class OrderCreateResponseDto {
+public class OrderResponseDto {
 
     private Long orderId;
     private int totalPrice;
     private OrderStatus orderStatus;
-    private List<OrderlineResponseDto> responseDtos;
+    private List<OrderlineResponseDto> orderedItems;
 
-    private OrderCreateResponseDto(Long orderId, int totalPrice, OrderStatus orderStatus,
-            List<OrderlineResponseDto> responseDtos) {
+    private OrderResponseDto(Long orderId, int totalPrice, OrderStatus orderStatus,
+            List<OrderlineResponseDto> orderedItems) {
         this.orderId = orderId;
         this.totalPrice = totalPrice;
         this.orderStatus = orderStatus;
-        this.responseDtos = responseDtos;
+        this.orderedItems = orderedItems;
     }
 
-    public static OrderCreateResponseDto of(Order order, List<OrderlineResponseDto> responseDtos) {
-        return new OrderCreateResponseDto(
+    public static OrderResponseDto of(Order order, List<OrderlineResponseDto> orderedItems) {
+        return new OrderResponseDto(
                 order.getId(),
                 order.getTotalPrice(),
                 order.getOrderStatus(),
-                responseDtos
+                orderedItems
         );
     }
 }
