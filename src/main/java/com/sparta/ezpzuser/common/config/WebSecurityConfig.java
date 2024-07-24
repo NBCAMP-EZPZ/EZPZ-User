@@ -66,8 +66,8 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .requestMatchers("api/v1/signup").permitAll()
-                .requestMatchers(HttpMethod.GET, "api/popups/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "api/coupons/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "api/v1/popups/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "api/v1/coupons/**").permitAll()
                 .anyRequest().authenticated()
         );
 
