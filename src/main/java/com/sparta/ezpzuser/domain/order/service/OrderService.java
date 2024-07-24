@@ -1,5 +1,7 @@
 package com.sparta.ezpzuser.domain.order.service;
 
+import com.sparta.ezpzuser.common.exception.CustomException;
+import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.cart.entity.Cart;
 import com.sparta.ezpzuser.domain.cart.repository.CartRepository;
 import com.sparta.ezpzuser.domain.cart.service.CartService;
@@ -31,7 +33,7 @@ public class OrderService {
     public OrderResponseDto createOrder(OrderRequestDto requestDto, User user) {
 
         // 요청받은 장바구니 정보 조회
-        List<Cart> cartList = findCartsByIds(requestDto.getCartIdRequestList());
+        List<Cart> cartList = findCartsByIds(requestDto.getCartIdRequestList(), user.getId());
 
         validateStockForItems(cartList);
 
@@ -66,10 +68,16 @@ public class OrderService {
      * @param cartIdRequestList 주문할 장바구니 id 리스트
      * @return 주문할 장바구니 리스트
      */
-    private List<Cart> findCartsByIds(List<OrderRequestDto.CartIdRequest> cartIdRequestList) {
+    private List<Cart> findCartsByIds(List<OrderRequestDto.CartIdRequest> cartIdRequestList,
+            Long userId) {
         List<Long> cartIds = cartIdRequestList.stream()
                 .map(OrderRequestDto.CartIdRequest::getCartId).toList();
-        return cartRepository.findAllByIdWithItems(cartIds);
+        List<Cart> carts = cartRepository.findAllByIdWithItems(cartIds).stream()
+                .filter(cart -> cart.getUser().getId().equals(userId)).toList();
+        if (carts.size() != cartIds.size()) {
+            throw new CustomException(ErrorType.CART_NOT_FOUND);
+        }
+        return carts;
     }
 
     /**
