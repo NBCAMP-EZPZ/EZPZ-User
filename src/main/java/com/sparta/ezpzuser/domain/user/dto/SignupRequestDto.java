@@ -9,7 +9,7 @@ import lombok.Getter;
 public class SignupRequestDto {
 
     @NotBlank(message = "ID는 공백일 수 없습니다.")
-    @Size(min = 10, max = 20, message = "ID는 최소 10자 이상, 최대 20자 이하이어야 합니다.")
+    @Size(min = 6, max = 20, message = "ID는 최소 6자 이상, 최대 20자 이하이어야 합니다.")
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "ID는 영문 또는 숫자만 가능합니다.")
     private String username;
 
