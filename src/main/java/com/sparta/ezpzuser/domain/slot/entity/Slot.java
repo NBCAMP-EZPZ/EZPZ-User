@@ -41,6 +41,9 @@ public class Slot {
 	@Column(nullable = false)
 	private int totalCount;
 	
+	@Column(nullable = false)
+	private int reservedCount;
+	
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false)
 	private SlotStatus slotStatus;
@@ -49,7 +52,7 @@ public class Slot {
 	@JoinColumn(name = "popup_id", nullable = false)
 	private Popup popup;
 	
-	public void decreaseTotalCount(int numberOfPersons) {
-		this.totalCount -= numberOfPersons;
+	public void increaseReservedCount(int numberOfPersons) {
+		this.reservedCount += numberOfPersons;
 	}
 }

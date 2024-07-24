@@ -43,7 +43,7 @@ public class ReservationService {
 		
 		// 예약 생성
 		Reservation saveReservation = reservationRepository.save(Reservation.of(requestDto.getNumberOfPersons(), user, slot));
-		slot.decreaseTotalCount(requestDto.getNumberOfPersons());
+		slot.increaseReservedCount(requestDto.getNumberOfPersons());
 		slotRepository.save(slot);
 		
 		return ReservationResponseDto.of(saveReservation, slot);
@@ -87,7 +87,7 @@ public class ReservationService {
 	 * @param slot 예약 슬롯 정보
 	 */
 	private void validateReservationCapacity(ReservationRequestDto requestDto, Slot slot) {
-		if (slot.getTotalCount() - requestDto.getNumberOfPersons() < 0
+		if (slot.getReservedCount() + requestDto.getNumberOfPersons() > slot.getTotalCount()
 			|| slot.getAvailableCount() < requestDto.getNumberOfPersons()) {
 			throw new CustomException(ErrorType.RESERVATION_EXCEEDS_AVAILABLE_SLOTS);
 		}
