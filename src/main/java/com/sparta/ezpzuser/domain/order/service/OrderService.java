@@ -91,7 +91,7 @@ public class OrderService {
      * @return 주문 상세 정보
      */
     public OrderResponseDto findOrder(Long orderId, User user) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdAndUserId(orderId, user.getId())
                 .orElseThrow(() -> new CustomException(ErrorType.ORDER_NOT_FOUND));
         List<OrderlineResponseDto> orderlineResponseDtoList = orderlineRepository.findAllByOrderId(
                 orderId).stream().map(OrderlineResponseDto::of).toList();
@@ -100,6 +100,22 @@ public class OrderService {
     }
 
 
+    /**
+     * 주문 취소
+     *
+     * @param orderId 취소할 주문 id
+     * @param user    요청한 사용
+     */
+    @Transactional
+    public void deleteOrder(Long orderId, User user) {
+        Order order = orderRepository.findByIdAndUserId(orderId, user.getId())
+                .orElseThrow(() -> new CustomException(ErrorType.ORDER_NOT_FOUND));
+        if (order.getOrderStatus() != OrderStatus.ORDER_COMPLETED) {
+            throw new CustomException(ErrorType.ORDER_CANCELLATION_NOT_ALLOWED);
+        }
+        order.setOrderStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+    }
     /* UTIL */
 
     /**

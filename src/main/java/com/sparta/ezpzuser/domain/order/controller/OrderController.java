@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,6 +50,14 @@ public class OrderController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return getResponseEntity(orderService.findOrder(orderId, userDetails.getUser()),
                 "주문 상세 조회 성공");
+    }
+
+    @PatchMapping("/{orderId}")
+    public ResponseEntity<CommonResponse<?>> deleteOrder(
+            @PathVariable Long orderId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        orderService.deleteOrder(orderId, userDetails.getUser());
+        return getResponseEntity("주문 취소 성공");
     }
 
 }

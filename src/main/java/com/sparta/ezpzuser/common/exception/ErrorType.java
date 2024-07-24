@@ -31,6 +31,7 @@ public enum ErrorType {
 
     // Order
     ORDER_NOT_FOUND(BAD_REQUEST, "존재하지 않는 주문 내역입니다."),
+    ORDER_CANCELLATION_NOT_ALLOWED(HttpStatus.FORBIDDEN, "배송 전 상태에서만 주문을 취소할 수 있습니다."),
 
     // Item
 
