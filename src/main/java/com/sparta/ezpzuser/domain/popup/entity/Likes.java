@@ -13,7 +13,7 @@ public class Likes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "popup_id")
+    @Column(name = "like_id")
     private Long id;
 
     @ManyToOne
