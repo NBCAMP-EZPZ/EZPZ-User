@@ -1,7 +1,6 @@
 package com.sparta.ezpzuser.domain.slot.service;
 
-import static com.sparta.ezpzuser.common.util.PageUtil.checkValidatePage;
-import static com.sparta.ezpzuser.common.util.PageUtil.createPageable;
+import static com.sparta.ezpzuser.common.util.PageUtil.validatePageableWithPage;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,11 +19,10 @@ import lombok.RequiredArgsConstructor;
 public class SlotService {
 	private final SlotRepository slotRepository;
 	
-	public Page<SlotResponseDto> findSlotsByPopupId(int page, Long popupId) {
+	public Page<SlotResponseDto> findSlotsByPopupId(Pageable pageable, Long popupId) {
 		
-		Pageable pageable = createPageable(page);
 		Page<Slot> slotPage = slotRepository.findByPopupId(popupId, pageable);
-		checkValidatePage(page, slotPage);
+		validatePageableWithPage(pageable, slotPage);
 		
 		return slotPage.map(SlotResponseDto::of);
 	}
