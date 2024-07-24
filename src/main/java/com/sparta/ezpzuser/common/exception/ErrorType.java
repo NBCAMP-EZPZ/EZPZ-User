@@ -23,7 +23,10 @@ public enum ErrorType {
 
     // Reservation
 
-    //
+    // Coupon
+    COUPON_NOT_FOUND(HttpStatus.BAD_REQUEST, "존재하지 않는 쿠폰입니다."),
+    ALREADY_DOWNLOADED_COUPON(HttpStatus.BAD_REQUEST, "이미 다운로드 받은 쿠폰입니다."),
+    SOLD_OUT_COUPON(HttpStatus.BAD_REQUEST, "이미 매진된 쿠폰입니다.")
 
     ;
     private final HttpStatus httpStatus;
