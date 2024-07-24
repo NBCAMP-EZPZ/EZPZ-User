@@ -5,8 +5,9 @@ import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.cart.entity.Cart;
 import com.sparta.ezpzuser.domain.cart.repository.CartRepository;
 import com.sparta.ezpzuser.domain.cart.service.CartService;
+import com.sparta.ezpzuser.domain.order.dto.OrderCreateResponseDto;
+import com.sparta.ezpzuser.domain.order.dto.OrderFindAllResponseDto;
 import com.sparta.ezpzuser.domain.order.dto.OrderRequestDto;
-import com.sparta.ezpzuser.domain.order.dto.OrderResponseDto;
 import com.sparta.ezpzuser.domain.order.entity.Order;
 import com.sparta.ezpzuser.domain.order.enums.OrderStatus;
 import com.sparta.ezpzuser.domain.order.repository.OrderRepository;
@@ -16,6 +17,8 @@ import com.sparta.ezpzuser.domain.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,8 +32,15 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
 
+    /**
+     * 주문하기
+     *
+     * @param requestDto 주문할 장바구니 정보 리스트
+     * @param user       주문 요청한 사용자
+     * @return 완료된 주문 정보
+     */
     @Transactional
-    public OrderResponseDto createOrder(OrderRequestDto requestDto, User user) {
+    public OrderCreateResponseDto createOrder(OrderRequestDto requestDto, User user) {
 
         // 요청받은 장바구니 정보 조회
         List<Cart> cartList = findCartsByIds(requestDto.getCartIdRequestList(), user.getId());
@@ -56,9 +66,20 @@ public class OrderService {
 
         // 사용된 장바구니 삭제
         cartList.stream().forEach(cart -> cartRepository.delete(cart));
-        return OrderResponseDto.of(order, orderlineResponseDtoList);
+        return OrderCreateResponseDto.of(order, orderlineResponseDtoList);
     }
 
+    /**
+     * 주문 목록 조회
+     *
+     * @param pageable 요청한 페이지 정보
+     * @param user     요청한 사용자
+     * @return 주문 목록 Page
+     */
+    public Page<OrderFindAllResponseDto> findOrdersAll(Pageable pageable, User user) {
+        Page<Order> orderPages = orderRepository.findAllByUserId(user.getId(), pageable);
+        return orderPages.map(OrderFindAllResponseDto::of);
+    }
 
     /* UTIL */
 

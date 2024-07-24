@@ -7,8 +7,10 @@ import com.sparta.ezpzuser.common.security.UserDetailsImpl;
 import com.sparta.ezpzuser.domain.order.dto.OrderRequestDto;
 import com.sparta.ezpzuser.domain.order.service.OrderService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +32,14 @@ public class OrderController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return getResponseEntity(orderService.createOrder(requestDto, userDetails.getUser()),
                 "주문 완료");
+    }
+
+    @GetMapping
+    public ResponseEntity<CommonResponse<?>> findOrdersAll(
+            Pageable pageable,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return getResponseEntity(orderService.findOrdersAll(pageable, userDetails.getUser()),
+                "주문 목록 조회 성공");
     }
 
 
