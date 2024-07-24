@@ -22,8 +22,10 @@ public enum ErrorType {
     // Item
 
     // Reservation
-
-    //
+    
+    // Page
+    INVALID_PAGE(HttpStatus.BAD_REQUEST, "페이지 번호가 올바르지 않습니다."),
+    NOT_FOUND_PAGE(HttpStatus.NOT_FOUND, "페이지가 존재하지 않습니다.")
 
     ;
     private final HttpStatus httpStatus;
