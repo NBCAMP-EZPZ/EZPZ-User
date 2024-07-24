@@ -4,8 +4,6 @@ import com.sparta.ezpzuser.common.dto.CommonResponse;
 import com.sparta.ezpzuser.common.security.UserDetailsImpl;
 import com.sparta.ezpzuser.domain.coupon.dto.CouponResponseDto;
 import com.sparta.ezpzuser.domain.coupon.dto.UserCouponResponseDto;
-import com.sparta.ezpzuser.domain.coupon.entity.Coupon;
-import com.sparta.ezpzuser.domain.coupon.entity.UserCoupon;
 import com.sparta.ezpzuser.domain.coupon.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,8 +33,8 @@ public class CouponController {
             @PathVariable Long couponId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        UserCoupon userCoupon = couponService.downloadCoupon(couponId, userDetails.getUser());
-        return getResponseEntity(UserCouponResponseDto.of(userCoupon), "쿠폰 다운로드 성공");
+        UserCouponResponseDto response = couponService.downloadCoupon(couponId, userDetails.getUser());
+        return getResponseEntity(response, "쿠폰 다운로드 성공");
     }
 
     /**
@@ -49,8 +47,7 @@ public class CouponController {
     public ResponseEntity<CommonResponse<?>> findAllDownloadableCoupons(
             Pageable pageable) {
 
-        Page<Coupon> page = couponService.findAllDownloadableCoupons(pageable);
-        Page<CouponResponseDto> response = page.map(CouponResponseDto::of);
+        Page<CouponResponseDto> response = couponService.findAllDownloadableCoupons(pageable);
         return getResponseEntity(response, "다운로드 가능한 쿠폰 목록 조회 성공");
     }
 
@@ -63,11 +60,10 @@ public class CouponController {
      */
     @GetMapping("/users/coupons")
     public ResponseEntity<CommonResponse<?>> findAllMyCoupons(
-            Pageable pageable,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            Pageable pageable) {
 
-        Page<Coupon> page = couponService.findAllMyCoupons(userDetails.getUser(), pageable);
-        Page<CouponResponseDto> response = page.map(CouponResponseDto::of);
+        Page<CouponResponseDto> response = couponService.findAllMyCoupons(userDetails.getUser(), pageable);
         return getResponseEntity(response, "마이 쿠폰 목록 조회 성공");
     }
 

@@ -1,6 +1,8 @@
 package com.sparta.ezpzuser.domain.coupon.service;
 
 import com.sparta.ezpzuser.common.exception.CustomException;
+import com.sparta.ezpzuser.domain.coupon.dto.CouponResponseDto;
+import com.sparta.ezpzuser.domain.coupon.dto.UserCouponResponseDto;
 import com.sparta.ezpzuser.domain.coupon.entity.Coupon;
 import com.sparta.ezpzuser.domain.coupon.entity.UserCoupon;
 import com.sparta.ezpzuser.domain.coupon.repository.CouponRepository;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static com.sparta.ezpzuser.common.exception.ErrorType.ALREADY_DOWNLOADED_COUPON;
 import static com.sparta.ezpzuser.common.exception.ErrorType.COUPON_NOT_FOUND;
+import static com.sparta.ezpzuser.common.util.PageUtil.validatePageableWithPage;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +34,7 @@ public class CouponService {
      * @return 다운로드 후 생성된 UserCoupon 객체
      */
     @Transactional
-    public UserCoupon downloadCoupon(Long couponId, User user) {
+    public UserCouponResponseDto downloadCoupon(Long couponId, User user) {
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new CustomException(COUPON_NOT_FOUND));
 
@@ -40,7 +43,8 @@ public class CouponService {
             throw new CustomException(ALREADY_DOWNLOADED_COUPON);
         }
         coupon.download();
-        return userCouponRepository.save(UserCoupon.of(user, coupon));
+        UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
+        return UserCouponResponseDto.of(userCoupon);
     }
 
     /**
@@ -49,8 +53,10 @@ public class CouponService {
      * @param pageable Pageable 객체
      * @return 다운로드 가능한 쿠폰 목록
      */
-    public Page<Coupon> findAllDownloadableCoupons(Pageable pageable) {
-        return couponRepository.findByRemainingCountGreaterThan(0, pageable);
+    public Page<CouponResponseDto> findAllDownloadableCoupons(Pageable pageable) {
+        Page<Coupon> page = couponRepository.findByRemainingCountGreaterThan(0, pageable);
+        validatePageableWithPage(pageable, page);
+        return page.map(CouponResponseDto::of);
     }
 
     /**
@@ -60,8 +66,10 @@ public class CouponService {
      * @param pageable Pageable 객체
      * @return 마이 쿠폰 목록
      */
-    public Page<Coupon> findAllMyCoupons(User user, Pageable pageable) {
-        return userCouponRepository.findAllMyCoupons(user, pageable);
+    public Page<CouponResponseDto> findAllMyCoupons(User user, Pageable pageable) {
+        Page<Coupon> page = userCouponRepository.findAllMyCoupons(user, pageable);
+        validatePageableWithPage(pageable, page);
+        return page.map(CouponResponseDto::of);
     }
 
 }
