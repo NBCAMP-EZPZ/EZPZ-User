@@ -10,5 +10,5 @@ public class CartCreateRequestDto {
     Long itemId;
 
     @NotNull(message = "장바구니에 담을 상품의 수량을 입력해주세요.")
-    Long quantity;
+    int quantity;
 }

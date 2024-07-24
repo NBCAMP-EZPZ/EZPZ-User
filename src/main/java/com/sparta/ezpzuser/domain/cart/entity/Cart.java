@@ -26,7 +26,7 @@ public class Cart extends Timestamped {
     private Long id;
 
     @Column
-    private Long quantity;
+    private int quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -43,7 +43,7 @@ public class Cart extends Timestamped {
      * @param user     장바구니를 생성하는 사용자
      * @param item     장바구니에 담을 굿즈
      */
-    private Cart(Long quantity, User user, Item item) {
+    private Cart(int quantity, User user, Item item) {
         this.quantity = quantity;
         this.user = user;
         this.item = item;
@@ -57,7 +57,7 @@ public class Cart extends Timestamped {
      * @param item     장바구니에 담을 굿즈
      * @return cart
      */
-    public static Cart of(Long quantity, User user, Item item) {
+    public static Cart of(int quantity, User user, Item item) {
         return new Cart(quantity, user, item);
     }
 
@@ -66,7 +66,7 @@ public class Cart extends Timestamped {
      *
      * @param quantity 변경할 수량
      */
-    public void updateCart(Long quantity) {
+    public void updateCart(int quantity) {
         this.quantity = quantity;
     }
 }

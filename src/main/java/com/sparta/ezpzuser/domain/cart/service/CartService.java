@@ -40,10 +40,7 @@ public class CartService {
                 () -> new IllegalArgumentException("존재하지 않는 상품입니다.") // 에러코드 만들어주시면 수정
         );
 
-        // 현재 재고량보다 사용자가 요청한 개수가 많을 때 예외 처리
-        if (item.getStock() <= requestDto.getQuantity()) {
-            throw new CustomException(ErrorType.INSUFFICIENT_STOCK);
-        }
+        validateStock(item, requestDto.getQuantity());
 
         Cart cart = cartRepository.save(Cart.of(
                 requestDto.getQuantity(),
@@ -88,10 +85,7 @@ public class CartService {
         Item item = itemRepository.findById(cart.getItem().getId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
 
-        // 재고보다 많은 수량으로 변경하려고 할 때의 예외 처리
-        if (item.getStock() < requestDto.getQuantity()) {
-            throw new CustomException(ErrorType.INSUFFICIENT_STOCK);
-        }
+        validateStock(item, requestDto.getQuantity());
 
         cart.updateCart(requestDto.getQuantity());
         return CartResponseDto.of(cart);
@@ -128,5 +122,17 @@ public class CartService {
         }
 
         return cart;
+    }
+
+    /**
+     * 재고보다 요청 수량이 많은지 확인하는 메서드 / item이 구현되면 itemService로 이동시켜야 할 듯*
+     *
+     * @param item              확인할 굿즈
+     * @param requestedQuantity 요청하려는 수량
+     */
+    public void validateStock(Item item, int requestedQuantity) {
+        if (item.getStock() < requestedQuantity) {
+            throw new CustomException(ErrorType.INSUFFICIENT_STOCK);
+        }
     }
 }

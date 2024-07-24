@@ -7,7 +7,7 @@ import lombok.Getter;
 public class CartResponseDto {
 
     private Long itemId;
-    private Long quantity;
+    private int quantity;
 
     /**
      * CartResponseDto 생성자
