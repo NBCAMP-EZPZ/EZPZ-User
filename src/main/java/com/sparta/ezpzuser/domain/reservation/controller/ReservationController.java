@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,6 +64,23 @@ public class ReservationController {
 		Page<ReservationResponseDto> responsePage = reservationService.findReservations(pageable, status, userDetails.getUser());
 		
 		return getResponseEntity(responsePage, "예약 목록 조회 성공");
+	}
+	
+	/**
+	 * 예약 취소
+	 *
+	 * @param reservationId 예약 ID
+	 * @param userDetails 로그인 사용자 정보
+	 * @return 예약 취소 결과
+	 */
+	@PatchMapping("/{reservationId}")
+	public ResponseEntity<CommonResponse<?>> cancelReservation(
+		@PathVariable Long reservationId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
+		reservationService.cancelReservation(reservationId, userDetails.getUser());
+		
+		return getResponseEntity("예약 취소 성공");
 	}
 	
 }

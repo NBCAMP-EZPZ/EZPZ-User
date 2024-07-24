@@ -1,5 +1,7 @@
 package com.sparta.ezpzuser.domain.reservation.repository;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +25,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 		+ "AND r.reservationStatus = :status "
 		+ "ORDER BY s.slotDate DESC, s.slotTime DESC")
 	Page<Reservation> findByUserIdAndStatus(@Param("userId") Long userId, @Param("status") ReservationStatus status, Pageable pageable);
+	
+	@Query("SELECT r FROM Reservation r "
+		+ "JOIN FETCH r.slot s "
+		+ "WHERE r.id = :reservationId "
+		+ "AND r.user.id = :userId")
+	Optional<Reservation> findByIdAndUserId(@Param("reservationId") Long reservationId, @Param("userId") Long userId);
 }

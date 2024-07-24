@@ -70,6 +70,23 @@ public class ReservationService {
 		return reservationPage.map(r -> ReservationResponseDto.of(r, r.getSlot()));
 	}
 	
+	/**
+	 * 예약 취소
+	 *
+	 * @param reservationId 예약 ID
+	 * @param user 로그인 사용자 정보
+	 */
+	@Transactional
+	public void cancelReservation(Long reservationId, User user) {
+		Reservation reservation = getReservationById(reservationId, user);
+		
+		Slot slot = reservation.getSlot();
+		slot.decreaseReservedCount(reservation.getNumberOfPersons());
+		slotRepository.save(slot);
+		
+		reservation.cancel();
+	}
+	
 	/* UTIL */
 	
 	/**
@@ -123,5 +140,17 @@ public class ReservationService {
 		if (reservationRepository.existsByUserIdAndPopupId(user.getId(), popup.getId())) {
 			throw new CustomException(ErrorType.RESERVATION_ALREADY_EXISTS);
 		}
+	}
+	
+	/**
+	 * 예약 조회
+	 *
+	 * @param reservationId 예약 ID
+	 * @param user 로그인 사용자 정보
+	 * @return 예약 정보
+	 */
+	private Reservation getReservationById(Long reservationId, User user) {
+		return reservationRepository.findByIdAndUserId(reservationId, user.getId())
+			.orElseThrow(() -> new CustomException(ErrorType.RESERVATION_NOT_FOUND));
 	}
 }
