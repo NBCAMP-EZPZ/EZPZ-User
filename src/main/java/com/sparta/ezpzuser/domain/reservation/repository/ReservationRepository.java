@@ -30,5 +30,13 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 		+ "JOIN FETCH r.slot s "
 		+ "WHERE r.id = :reservationId "
 		+ "AND r.user.id = :userId")
-	Optional<Reservation> findByIdAndUserId(@Param("reservationId") Long reservationId, @Param("userId") Long userId);
+	Optional<Reservation> findReservationAndSlot(@Param("reservationId") Long reservationId, @Param("userId") Long userId);
+	
+	
+	@Query("SELECT r FROM Reservation r "
+		+ "JOIN FETCH r.slot s "
+		+ "JOIN FETCH s.popup p "
+		+ "WHERE r.id = :reservationId "
+		+ "AND r.user.id = :userId")
+	Optional<Reservation> findReservationAndSlotPopUp(@Param("reservationId") Long reservationId, @Param("userId") Long userId);
 }

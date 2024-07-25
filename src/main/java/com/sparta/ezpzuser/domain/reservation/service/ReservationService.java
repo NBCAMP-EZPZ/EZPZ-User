@@ -78,7 +78,7 @@ public class ReservationService {
 	 */
 	@Transactional
 	public void cancelReservation(Long reservationId, User user) {
-		Reservation reservation = getReservationById(reservationId, user);
+		Reservation reservation = getReservationAndSlot(reservationId, user);
 		
 		Slot slot = reservation.getSlot();
 		slot.decreaseReservedCount(reservation.getNumberOfPersons());
@@ -143,14 +143,26 @@ public class ReservationService {
 	}
 	
 	/**
-	 * 예약 조회
+	 * 예약 조회 (팝업 정보 제외)
 	 *
 	 * @param reservationId 예약 ID
 	 * @param user 로그인 사용자 정보
 	 * @return 예약 정보
 	 */
-	private Reservation getReservationById(Long reservationId, User user) {
-		return reservationRepository.findByIdAndUserId(reservationId, user.getId())
+	private Reservation getReservationAndSlot(Long reservationId, User user) {
+		return reservationRepository.findReservationAndSlot(reservationId, user.getId())
+			.orElseThrow(() -> new CustomException(ErrorType.RESERVATION_NOT_FOUND));
+	}
+	
+	/**
+	 * 예약 조회 (팝업 정보 포함)
+	 *
+	 * @param reservationId 예약 ID
+	 * @param user 로그인 사용자 정보
+	 * @return 예약 정보
+	 */
+	private Reservation getReservationAndSlotPopup(Long reservationId, User user) {
+		return reservationRepository.findReservationAndSlotPopUp(reservationId, user.getId())
 			.orElseThrow(() -> new CustomException(ErrorType.RESERVATION_NOT_FOUND));
 	}
 }
