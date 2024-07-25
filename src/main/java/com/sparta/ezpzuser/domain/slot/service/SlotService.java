@@ -19,6 +19,13 @@ import lombok.RequiredArgsConstructor;
 public class SlotService {
 	private final SlotRepository slotRepository;
 	
+	/**
+	 * 팝업 ID로 슬롯 목록 조회
+	 *
+	 * @param pageable 페이징 정보
+	 * @param popupId 팝업 ID
+	 * @return 슬롯 목록
+	 */
 	public Page<SlotResponseDto> findSlotsByPopupId(Pageable pageable, Long popupId) {
 		
 		Page<Slot> slotPage = slotRepository.findByPopupId(popupId, pageable);

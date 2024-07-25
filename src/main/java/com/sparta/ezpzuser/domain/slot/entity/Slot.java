@@ -55,4 +55,8 @@ public class Slot {
 	public void increaseReservedCount(int numberOfPersons) {
 		this.reservedCount += numberOfPersons;
 	}
+	
+	public void decreaseReservedCount(int numberOfPersons) {
+		this.reservedCount -= numberOfPersons;
+	}
 }

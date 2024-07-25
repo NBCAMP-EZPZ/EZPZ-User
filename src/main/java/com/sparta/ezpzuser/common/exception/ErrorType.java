@@ -28,20 +28,25 @@ public enum ErrorType {
     DUPLICATED_USERNAME(BAD_REQUEST, "이미 존재하는 사용자 아이디입니다."),
 
     // Popup
+    POPUP_NOT_FOUNT(NOT_FOUND, "존재하지 않는 팝업입니다."),
+    POPUP_ACCESS_FORBIDDEN(FORBIDDEN, "해당 팝업이 존재하지 않거나, 팝업에 대한 권한이 없습니다."),
 
     // Order
 
     // Item
+    ITEM_NOT_FOUNT(NOT_FOUND, "해당 상품을 찾을 수 없습니다."),
+    ITEM_ACCESS_FORBIDDEN(FORBIDDEN, "해당 상품에 대한 접근 권한이 없습니다."),
 
     // Reservation
     RESERVATION_EXCEEDS_AVAILABLE_SLOTS(BAD_REQUEST, "예약 가능 인원을 초과하였습니다."),
     RESERVATION_ALREADY_EXISTS(BAD_REQUEST, "이미 예약한 내역이 존재합니다."),
 
+
     // Review
     RESERVATION_NOT_FOUND(NOT_FOUND, "해당 예약을 찾을 수 없습니다."),
     DIFFERENT_RESERVATION_USER(UNAUTHORIZED, "해당 예약의 예약자가 아닙니다."),
     UNVISITED_USER(BAD_REQUEST, "예약한 팝업에 방문 완료한 예약자가 아닙니다."),
-
+  
     // Slot
     SLOT_RESERVATION_FINISHED(BAD_REQUEST, "예약이 마감된 슬롯입니다."),
     SLOT_NOT_FOUND(NOT_FOUND, "해당 슬롯을 찾을 수 없습니다."),
