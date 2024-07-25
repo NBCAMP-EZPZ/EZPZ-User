@@ -5,12 +5,13 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.ezpzuser.common.util.PageUtil;
+import com.sparta.ezpzuser.domain.popup.dto.PopupCondition;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import com.sparta.ezpzuser.domain.popup.enums.ApprovalStatus;
 import com.sparta.ezpzuser.domain.popup.enums.PopupStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
@@ -24,33 +25,33 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<Popup> findAllPopupsByStatus(PageUtil pageUtil) {
-        JPAQuery<Popup> query = findAllPopupsByStatusQuery(popup, pageUtil)
-                .offset(pageUtil.toPageable().getOffset())
-                .limit(pageUtil.toPageable().getPageSize())
+    public Page<Popup> findAllPopupsByStatus(Pageable pageable, PopupCondition cond) {
+        JPAQuery<Popup> query = findAllPopupsByStatusQuery(popup, cond)
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .orderBy(popup.createdAt.desc());
 
         List<Popup> popups = query.fetch();
-        Long totalSize = countQuery(pageUtil).fetch().get(0);
+        Long totalSize = countQuery(cond).fetch().get(0);
 
-        return PageableExecutionUtils.getPage(popups, pageUtil.toPageable(), () -> totalSize);
+        return PageableExecutionUtils.getPage(popups, pageable, () -> totalSize);
     }
 
-    private <T> JPAQuery<T> findAllPopupsByStatusQuery(Expression<T> expr, PageUtil pageUtil) {
+    private <T> JPAQuery<T> findAllPopupsByStatusQuery(Expression<T> expr, PopupCondition cond) {
         return jpaQueryFactory.select(expr)
                 .from(popup)
                 .where(
                         popup.approvalStatus.eq(ApprovalStatus.APPROVED),
-                        popupStatusEq(pageUtil.getFirstStatus())
+                        popupStatusEq(cond.getPopupStatus())
                 );
     }
 
-    private JPAQuery<Long> countQuery(PageUtil pageUtil) {
+    private JPAQuery<Long> countQuery(PopupCondition cond) {
         return jpaQueryFactory.select(Wildcard.count)
                 .from(popup)
                 .where(
                         popup.approvalStatus.eq(ApprovalStatus.APPROVED),
-                        popupStatusEq(pageUtil.getFirstStatus())
+                        popupStatusEq(cond.getPopupStatus())
                 );
     }
 
