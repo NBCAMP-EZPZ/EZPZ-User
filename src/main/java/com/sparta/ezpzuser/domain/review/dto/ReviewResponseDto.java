@@ -13,7 +13,6 @@ public class ReviewResponseDto {
     private final String content;
     private final Long reservationId;
     private final Long popupId;
-    private final Long userId;
     private final LocalDateTime createdAt;
 
     private ReviewResponseDto(Review review) {
@@ -22,7 +21,6 @@ public class ReviewResponseDto {
         this.content = review.getContent();
         this.reservationId = review.getReservation().getId();
         this.popupId = review.getPopup().getId();
-        this.userId = review.getReservation().getUser().getId();
         this.createdAt = review.getCreatedAt();
     }
 

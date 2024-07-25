@@ -1,9 +1,9 @@
 package com.sparta.ezpzuser.domain.review.service;
 
-
 import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.util.PageUtil;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
+import com.sparta.ezpzuser.domain.popup.repository.PopupRepository;
 import com.sparta.ezpzuser.domain.reservation.entity.Reservation;
 import com.sparta.ezpzuser.domain.reservation.enums.ReservationStatus;
 import com.sparta.ezpzuser.domain.reservation.repository.ReservationRepository;
@@ -27,6 +27,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
+    private final PopupRepository popupRepository;
 
     /**
      * 리뷰 등록
@@ -47,7 +48,7 @@ public class ReviewService {
         if (!reservation.getReservationStatus().equals(ReservationStatus.FINISHED)) {
             throw new CustomException(UNVISITED_USER);
         }
-        Popup popup = reservation.getSlot().getPopup();
+        Popup popup = popupRepository.findByReservationId(reservation.getId());
         Review review = reviewRepository.save(Review.of(dto, popup, reservation));
         return ReviewResponseDto.of(review);
     }
