@@ -5,6 +5,7 @@ import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.host.entity.Host;
 import com.sparta.ezpzuser.domain.popup.enums.ApprovalStatus;
+
 import com.sparta.ezpzuser.domain.popup.enums.PopupStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

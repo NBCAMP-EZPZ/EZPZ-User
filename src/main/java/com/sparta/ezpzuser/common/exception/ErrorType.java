@@ -38,11 +38,11 @@ public enum ErrorType {
     // Reservation
     RESERVATION_EXCEEDS_AVAILABLE_SLOTS(BAD_REQUEST, "예약 가능 인원을 초과하였습니다."),
     RESERVATION_ALREADY_EXISTS(BAD_REQUEST, "이미 예약한 내역이 존재합니다."),
+    RESERVATION_NOT_FOUND(NOT_FOUND, "해당 예약을 찾을 수 없습니다."),
     
     // Slot
     SLOT_RESERVATION_FINISHED(BAD_REQUEST, "예약이 마감된 슬롯입니다."),
     SLOT_NOT_FOUND(NOT_FOUND, "해당 슬롯을 찾을 수 없습니다."),
-    
 
     // Coupon
     COUPON_NOT_FOUND(BAD_REQUEST, "존재하지 않는 쿠폰입니다."),
