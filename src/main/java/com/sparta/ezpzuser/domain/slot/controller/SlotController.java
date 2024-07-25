@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sparta.ezpzuser.common.dto.CommonResponse;
@@ -23,6 +22,13 @@ import lombok.RequiredArgsConstructor;
 public class SlotController {
 	private final SlotService slotService;
 	
+	/**
+	 * 팝업 ID로 슬롯 목록 조회
+	 *
+	 * @param pageable 페이징 정보
+	 * @param popupId 팝업 ID
+	 * @return 슬롯 목록
+	 */
 	@GetMapping
 	public ResponseEntity<CommonResponse<?>> findSlotsByPopupId(
 		@PathVariable Long popupId,
@@ -30,7 +36,7 @@ public class SlotController {
 		
 		Page<SlotResponseDto> responseDto = slotService.findSlotsByPopupId(pageable, popupId);
 		
-		return getResponseEntity(responseDto, "예약 가능 목록 조회 성공");
+		return getResponseEntity(responseDto, "예약 목록 조회 성공");
 		
 	}
 }
