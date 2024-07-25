@@ -23,7 +23,7 @@ public class Popup extends Timestamped {
     @Column(name = "popup_id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_id", nullable = false)
     private Host host;
 
