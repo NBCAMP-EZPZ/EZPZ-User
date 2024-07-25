@@ -38,5 +38,4 @@ public class User extends Timestamped {
     public static User of(SignupRequestDto dto, String encodedPassword) {
         return new User(dto, encodedPassword);
     }
-
 }
