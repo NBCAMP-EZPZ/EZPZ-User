@@ -12,7 +12,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import static com.sparta.ezpzuser.common.exception.ErrorType.*;
 
-
 @Component
 public class CustomPageableHandlerMethodArgumentResolver implements HandlerMethodArgumentResolver {
 
