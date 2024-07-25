@@ -61,12 +61,6 @@ public class CartService {
         List<Cart> cartList = cartRepository.findAllByUserIdOrderByCreatedAtDesc(
                 user.getId());
 
-        // 장바구니에 넣을 때는 재고가 있었지만, 현재는 재고가 없는 물건에 대한 예외 처리
-        for (Cart cart : cartList) {
-            if (cart.getItem().getStock() < cart.getQuantity()) {
-                throw new CustomException(ErrorType.STOCK_UNAVAILABLE);
-            }
-        }
         return cartList.stream().map(CartResponseDto::of).collect(Collectors.toList());
     }
 
