@@ -1,0 +1,19 @@
+## Variables
+@contentId = 30
+
+### 컨텐츠 좋아요 토글 (contentType : popup/item)
+POST http://localhost:8080/api/v1/likes
+Content-Type: application/json
+Authorization: {{Authorization}}
+Cookie: {{Cookie}}
+
+{
+  "contentId": {{contentId}},
+  "contentType": "popup"
+}
+
+### 타입별 좋아요한 컨텐츠 목록 조회 (contentType : popup/item)
+GET http://localhost:8080/api/v1/likes?contentType=popup
+Authorization: {{Authorization}}
+Cookie: {{Cookie}}
+

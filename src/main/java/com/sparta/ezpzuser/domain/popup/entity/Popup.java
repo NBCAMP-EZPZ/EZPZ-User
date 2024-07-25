@@ -75,4 +75,18 @@ public class Popup extends Timestamped {
             throw new CustomException(ErrorType.POPUP_ACCESS_FORBIDDEN);
         }
     }
+
+    /**
+     * 좋아요 개수 (true: 증가 / false: 감소)
+     * @param b boolean
+     */
+    public void updateLikeCount(boolean b) {
+        if (b) {
+            this.likeCount += 1;
+        }else {
+            if (this.likeCount > 0) {
+                this.likeCount -= 1;
+            }
+        }
+    }
 }

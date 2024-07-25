@@ -47,6 +47,32 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
         return PageableExecutionUtils.getPage(popups, pageable, () -> totalSize);
     }
 
+    @Override
+    public Page<Popup> findPopupByIdList(Pageable pageable, List<Long> popupIdList) {
+        List<Popup> popups = jpaQueryFactory
+                .selectFrom(popup)
+                .where(
+                        popup.approvalStatus.eq(ApprovalStatus.APPROVED),
+                        popup.popupStatus.ne(PopupStatus.CANCELED),
+                        popup.id.in(popupIdList)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(popup.createdAt.desc())
+                .fetch();
+
+        Long totalSize = jpaQueryFactory.select(Wildcard.count)
+                .from(popup)
+                .where(
+                        popup.approvalStatus.eq(ApprovalStatus.APPROVED),
+                        popup.popupStatus.ne(PopupStatus.CANCELED),
+                        popup.id.in(popupIdList)
+                )
+                .fetchOne();
+
+        return PageableExecutionUtils.getPage(popups, pageable, () -> totalSize);
+    }
+
     // 조건 : 팝업 ID
     private BooleanExpression popupStatusEq(String statusBy) {
         return Objects.nonNull(statusBy) && !"all".equals(statusBy) ?

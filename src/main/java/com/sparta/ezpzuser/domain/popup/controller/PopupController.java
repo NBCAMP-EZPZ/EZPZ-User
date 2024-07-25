@@ -1,5 +1,6 @@
 package com.sparta.ezpzuser.domain.popup.controller;
 
+import com.sparta.ezpzuser.common.security.UserDetailsImpl;
 import com.sparta.ezpzuser.domain.popup.dto.PopupCondition;
 import com.sparta.ezpzuser.domain.popup.dto.PopupResponseDto;
 import com.sparta.ezpzuser.domain.popup.service.PopupService;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static com.sparta.ezpzuser.common.util.ControllerUtil.getResponseEntity;

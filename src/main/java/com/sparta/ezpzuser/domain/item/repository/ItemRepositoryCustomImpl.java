@@ -51,6 +51,33 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
         return PageableExecutionUtils.getPage(items, pageable, () -> totalSize);
     }
 
+    @Override
+    public Page<Item> findItemByIdList(Pageable pageable, List<Long> itemIdList) {
+        // 데이터 조회 쿼리
+        List<Item> items = jpaQueryFactory
+                .selectFrom(item)
+                .where(
+                        item.itemStatus.ne(ItemStatus.SALE_END),
+                        item.id.in(itemIdList)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(item.createdAt.desc())
+                .fetch();
+
+        // 카운트 쿼리
+        Long totalSize = jpaQueryFactory
+                .select(Wildcard.count)
+                .from(item)
+                .where(
+                        item.itemStatus.ne(ItemStatus.SALE_END),
+                        item.id.in(itemIdList)
+                )
+                .fetchOne();
+
+        return PageableExecutionUtils.getPage(items, pageable, () -> totalSize);
+    }
+
     // 조건 : 호스트 ID
     private BooleanExpression hostIdEq(String hostId) {
         return Objects.nonNull(hostId) && !"all".equals(hostId) ?
