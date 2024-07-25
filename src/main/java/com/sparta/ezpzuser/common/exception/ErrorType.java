@@ -2,6 +2,9 @@ package com.sparta.ezpzuser.common.exception;
 
 import static com.sparta.ezpzuser.common.resolver.CustomPageableHandlerMethodArgumentResolver.MAX_PAGE_SIZE;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -48,7 +51,7 @@ public enum ErrorType {
     RESERVATION_NOT_FOUND(NOT_FOUND, "해당 예약을 찾을 수 없습니다."),
     DIFFERENT_RESERVATION_USER(UNAUTHORIZED, "해당 예약의 예약자가 아닙니다."),
     UNVISITED_USER(BAD_REQUEST, "예약한 팝업에 방문 완료한 예약자가 아닙니다."),
-  
+
     // Slot
     SLOT_RESERVATION_FINISHED(BAD_REQUEST, "예약이 마감된 슬롯입니다."),
     SLOT_NOT_FOUND(NOT_FOUND, "해당 슬롯을 찾을 수 없습니다."),
