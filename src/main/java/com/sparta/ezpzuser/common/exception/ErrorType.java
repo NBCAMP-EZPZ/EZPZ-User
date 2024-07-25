@@ -28,6 +28,8 @@ public enum ErrorType {
     DUPLICATED_USERNAME(BAD_REQUEST, "이미 존재하는 사용자 아이디입니다."),
 
     // Popup
+    POPUP_NOT_FOUNT(NOT_FOUND, "존재하지 않는 팝업입니다."),
+    POPUP_ACCESS_FORBIDDEN(FORBIDDEN, "해당 팝업이 존재하지 않거나, 팝업에 대한 권한이 없습니다."),
 
     // Order
 
