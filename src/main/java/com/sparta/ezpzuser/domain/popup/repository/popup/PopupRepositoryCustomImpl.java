@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.sparta.ezpzuser.domain.popup.entity.QPopup.popup;
+import static com.sparta.ezpzuser.domain.reservation.entity.QReservation.reservation;
+import static com.sparta.ezpzuser.domain.slot.entity.QSlot.slot;
 
 @RequiredArgsConstructor
 public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
@@ -71,6 +73,17 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
                 .fetchOne();
 
         return PageableExecutionUtils.getPage(popups, pageable, () -> totalSize);
+    }
+
+    @Override
+    public Popup findByReservationId(Long reservationId) {
+        return jpaQueryFactory
+                .select(popup)
+                .from(reservation)
+                .join(reservation.slot, slot).fetchJoin()
+                .join(slot.popup, popup).fetchJoin()
+                .where(reservation.id.eq(reservationId))
+                .fetchOne();
     }
 
     // 조건 : 팝업 ID

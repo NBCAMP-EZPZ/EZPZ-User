@@ -6,8 +6,8 @@ import com.sparta.ezpzuser.domain.coupon.entity.Coupon;
 import com.sparta.ezpzuser.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public class UserCouponRepositoryCustomImpl implements UserCouponRepositoryCusto
                 )
                 .fetchOne();
 
-        return new PageImpl<>(coupons, pageable, getTotal(totalCount));
+        return PageableExecutionUtils.getPage(coupons, pageable, () -> getTotal(totalCount));
     }
 
 }

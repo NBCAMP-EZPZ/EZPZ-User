@@ -12,4 +12,6 @@ public interface PopupRepositoryCustom {
     Page<Popup> findAllPopupsByStatus(Pageable pageable, PopupCondition cond);
 
     Page<Popup> findPopupByIdList(Pageable pageable, List<Long> popupIdList);
+
+    Popup findByReservationId(Long reservationId);
 }
