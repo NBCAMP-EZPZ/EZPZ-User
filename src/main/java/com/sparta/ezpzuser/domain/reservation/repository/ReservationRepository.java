@@ -15,7 +15,11 @@ import com.sparta.ezpzuser.domain.reservation.enums.ReservationStatus;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 	
-	@Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reservation r WHERE r.user.id = :userId AND r.slot.popup.id = :popupId")
+	@Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END "
+		+ "FROM Reservation r "
+		+ "WHERE r.user.id = :userId "
+		+ "AND r.slot.popup.id = :popupId "
+		+ "AND r.reservationStatus != 'CANCEL'")
 	boolean existsByUserIdAndPopupId(@Param("userId") Long userId, @Param("popupId") Long popupId);
 	
 	@Query("SELECT r FROM Reservation r "
