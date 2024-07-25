@@ -3,6 +3,7 @@ package com.sparta.ezpzuser.domain.slot.controller;
 import static com.sparta.ezpzuser.common.util.ControllerUtil.getResponseEntity;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,9 +26,9 @@ public class SlotController {
 	@GetMapping
 	public ResponseEntity<CommonResponse<?>> findSlotsByPopupId(
 		@PathVariable Long popupId,
-		@RequestParam(defaultValue = "1") int page) {
+		Pageable pageable) {
 		
-		Page<SlotResponseDto> responseDto = slotService.findSlotsByPopupId(page, popupId);
+		Page<SlotResponseDto> responseDto = slotService.findSlotsByPopupId(pageable, popupId);
 		
 		return getResponseEntity(responseDto, "예약 가능 목록 조회 성공");
 		
