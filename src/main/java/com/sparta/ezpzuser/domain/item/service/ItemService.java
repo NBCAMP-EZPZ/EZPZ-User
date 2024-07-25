@@ -4,6 +4,7 @@ import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.common.util.PageUtil;
 import com.sparta.ezpzuser.domain.item.dto.ItemCondition;
+import com.sparta.ezpzuser.domain.item.dto.ItemPageResponseDto;
 import com.sparta.ezpzuser.domain.item.dto.ItemResponseDto;
 import com.sparta.ezpzuser.domain.item.entity.Item;
 import com.sparta.ezpzuser.domain.item.repository.ItemRepository;
@@ -28,7 +29,7 @@ public class ItemService {
      */
     public Page<?> findAllItemsByHostAndPopupAndStatus(Pageable pageable, ItemCondition cond) {
         Page<?> itemList = itemRepository.findAllItemsByHostAndPopupAndStatus(pageable, cond)
-                .map(ItemResponseDto::of);
+                .map(ItemPageResponseDto::of);
         PageUtil.validatePageableWithPage(pageable, itemList);
         return itemList;
     }

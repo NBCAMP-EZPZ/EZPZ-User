@@ -10,6 +10,7 @@ public class ItemPageResponseDto {
     private final String name;
     private final int price;
     private final int likeCount;
+    private final String itemStatus;
     private final String image;
 
     public ItemPageResponseDto(Item item) {
@@ -17,6 +18,7 @@ public class ItemPageResponseDto {
         this.name = item.getName();
         this.price = item.getPrice();
         this.likeCount = item.getLikeCount();
+        this.itemStatus = item.getItemStatus().toString();
         this.image = item.getImageUrl();
     }
 

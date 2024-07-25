@@ -53,4 +53,8 @@ public class Reservation extends Timestamped {
 	public static Reservation of(int numberOfPersons, User user, Slot slot) {
 		return new Reservation(numberOfPersons, user, slot);
 	}
+	
+	public void cancel() {
+		this.reservationStatus = ReservationStatus.CANCEL;
+	}
 }

@@ -12,6 +12,7 @@ public class ItemResponseDto {
     private final int price;
     private final int stock;
     private final int likeCount;
+    private final String itemStatus;
     private final String imageUrl;
     private final String imageName;
 
@@ -22,6 +23,7 @@ public class ItemResponseDto {
         this.price = item.getPrice();
         this.stock = item.getStock();
         this.likeCount = item.getLikeCount();
+        this.itemStatus = item.getItemStatus().toString();
         this.imageUrl = item.getImageUrl();
         this.imageName = item.getImageName();
     }
