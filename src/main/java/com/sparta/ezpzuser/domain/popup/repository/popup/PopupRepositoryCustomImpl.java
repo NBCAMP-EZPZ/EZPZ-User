@@ -1,9 +1,7 @@
 package com.sparta.ezpzuser.domain.popup.repository.popup;
 
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.ezpzuser.domain.popup.dto.PopupCondition;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
@@ -26,35 +24,30 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
 
     @Override
     public Page<Popup> findAllPopupsByStatus(Pageable pageable, PopupCondition cond) {
-        JPAQuery<Popup> query = findAllPopupsByStatusQuery(popup, cond)
+        List<Popup> popups = jpaQueryFactory
+                .select(popup)
+                .from(popup)
+                .where(
+                        popup.approvalStatus.eq(ApprovalStatus.APPROVED),
+                        popupStatusEq(cond.getPopupStatus())
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(popup.createdAt.desc());
+                .orderBy(popup.createdAt.desc())
+                .fetch();
 
-        List<Popup> popups = query.fetch();
-        Long totalSize = countQuery(cond).fetch().get(0);
+        Long totalSize = jpaQueryFactory.select(Wildcard.count)
+                .from(popup)
+                .where(
+                        popup.approvalStatus.eq(ApprovalStatus.APPROVED),
+                        popupStatusEq(cond.getPopupStatus())
+                )
+                .fetchOne();
 
         return PageableExecutionUtils.getPage(popups, pageable, () -> totalSize);
     }
 
-    private <T> JPAQuery<T> findAllPopupsByStatusQuery(Expression<T> expr, PopupCondition cond) {
-        return jpaQueryFactory.select(expr)
-                .from(popup)
-                .where(
-                        popup.approvalStatus.eq(ApprovalStatus.APPROVED),
-                        popupStatusEq(cond.getPopupStatus())
-                );
-    }
-
-    private JPAQuery<Long> countQuery(PopupCondition cond) {
-        return jpaQueryFactory.select(Wildcard.count)
-                .from(popup)
-                .where(
-                        popup.approvalStatus.eq(ApprovalStatus.APPROVED),
-                        popupStatusEq(cond.getPopupStatus())
-                );
-    }
-
+    // 조건 : 팝업 ID
     private BooleanExpression popupStatusEq(String statusBy) {
         return Objects.nonNull(statusBy) && !"all".equals(statusBy) ?
                 popup.popupStatus.eq(PopupStatus.valueOf(statusBy.toUpperCase())) : null;

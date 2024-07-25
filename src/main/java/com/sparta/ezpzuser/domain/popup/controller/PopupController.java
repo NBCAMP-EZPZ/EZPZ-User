@@ -1,6 +1,5 @@
 package com.sparta.ezpzuser.domain.popup.controller;
 
-import com.sparta.ezpzuser.common.util.PageUtil;
 import com.sparta.ezpzuser.domain.popup.dto.PopupCondition;
 import com.sparta.ezpzuser.domain.popup.dto.PopupResponseDto;
 import com.sparta.ezpzuser.domain.popup.service.PopupService;
@@ -31,7 +30,6 @@ public class PopupController {
             @RequestParam(defaultValue = "all") String popupStatus) {
         PopupCondition cond = PopupCondition.of(popupStatus);
         Page<?> popupList = popupService.findAllPopupsByStatus(pageable, cond);
-        PageUtil.validatePageableWithPage(pageable, popupList);
         return getResponseEntity(popupList, "팝업 목록 조회 성공");
     }
 
