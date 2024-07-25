@@ -71,6 +71,21 @@ public class ReservationService {
 	}
 	
 	/**
+	 * 예약 상세 조회
+	 *
+	 * @param reservationId 예약 ID
+	 * @param user 로그인 사용자 정보
+	 * @return 예약 정보
+	 */
+	public ReservationResponseDto findReservation(Long reservationId, User user) {
+		Reservation reservation = getReservationAndSlotPopup(reservationId, user);
+		
+		return ReservationResponseDto.of(reservation, reservation.getSlot());
+	}
+	
+	
+	
+	/**
 	 * 예약 취소
 	 *
 	 * @param reservationId 예약 ID

@@ -67,6 +67,25 @@ public class ReservationController {
 	}
 	
 	/**
+	 * 예약 상세 조회
+	 *
+	 * @param reservationId 예약 ID
+	 * @param userDetails 로그인 사용자 정보
+	 * @return 예약 상세 정보
+	 */
+	@GetMapping("/{reservationId}")
+	public ResponseEntity<CommonResponse<?>> findReservation(
+		@PathVariable Long reservationId,
+		@AuthenticationPrincipal UserDetailsImpl userDetails) {
+		
+		ReservationResponseDto responseDto = reservationService.findReservation(reservationId, userDetails.getUser());
+		
+		return getResponseEntity(responseDto, "예약 조회 성공");
+	}
+	
+	
+	
+	/**
 	 * 예약 취소
 	 *
 	 * @param reservationId 예약 ID
