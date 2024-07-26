@@ -5,8 +5,10 @@ import com.sparta.ezpzuser.domain.order.enums.OrderStatus;
 import com.sparta.ezpzuser.domain.orderline.dto.OrderlineResponseDto;
 import java.util.List;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class OrderResponseDto {
 
     private Long orderId;
