@@ -5,6 +5,9 @@ import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.cart.entity.Cart;
 import com.sparta.ezpzuser.domain.cart.repository.CartRepository;
 import com.sparta.ezpzuser.domain.cart.service.CartService;
+import com.sparta.ezpzuser.domain.item.entity.Item;
+import com.sparta.ezpzuser.domain.item.enums.ItemStatus;
+import com.sparta.ezpzuser.domain.item.repository.ItemRepository;
 import com.sparta.ezpzuser.domain.order.dto.OrderFindAllResponseDto;
 import com.sparta.ezpzuser.domain.order.dto.OrderRequestDto;
 import com.sparta.ezpzuser.domain.order.dto.OrderResponseDto;
@@ -32,6 +35,7 @@ public class OrderService {
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
     private final OrderlineRepository orderlineRepository;
+    private final ItemRepository itemRepository;
 
 
     /**
@@ -52,10 +56,19 @@ public class OrderService {
         Order order = Order.of(user);
         List<OrderlineResponseDto> orderlineResponseDtoList = new ArrayList<>();
         for (Cart cart : cartList) {
+            Item item = cart.getItem();
+
+            int newStock = item.getStock() - cart.getQuantity();
+
+            item.updateStock(newStock);
+            if (newStock == 0) {
+                item.updateStatus(ItemStatus.SOLD_OUT);
+            }
+
             Orderline orderline = Orderline.of(
                     cart.getQuantity(),
                     order,
-                    cart.getItem()
+                    item
             );
 
             order.addOrderline(orderline);
@@ -63,7 +76,6 @@ public class OrderService {
             orderlineResponseDtoList.add(OrderlineResponseDto.of(orderline));
         }
 
-        order.setOrderStatus(OrderStatus.ORDER_COMPLETED);
         orderRepository.save(order);
 
         // 사용된 장바구니 삭제
@@ -113,7 +125,19 @@ public class OrderService {
         if (order.getOrderStatus() != OrderStatus.ORDER_COMPLETED) {
             throw new CustomException(ErrorType.ORDER_CANCELLATION_NOT_ALLOWED);
         }
-        order.setOrderStatus(OrderStatus.CANCELLED);
+        List<Orderline> orderlineList = orderlineRepository.findAllByOrderId(orderId);
+        for (Orderline orderline : orderlineList) {
+            Item item = orderline.getItem();
+
+            if (item.getItemStatus().equals(ItemStatus.SOLD_OUT)) {
+                item.updateStock(orderline.getQuantity());
+                item.updateStatus(ItemStatus.SALE);
+            } else {
+                item.updateStock(item.getStock() + orderline.getQuantity());
+            }
+        }
+
+        order.updateStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
     }
     /* UTIL */

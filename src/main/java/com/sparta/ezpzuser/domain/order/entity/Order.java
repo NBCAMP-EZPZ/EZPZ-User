@@ -24,7 +24,6 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
@@ -40,7 +39,6 @@ public class Order extends Timestamped {
     @Column(nullable = false)
     private int totalPrice;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus orderStatus;
@@ -59,6 +57,7 @@ public class Order extends Timestamped {
      */
     private Order(User user) {
         this.user = user;
+        this.orderStatus = OrderStatus.ORDER_COMPLETED;
     }
 
     /**
@@ -92,5 +91,14 @@ public class Order extends Timestamped {
         this.totalPrice = orderlineList.stream()
                 .mapToInt(orderline -> orderline.getItem().getPrice() * orderline.getQuantity())
                 .sum();
+    }
+
+    /**
+     * 주문 상태 변경 메서드
+     *
+     * @param orderStatus 변경할 상태
+     */
+    public void updateStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
     }
 }
