@@ -213,6 +213,9 @@ public class OrderServiceTest {
     @Test
     @DisplayName("Test 주문 취소")
     public void deleteOrder() {
+        int initialStock = item.getStock();
+        int orderQuantity = orderline.getQuantity();
+
         when(orderRepository.findByIdAndUserId(anyLong(), anyLong())).thenReturn(
                 Optional.of(order));
         when(orderlineRepository.findAllByOrderId(anyLong())).thenReturn(List.of(orderline));
@@ -221,11 +224,16 @@ public class OrderServiceTest {
         orderService.deleteOrder(1L, user);
 
         verify(orderRepository, times(1)).save(order);
+
+        // Item의 stock이 증가했는지 확인
+        assertEquals(initialStock + orderQuantity, item.getStock());
+
+        // 주문 상태가 변경되었는지 확인
         assertEquals(order.getOrderStatus(), OrderStatus.CANCELLED);
     }
 
     @Test
-    @DisplayName("Test findOrder with exception")
+    @DisplayName("Test 주문 상세 조회 with exception")
     public void findOrder_Exception() {
         when(orderRepository.findByIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.empty());
 
