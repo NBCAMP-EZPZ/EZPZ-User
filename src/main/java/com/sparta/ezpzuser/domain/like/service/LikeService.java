@@ -14,15 +14,14 @@ import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import com.sparta.ezpzuser.domain.popup.repository.popup.PopupRepository;
 import com.sparta.ezpzuser.domain.user.entity.User;
 import com.sparta.ezpzuser.domain.user.repository.UserRepository;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +36,9 @@ public class LikeService {
 
     /**
      * 컨텐츠 좋아요 토글
+     *
      * @param content 컨텐츠 타입, ID
-     * @param user 유저
+     * @param user    유저
      */
     @Transactional
     public void contentLike(LikeContentDto content, User user) {
@@ -53,9 +53,10 @@ public class LikeService {
 
     /**
      * 타입별 좋아요한 컨텐츠 목록 조회
-     * @param pageable 페이징
+     *
+     * @param pageable    페이징
      * @param contentType 컨텐츠 타입
-     * @param user 유저
+     * @param user        유저
      * @return 컨텐츠 목록
      */
     public Page<?> findAllLikesByContentType(Pageable pageable, String contentType, User user) {
@@ -93,32 +94,35 @@ public class LikeService {
 
     /**
      * 팝업 좋아요
+     *
      * @param content 팝업 ID
-     * @param user 유저
+     * @param user    유저
      */
     private void popupLike(LikeContentDto content, User user) {
         Popup popup = popupRepository.findById(content.getContentId())
-                .orElseThrow(() -> new CustomException(ErrorType.POPUP_NOT_FOUNT));
+                .orElseThrow(() -> new CustomException(ErrorType.POPUP_NOT_FOUND));
         popup.verifyStatus();
         popup.updateLikeCount(toggleLike(content, user));
     }
 
     /**
      * 굿즈 좋아요
+     *
      * @param content 굿즈 ID
-     * @param user 유저
+     * @param user    유저
      */
     private void itemLike(LikeContentDto content, User user) {
         Item item = itemRepository.findById(content.getContentId())
-                .orElseThrow(() -> new CustomException(ErrorType.ITEM_NOT_FOUNT));
+                .orElseThrow(() -> new CustomException(ErrorType.ITEM_NOT_FOUND));
         item.checkStatus();
         item.updateLikeCount(toggleLike(content, user));
     }
 
     /**
      * 좋아요 토글
+     *
      * @param content 컨텐츠 타입, ID
-     * @param user 유저
+     * @param user    유저
      */
     private boolean toggleLike(LikeContentDto content, User user) {
         Optional<Like> like = likeRepository.findByUserAndContentIdAndContentType(
@@ -129,7 +133,7 @@ public class LikeService {
             Like saveLike = Like.of(user, content.getContentId(), content.getContentType());
             likeRepository.save(saveLike);
             return true;
-        }else {
+        } else {
             likeRepository.delete(like.get());
             return false;
         }
@@ -137,7 +141,8 @@ public class LikeService {
 
     /**
      * 컨텐츠 ID 목록
-     * @param likeList 좋아요 목록
+     *
+     * @param likeList    좋아요 목록
      * @param contentType 컨텐츠 타입
      * @return ID 목록
      */

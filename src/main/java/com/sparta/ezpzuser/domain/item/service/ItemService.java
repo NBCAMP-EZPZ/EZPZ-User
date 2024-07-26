@@ -23,8 +23,9 @@ public class ItemService {
 
     /**
      * 호스트, 팝업 및 상태별 상품 목록 조회
+     *
      * @param pageable 페이징
-     * @param cond 조회 조건
+     * @param cond     조회 조건
      * @return 상품
      */
     public Page<?> findAllItemsByHostAndPopupAndStatus(Pageable pageable, ItemCondition cond) {
@@ -36,12 +37,13 @@ public class ItemService {
 
     /**
      * 상품 상세 조회
+     *
      * @param itemId 상품 ID
      * @return 상품 상세
      */
     public ItemResponseDto findItem(Long itemId) {
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new CustomException(ErrorType.ITEM_NOT_FOUNT));
+                .orElseThrow(() -> new CustomException(ErrorType.ITEM_NOT_FOUND));
         item.checkStatus();
         return ItemResponseDto.of(item);
     }

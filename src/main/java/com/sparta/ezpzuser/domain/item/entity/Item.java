@@ -5,7 +5,16 @@ import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.item.enums.ItemStatus;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -60,15 +69,32 @@ public class Item extends Timestamped {
 
     /**
      * 좋아요 개수 (true: 증가 / false: 감소)
+     *
      * @param b boolean
      */
     public void updateLikeCount(boolean b) {
         if (b) {
             this.likeCount++;
-        }else {
-            if (this.likeCount > 0) {
-                this.likeCount--;
-            }
+        } else if (this.likeCount > 0) {
+            this.likeCount--;
         }
+    }
+
+    /**
+     * 재고량 변경
+     *
+     * @param stock 변경할 수량
+     */
+    public void updateStock(int stock) {
+        this.stock = stock;
+    }
+
+    /**
+     * 상품 상태 변경
+     *
+     * @param itemStatus 변경할 상태
+     */
+    public void updateStatus(ItemStatus itemStatus) {
+        this.itemStatus = itemStatus;
     }
 }
