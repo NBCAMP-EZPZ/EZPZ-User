@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.sparta.ezpzuser.domain.popup.entity.QPopup.popup;
+import static com.sparta.ezpzuser.domain.reservation.entity.QReservation.reservation;
+import static com.sparta.ezpzuser.domain.slot.entity.QSlot.slot;
 
 @RequiredArgsConstructor
 public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
@@ -25,8 +27,8 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
     @Override
     public Page<Popup> findAllPopupsByStatus(Pageable pageable, PopupCondition cond) {
         List<Popup> popups = jpaQueryFactory
-                .select(popup)
-                .from(popup)
+                .selectFrom(popup)
+                .join(popup.host).fetchJoin()
                 .where(
                         popup.approvalStatus.eq(ApprovalStatus.APPROVED),
                         popupStatusEq(cond.getPopupStatus())
@@ -45,6 +47,44 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
                 .fetchOne();
 
         return PageableExecutionUtils.getPage(popups, pageable, () -> totalSize);
+    }
+
+    @Override
+    public Page<Popup> findPopupByIdList(Pageable pageable, List<Long> popupIdList) {
+        List<Popup> popups = jpaQueryFactory
+                .selectFrom(popup)
+                .join(popup.host).fetchJoin()
+                .where(
+                        popup.approvalStatus.eq(ApprovalStatus.APPROVED),
+                        popup.popupStatus.ne(PopupStatus.CANCELED),
+                        popup.id.in(popupIdList)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(popup.createdAt.desc())
+                .fetch();
+
+        Long totalSize = jpaQueryFactory.select(Wildcard.count)
+                .from(popup)
+                .where(
+                        popup.approvalStatus.eq(ApprovalStatus.APPROVED),
+                        popup.popupStatus.ne(PopupStatus.CANCELED),
+                        popup.id.in(popupIdList)
+                )
+                .fetchOne();
+
+        return PageableExecutionUtils.getPage(popups, pageable, () -> totalSize);
+    }
+
+    @Override
+    public Popup findByReservationId(Long reservationId) {
+        return jpaQueryFactory
+                .select(popup)
+                .from(reservation)
+                .join(reservation.slot, slot).fetchJoin()
+                .join(slot.popup, popup).fetchJoin()
+                .where(reservation.id.eq(reservationId))
+                .fetchOne();
     }
 
     // 조건 : 팝업 ID

@@ -37,6 +37,9 @@ public enum ErrorType {
     ITEM_NOT_FOUNT(NOT_FOUND, "해당 상품을 찾을 수 없습니다."),
     ITEM_ACCESS_FORBIDDEN(FORBIDDEN, "해당 상품에 대한 접근 권한이 없습니다."),
 
+    // Like
+    INVALID_CONTENT_TYPE(BAD_REQUEST, "잘못된 컨테츠 타입입니다."),
+
     // Reservation
     RESERVATION_EXCEEDS_AVAILABLE_SLOTS(BAD_REQUEST, "예약 가능 인원을 초과하였습니다."),
     RESERVATION_ALREADY_EXISTS(BAD_REQUEST, "이미 예약한 내역이 존재합니다."),

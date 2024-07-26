@@ -49,9 +49,26 @@ public class Item extends Timestamped {
     @Enumerated(EnumType.STRING)
     private ItemStatus itemStatus;
 
+    /**
+     * 상태 확인
+     */
     public void checkStatus() {
         if (this.itemStatus.equals(ItemStatus.SALE_END)) {
             throw new CustomException(ErrorType.ITEM_ACCESS_FORBIDDEN);
+        }
+    }
+
+    /**
+     * 좋아요 개수 (true: 증가 / false: 감소)
+     * @param b boolean
+     */
+    public void updateLikeCount(boolean b) {
+        if (b) {
+            this.likeCount++;
+        }else {
+            if (this.likeCount > 0) {
+                this.likeCount--;
+            }
         }
     }
 }
