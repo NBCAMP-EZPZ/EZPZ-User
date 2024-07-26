@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,12 +44,10 @@ public class LikeService {
     public void contentLike(LikeContentDto content, User user) {
 
         // 좋아요 가능한 상태인지 확인
-        if (content.getContentType().equals("popup")) {
-            popupLike(content, user);
-        } else if (content.getContentType().equals("item")) {
-            itemLike(content, user);
-        }else {
-            throw new CustomException(ErrorType.INVALID_CONTENT_TYPE);
+        switch (content.getContentType()) {
+            case "popup" -> popupLike(content, user);
+            case "item" -> itemLike(content, user);
+            default -> throw new CustomException(ErrorType.INVALID_CONTENT_TYPE);
         }
     }
 
@@ -67,36 +66,28 @@ public class LikeService {
         // 유저 좋아요 목록
         List<Like> likeList = findUser.getLikeList();
 
-        if (contentType.equals("popup")) {
+        switch (contentType) {
+            case "popup" -> {
+                // 팝업 Id 목록
+                List<Long> popupIdList = contentIdList(likeList, contentType);
 
-            // 팝업 Id 목록
-            List<Long> popupIdList = likeList.stream()
-                    .filter(like -> contentType.equals(like.getContentType()))
-                    .map(Like::getContentId)
-                    .toList();
+                // 좋아요한 팝업 목록
+                Page<?> popupList = popupRepository.findPopupByIdList(pageable, popupIdList)
+                        .map(LikePopupPageResponseDto::of);
+                PageUtil.validatePageableWithPage(pageable, popupList);
+                return popupList;
+            }
+            case "item" -> {
+                // 굿즈 ID 목록
+                List<Long> itemIdList = contentIdList(likeList, contentType);
 
-            // 좋아요한 팝업 목록
-            Page<?> popupList = popupRepository.findPopupByIdList(pageable, popupIdList)
-                    .map(LikePopupPageResponseDto::of);
-            PageUtil.validatePageableWithPage(pageable, popupList);
-            return popupList;
-
-        }else if (contentType.equals("item")) {
-
-            // 굿즈 ID 목록
-            List<Long> itemIdList = likeList.stream()
-                    .filter(like -> contentType.equals(like.getContentType()))
-                    .map(Like::getContentId)
-                    .toList();
-
-            // 좋아요한 굿즈 목록
-            Page<?> itemList = itemRepository.findItemByIdList(pageable, itemIdList)
-                    .map(LikeItemPageResponseDto::of);
-            PageUtil.validatePageableWithPage(pageable, itemList);
-            return itemList;
-
-        }else {
-            throw new CustomException(ErrorType.INVALID_CONTENT_TYPE);
+                // 좋아요한 굿즈 목록
+                Page<?> itemList = itemRepository.findItemByIdList(pageable, itemIdList)
+                        .map(LikeItemPageResponseDto::of);
+                PageUtil.validatePageableWithPage(pageable, itemList);
+                return itemList;
+            }
+            default -> throw new CustomException(ErrorType.INVALID_CONTENT_TYPE);
         }
     }
 
@@ -130,18 +121,30 @@ public class LikeService {
      * @param user 유저
      */
     private boolean toggleLike(LikeContentDto content, User user) {
-        Like like = likeRepository.findByUserAndContentIdAndContentType(
-                user, content.getContentId(), content.getContentType())
-                .orElse(null);
+        Optional<Like> like = likeRepository.findByUserAndContentIdAndContentType(
+                user, content.getContentId(), content.getContentType());
 
         // 좋아요 등록/취소 토글
-        if (like == null) {
+        if (like.isEmpty()) {
             Like saveLike = Like.of(user, content.getContentId(), content.getContentType());
             likeRepository.save(saveLike);
             return true;
         }else {
-            likeRepository.delete(like);
+            likeRepository.delete(like.get());
             return false;
         }
+    }
+
+    /**
+     * 컨텐츠 ID 목록
+     * @param likeList 좋아요 목록
+     * @param contentType 컨텐츠 타입
+     * @return ID 목록
+     */
+    private List<Long> contentIdList(List<Like> likeList, String contentType) {
+        return likeList.stream()
+                .filter(like -> contentType.equals(like.getContentType()))
+                .map(Like::getContentId)
+                .toList();
     }
 }

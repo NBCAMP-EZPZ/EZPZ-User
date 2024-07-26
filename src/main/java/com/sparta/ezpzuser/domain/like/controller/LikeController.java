@@ -46,6 +46,6 @@ public class LikeController {
             @RequestParam String contentType,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Page<?> contentList = likeService.findAllLikesByContentType(pageable, contentType, userDetails.getUser());
-        return getResponseEntity(contentList, "타입별 좋아요한 한 컨테츠 목록 조회 성공");
+        return getResponseEntity(contentList, "타입별 좋아요한 한 컨텐츠 목록 조회 성공");
     }
 }

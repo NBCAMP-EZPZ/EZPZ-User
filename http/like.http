@@ -13,7 +13,7 @@ Cookie: {{Cookie}}
 }
 
 ### 타입별 좋아요한 컨텐츠 목록 조회 (contentType : popup/item)
-GET http://localhost:8080/api/v1/likes?contentType=popup
+GET http://localhost:8080/api/v1/likes?contentType=item
 Authorization: {{Authorization}}
 Cookie: {{Cookie}}
 

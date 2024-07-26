@@ -82,10 +82,10 @@ public class Popup extends Timestamped {
      */
     public void updateLikeCount(boolean b) {
         if (b) {
-            this.likeCount += 1;
+            this.likeCount++;
         }else {
             if (this.likeCount > 0) {
-                this.likeCount -= 1;
+                this.likeCount--;
             }
         }
     }
