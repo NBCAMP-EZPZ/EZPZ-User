@@ -1,5 +1,6 @@
 package com.sparta.ezpzuser.domain.order.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -14,6 +15,7 @@ import static org.mockito.Mockito.when;
 
 import com.sparta.ezpzuser.common.entity.Timestamped;
 import com.sparta.ezpzuser.common.exception.CustomException;
+import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.cart.entity.Cart;
 import com.sparta.ezpzuser.domain.cart.repository.CartRepository;
 import com.sparta.ezpzuser.domain.cart.service.CartService;
@@ -230,21 +232,51 @@ public class OrderServiceTest {
 
         // 주문 상태가 변경되었는지 확인
         assertEquals(order.getOrderStatus(), OrderStatus.CANCELLED);
+
+        // Item이 판매중인지 확인
+        assertEquals(item.getItemStatus(), ItemStatus.SALE);
     }
 
     @Test
-    @DisplayName("Test 주문 상세 조회 with exception")
+    @DisplayName("Test 주문 상세 조회 with ORDER_NOT_FOUND exception")
     public void findOrder_Exception() {
         when(orderRepository.findByIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(CustomException.class, () -> orderService.findOrder(1L, user));
+        CustomException exception = assertThrows(CustomException.class,
+                () -> orderService.findOrder(1L, user));
+
+        //then
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorType()).isEqualTo(ErrorType.ORDER_NOT_FOUND);
     }
 
     @Test
-    @DisplayName("Test deleteOrder with exception")
-    public void deleteOrder_Exception() {
+    @DisplayName("Test 주문 취소 with ORDER_NOT_FOUND exception")
+    public void deleteOrder_Exception_Order_Not_Found() {
         when(orderRepository.findByIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(CustomException.class, () -> orderService.deleteOrder(1L, user));
+        CustomException exception = assertThrows(CustomException.class,
+                () -> orderService.deleteOrder(1L, user));
+
+        //then
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorType()).isEqualTo(ErrorType.ORDER_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("Test 주문 취소 with ORDER_CANCELLATION_NOT_ALLOWED exception")
+    public void deleteOrder_Exception_Order_Cancellation_Not_Allowed() {
+        // 이미 취소된 주문이라고 가정
+        order.updateStatus(OrderStatus.CANCELLED);
+
+        when(orderRepository.findByIdAndUserId(anyLong(), anyLong())).thenReturn(
+                Optional.of(order));
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> orderService.deleteOrder(1L, user));
+
+        //then
+        assertThat(exception).isNotNull();
+        assertThat(exception.getErrorType()).isEqualTo(ErrorType.ORDER_CANCELLATION_NOT_ALLOWED);
     }
 }
