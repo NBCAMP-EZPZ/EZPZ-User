@@ -37,7 +37,7 @@ public class CartService {
     @Transactional
     public CartResponseDto createCart(CartCreateRequestDto requestDto, User user) {
         Item item = itemRepository.findById(requestDto.getItemId()).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 상품입니다.") // 에러코드 만들어주시면 수정
+                () -> new CustomException(ErrorType.ITEM_NOT_FOUND)
         );
 
         validateStock(item, requestDto.getQuantity());
@@ -77,7 +77,8 @@ public class CartService {
         Cart cart = getValidatedCart(cartId, user);
 
         Item item = itemRepository.findById(cart.getItem().getId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+                .orElseThrow(() -> new CustomException(ErrorType.ITEM_NOT_FOUND)
+                );
 
         validateStock(item, requestDto.getQuantity());
 

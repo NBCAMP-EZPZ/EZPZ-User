@@ -31,7 +31,7 @@ public enum ErrorType {
     DUPLICATED_USERNAME(HttpStatus.BAD_REQUEST, "이미 존재하는 사용자 아이디입니다."),
 
     // Popup
-    POPUP_NOT_FOUNT(NOT_FOUND, "존재하지 않는 팝업입니다."),
+    POPUP_NOT_FOUND(NOT_FOUND, "존재하지 않는 팝업입니다."),
     POPUP_ACCESS_FORBIDDEN(FORBIDDEN, "해당 팝업이 존재하지 않거나, 팝업에 대한 권한이 없습니다."),
 
     // Order
@@ -39,7 +39,7 @@ public enum ErrorType {
     ORDER_CANCELLATION_NOT_ALLOWED(HttpStatus.FORBIDDEN, "배송 전 상태에서만 주문을 취소할 수 있습니다."),
 
     // Item
-    ITEM_NOT_FOUNT(NOT_FOUND, "해당 상품을 찾을 수 없습니다."),
+    ITEM_NOT_FOUND(NOT_FOUND, "해당 상품을 찾을 수 없습니다."),
     ITEM_ACCESS_FORBIDDEN(FORBIDDEN, "해당 상품에 대한 접근 권한이 없습니다."),
 
     // Like

@@ -75,10 +75,8 @@ public class Item extends Timestamped {
     public void updateLikeCount(boolean b) {
         if (b) {
             this.likeCount++;
-        } else {
-            if (this.likeCount > 0) {
-                this.likeCount--;
-            }
+        } else if (this.likeCount > 0) {
+            this.likeCount--;
         }
     }
 
