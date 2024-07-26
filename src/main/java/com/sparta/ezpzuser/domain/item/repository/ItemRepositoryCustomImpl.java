@@ -25,8 +25,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     public Page<Item> findAllItemsByHostAndPopupAndStatus(Pageable pageable, ItemCondition cond) {
         // 데이터 조회 쿼리
         List<Item> items = jpaQueryFactory
-                .select(item)
-                .from(item)
+                .selectFrom(item)
                 .where(
                         hostIdEq(cond.getHostId()),
                         popupIdEq(cond.getPopupId()),
