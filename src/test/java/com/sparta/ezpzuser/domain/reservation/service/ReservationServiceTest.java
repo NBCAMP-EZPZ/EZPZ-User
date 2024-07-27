@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
@@ -34,6 +35,7 @@ import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import com.sparta.ezpzuser.domain.reservation.dto.ReservationRequestDto;
 import com.sparta.ezpzuser.domain.reservation.dto.ReservationResponseDto;
 import com.sparta.ezpzuser.domain.reservation.entity.Reservation;
+import com.sparta.ezpzuser.domain.reservation.enums.ReservationStatus;
 import com.sparta.ezpzuser.domain.reservation.repository.ReservationRepository;
 import com.sparta.ezpzuser.domain.slot.entity.Slot;
 import com.sparta.ezpzuser.domain.slot.enums.SlotStatus;
@@ -215,6 +217,32 @@ class ReservationServiceTest {
 		assertThat(exception.getErrorType()).isEqualTo(ErrorType.RESERVATION_NOT_FOUND);
 	}
 	
+	@Test
+	@DisplayName("예약 취소 성공")
+	void 예약취소성공() {
+	    //when
+		when(reservationRepository.findReservationAndSlot(anyLong(), anyLong())).thenReturn(Optional.of(reservation));
+		
+		reservationService.cancelReservation(1L, user);
+	    
+	    //then
+		assertThat(reservation.getReservationStatus()).isEqualTo(ReservationStatus.CANCEL);
+		assertThat(reservation.getSlot().getReservedCount()).isEqualTo(-2);
+		verify(slotRepository).save(reservation.getSlot());
+	}
+	
+	@Test
+	@DisplayName("예약 취소 실패 - 예약 없음")
+	void 예약취소_실패_예약없음() {
+		//when
+		when(reservationRepository.findReservationAndSlot(anyLong(), anyLong())).thenReturn(Optional.empty());
+		
+		CustomException exception = assertThrows(CustomException.class, () -> reservationService.cancelReservation(1L, user));
+	    
+	    //then
+		assertThat(exception).isNotNull();
+		assertThat(exception.getErrorType()).isEqualTo(ErrorType.RESERVATION_NOT_FOUND);
+	}
 	
 	
 	// Reflection을 사용하여 ID 설정하는 메소드
