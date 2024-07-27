@@ -188,6 +188,33 @@ class ReservationServiceTest {
 		assertThat(exception.getErrorType()).isEqualTo(ErrorType.EMPTY_PAGE_ELEMENTS);
 	}
 	
+	@Test
+	@DisplayName("예약 상세 조회 성공")
+	void 예약상세조회성공() {
+	    //when
+		when(reservationRepository.findReservationAndSlotPopUp(anyLong(), anyLong())).thenReturn(Optional.of(reservation));
+		
+		ReservationResponseDto result = reservationService.findReservation(1L, user);
+		
+		//then
+		assertThat(result).isNotNull();
+		assertThat(result.getId()).isEqualTo(1L);
+		assertThat(result.getSlotDate()).isEqualTo(reservation.getSlot().getSlotDate().toString());
+	}
+	
+	@Test
+	@DisplayName("예약 상세 조회 실패 - 예약 없음")
+	void 예약상세조회_실패_예약없음() {
+	    //when
+		when(reservationRepository.findReservationAndSlotPopUp(anyLong(), anyLong())).thenReturn(Optional.empty());
+		
+		CustomException exception = assertThrows(CustomException.class, () -> reservationService.findReservation(1L, user));
+	    
+	    //then
+		assertThat(exception).isNotNull();
+		assertThat(exception.getErrorType()).isEqualTo(ErrorType.RESERVATION_NOT_FOUND);
+	}
+	
 	
 	
 	// Reflection을 사용하여 ID 설정하는 메소드
