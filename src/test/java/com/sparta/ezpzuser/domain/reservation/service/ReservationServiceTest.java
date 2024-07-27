@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.sparta.ezpzuser.common.exception.CustomException;
@@ -149,6 +154,41 @@ class ReservationServiceTest {
 		assertThat(exception).isNotNull();
 		assertThat(exception.getErrorType()).isEqualTo(ErrorType.SLOT_RESERVATION_FINISHED);
 	}
+	
+	@Test
+	@DisplayName("예약 목록 조회 성공")
+	void 예약목록조회성공() {
+	    //given
+		Pageable pageable = PageRequest.of(0, 10);
+		List<Reservation> reservations = List.of(reservation);
+		Page<Reservation> reservationPage = new PageImpl<>(reservations, pageable, reservations.size());
+		
+	    //when
+		when(reservationRepository.findByUserIdAndStatus(anyLong(), any(), any())).thenReturn(reservationPage);
+		
+		Page<ReservationResponseDto> result = reservationService.findReservations(pageable, "READY", user);
+		
+		//then
+		assertThat(result).isNotNull();
+		assertThat(result.getContent().size()).isEqualTo(1);
+	}
+	
+	@Test
+	@DisplayName("예약 목록 조회 실패 - 페이지 없음")
+	void 예약목록조회_실패_페이지없음() {
+	    //given
+		Pageable pageable = PageRequest.of(0, 10);
+		
+	    //when
+		when(reservationRepository.findByUserIdAndStatus(anyLong(), any(), any())).thenReturn(new PageImpl<>(List.of()));
+		CustomException exception = assertThrows(CustomException.class, () -> reservationService.findReservations(pageable, "READY", user));
+	    
+	    //then
+		assertThat(exception).isNotNull();
+		assertThat(exception.getErrorType()).isEqualTo(ErrorType.EMPTY_PAGE_ELEMENTS);
+	}
+	
+	
 	
 	// Reflection을 사용하여 ID 설정하는 메소드
 	private void setId(Object entity, Long id) {
