@@ -16,7 +16,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update  # Hibernate 자동 DDL 생성 옵션
+      ddl-auto: ${DDL_AUTO}  # Hibernate 자동 DDL 생성 옵션
 
     properties:
       hibernate:
@@ -26,8 +26,8 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 
 logging.level:
   org.hibernate.SQL: debug  # Hibernate SQL 쿼리를 debug 레벨로 설정하여 로깅합니다.
