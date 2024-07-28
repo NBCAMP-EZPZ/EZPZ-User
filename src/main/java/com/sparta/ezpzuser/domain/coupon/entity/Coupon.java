@@ -30,6 +30,15 @@ public class Coupon {
 
     private LocalDate expiredAt;
 
+    private Coupon(int totalCount) {
+        this.totalCount = totalCount;
+        this.remainingCount = totalCount;
+    }
+
+    public static Coupon of(int totalCount) {
+        return new Coupon(totalCount);
+    }
+
     /**
      * 쿠폰 다운로드
      */
