@@ -1,0 +1,37 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    url: ${TEST_DATASOURCE_URL}
+    username: ${TEST_DATASOURCE_USERNAME}
+    password: ${TEST_DATASOURCE_PASSWORD}
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+        format_sql: true
+        use_sql_comments: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+  access-token:
+    ttl: ${ACCESS_TOKEN_TTL}
+  refresh-token:
+    ttl: ${REFRESH_TOKEN_TTL}
+
+server:
+  port: ${SERVER_PORT}
