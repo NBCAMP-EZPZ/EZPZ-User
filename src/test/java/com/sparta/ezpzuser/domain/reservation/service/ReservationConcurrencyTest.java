@@ -110,6 +110,7 @@ public class ReservationConcurrencyTest {
 		}
 		
 		latch.await();
+		executorService.shutdown();
 		
 		Slot updatedSlot = slotRepository.findById(slot.getId()).orElseThrow();
 		
