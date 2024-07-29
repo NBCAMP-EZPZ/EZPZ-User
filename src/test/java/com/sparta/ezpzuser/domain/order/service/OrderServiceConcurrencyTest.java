@@ -17,10 +17,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test")
 public class OrderServiceConcurrencyTest {
 
     @Autowired
@@ -50,7 +52,7 @@ public class OrderServiceConcurrencyTest {
     void testConcurrentOrderCreation() throws InterruptedException {
         int userCount = 100;
         int baseCartId = 50099;
-        
+
         AtomicInteger successCount = new AtomicInteger();
         AtomicInteger failCount = new AtomicInteger();
 
