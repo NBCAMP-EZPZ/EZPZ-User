@@ -1,7 +1,4 @@
 spring:
-  profiles:
-    active:
-      test
 
   datasource:
     url: ${TEST_DATASOURCE_URL}
