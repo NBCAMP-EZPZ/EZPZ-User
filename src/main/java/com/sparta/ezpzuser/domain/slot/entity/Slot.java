@@ -52,6 +52,21 @@ public class Slot {
 	@JoinColumn(name = "popup_id", nullable = false)
 	private Popup popup;
 	
+	public Slot(LocalDate slotDate, LocalTime slotTime, int totalCount, Popup popup, SlotStatus slotStatus) {
+		this.slotDate = slotDate;
+		this.slotTime = slotTime;
+		this.availableCount = totalCount;
+		this.totalCount = totalCount;
+		this.reservedCount = 0;
+		this.slotStatus = slotStatus;
+		this.popup = popup;
+	}
+	
+	public static Slot of(LocalDate slotDate, LocalTime slotTime, int totalCount, Popup popup, SlotStatus slotStatus) {
+		return new Slot(slotDate, slotTime, totalCount, popup, slotStatus);
+	}
+	
+	
 	public void increaseReservedCount(int numberOfPersons) {
 		this.reservedCount += numberOfPersons;
 	}
