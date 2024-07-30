@@ -3,12 +3,8 @@ package com.sparta.ezpzuser.domain.user.entity;
 import com.sparta.ezpzuser.common.entity.Timestamped;
 import com.sparta.ezpzuser.domain.like.entity.Like;
 import com.sparta.ezpzuser.domain.user.dto.SignupRequestDto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+
 import java.util.List;
 
 import jakarta.persistence.Table;
@@ -19,6 +15,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "users")

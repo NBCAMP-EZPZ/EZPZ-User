@@ -20,10 +20,12 @@ Content-Type: application/json
 }
 
 > {%
-  client.log(response.headers.valueOf("Authorization"));
-  // client.log(response.headers.valueOf("RefreshToken"));
-  client.global.set("Authorization", response.headers.valueOf("Authorization"));
-  // client.global.set("RefreshToken", response.headers.valueOf("RefreshToken"));
+    client.global.set("Authorization", response.headers.valueOf("Authorization"));
+    client.global.set("refresh_token", response.headers.valueOf("Set-Cookie").split(";")[0].split("=")[1]);
+    client.log("Authorization : " + client.global.get("Authorization"))
+    client.log("refresh_token : " + client.global.get("refresh_token"))
+
+    client.global.set("Cookie", response.headers.valueOf("Set-Cookie"));
 %}
 
 ### 역할 바꾸기
