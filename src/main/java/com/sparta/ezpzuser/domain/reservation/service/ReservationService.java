@@ -7,10 +7,12 @@ import java.util.Optional;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sparta.ezpzuser.common.entity.RestPage;
 import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
