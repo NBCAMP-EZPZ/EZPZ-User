@@ -21,6 +21,7 @@ import com.sparta.ezpzuser.domain.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -121,6 +122,7 @@ public class OrderService {
      * @param user    요청한 사용
      */
     @Transactional
+    @CacheEvict(value = "orders", key = "'orders:' + #orderId")
     public void deleteOrder(Long orderId, User user) {
         Order order = orderRepository.findByIdAndUserId(orderId, user.getId())
                 .orElseThrow(() -> new CustomException(ErrorType.ORDER_NOT_FOUND));
