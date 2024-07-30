@@ -2,8 +2,10 @@ package com.sparta.ezpzuser.domain.orderline.dto;
 
 import com.sparta.ezpzuser.domain.orderline.entity.Orderline;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class OrderlineResponseDto {
 
     private Long itemId;

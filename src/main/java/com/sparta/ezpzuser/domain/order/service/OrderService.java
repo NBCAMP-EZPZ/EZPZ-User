@@ -21,6 +21,7 @@ import com.sparta.ezpzuser.domain.user.entity.User;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -102,6 +103,7 @@ public class OrderService {
      * @param user    요청한 사용자
      * @return 주문 상세 정보
      */
+    @Cacheable(value = "orders", key = "'orders:' + #orderId")
     public OrderResponseDto findOrder(Long orderId, User user) {
         Order order = orderRepository.findByIdAndUserId(orderId, user.getId())
                 .orElseThrow(() -> new CustomException(ErrorType.ORDER_NOT_FOUND));
