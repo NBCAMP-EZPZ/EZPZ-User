@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 public class CartResponseDto {
 
+    private Long cartId;
     private Long itemId;
     private int quantity;
 
@@ -15,6 +16,7 @@ public class CartResponseDto {
      * @param cart
      */
     private CartResponseDto(Cart cart) {
+        this.cartId = cart.getId();
         this.itemId = cart.getItem().getId();
         this.quantity = cart.getQuantity();
     }
