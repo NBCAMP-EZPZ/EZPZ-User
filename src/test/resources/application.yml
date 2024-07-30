@@ -1,13 +1,10 @@
 spring:
-  config:
-    activate:
-      on-profile: test
 
   datasource:
     url: ${TEST_DATASOURCE_URL}
     username: ${TEST_DATASOURCE_USERNAME}
     password: ${TEST_DATASOURCE_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.h2.Driver
 
   servlet:
     multipart:
@@ -16,7 +13,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: ${DDL_AUTO}  # Hibernate 자동 DDL 생성 옵션
+      ddl-auto: update  # Hibernate 자동 DDL 생성 옵션
 
     properties:
       hibernate:
@@ -28,10 +25,6 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
-
-logging.level:
-  org.hibernate.SQL: debug  # Hibernate SQL 쿼리를 debug 레벨로 설정하여 로깅합니다.
-  org.hibernate.orm.jdbc.bind: trace  # 스프링 부트 3.x, Hibernate 6.x에서 JDBC 바인딩을 trace 레벨로 설정합니다.
 
 jwt:
   secret:
