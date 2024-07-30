@@ -2,13 +2,11 @@ package com.sparta.ezpzuser.domain.slot.service;
 
 import static com.sparta.ezpzuser.common.util.PageUtil.validatePageableWithPage;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sparta.ezpzuser.common.entity.RestPage;
 import com.sparta.ezpzuser.domain.slot.dto.SlotResponseDto;
 import com.sparta.ezpzuser.domain.slot.entity.Slot;
 import com.sparta.ezpzuser.domain.slot.repository.SlotRepository;
@@ -28,12 +26,11 @@ public class SlotService {
 	 * @param popupId 팝업 ID
 	 * @return 슬롯 목록
 	 */
-	@Cacheable(value = "slots", key = "'popup:' + #popupId + ':' + 'slot' + ':' +#pageable.pageNumber")
-	public RestPage<SlotResponseDto> findSlotsByPopupId(Pageable pageable, Long popupId) {
+	public Page<SlotResponseDto> findSlotsByPopupId(Pageable pageable, Long popupId) {
 		
 		Page<Slot> slotPage = slotRepository.findByPopupId(popupId, pageable);
 		validatePageableWithPage(pageable, slotPage);
 		
-		return new RestPage<>(slotPage.map(SlotResponseDto::of));
+		return slotPage.map(SlotResponseDto::of);
 	}
 }
