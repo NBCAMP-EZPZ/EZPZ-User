@@ -11,55 +11,28 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 public class CouponServiceTest {
 
-    @TestConfiguration
-    static class MockConfig {
-
-        @Autowired
-        CouponRepository couponRepository;
-
-        @Bean
-        @Primary
-        public CouponService couponService() {
-            return new CouponService(couponRepository, this.userCouponRepository());
-        }
-
-        public UserCouponRepository userCouponRepository() {
-            UserCouponRepository mockRepository = mock(UserCouponRepository.class);
-            when(mockRepository.existsByUserAndCoupon(any(User.class), any(Coupon.class)))
-                    .thenReturn(false);
-            when(mockRepository.save(any(UserCoupon.class)))
-                    .thenReturn(UserCoupon.of(
-                            User.of(new SignupRequestDto(), "password"),
-                            Coupon.of(100)));
-            return mockRepository;
-        }
-
-    }
+    @Autowired
+    CouponService couponService;
 
     @Autowired
-    private CouponRepository couponRepository;
+    CouponRepository couponRepository;
 
-    @Autowired
-    private CouponService couponService;
+    @MockBean
+    UserCouponRepository userCouponRepository;
 
-    private Coupon coupon;
-    private User user;
+    Coupon coupon;
+    User user;
 
     @BeforeEach
     void setUp() {
@@ -69,24 +42,18 @@ public class CouponServiceTest {
 
     @Test
     @DisplayName("실패 - 쿠폰 다운로드 동시성 테스트")
-    void downloadCouponWithoutConcurrencyLock() throws InterruptedException {
+    void downloadCouponWithoutConcurrencyLock() {
         // given
-        int threadCount = 100; // 스레드 개수
-        ExecutorService executorService = Executors.newFixedThreadPool(threadCount); // 스레드 풀 생성
-        CountDownLatch latch = new CountDownLatch(threadCount);
+        given(userCouponRepository.existsByUserAndCoupon(any(User.class), any(Coupon.class)))
+                .willReturn(false);
+        given(userCouponRepository.save(any(UserCoupon.class)))
+                .willReturn(UserCoupon.of(
+                        User.of(new SignupRequestDto(), "password"),
+                        Coupon.of(100)));
 
         // when
-        for (int i = 0; i < threadCount; i++) {
-            executorService.submit(() -> {
-                try {
-                    couponService.downloadCouponWithoutLock(coupon.getId(), user);
-                } finally {
-                    latch.countDown();
-                }
-            });
-        }
-        // 모든 스레드가 작업을 완료할 때까지 대기
-        latch.await();
+        IntStream.range(0, 100).parallel()
+                .forEach(i -> couponService.downloadCouponWithoutLock(coupon.getId(), user));
 
         // then
         int remainingCount = couponRepository.findById(coupon.getId()).orElseThrow().getRemainingCount();
