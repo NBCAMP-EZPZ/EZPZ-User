@@ -4,7 +4,9 @@ import static com.sparta.ezpzuser.common.util.PageUtil.validatePageableWithPage;
 
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +41,7 @@ public class ReservationService {
 	 * @return 생성된 예약 정보
 	 */
 	@Transactional
+	@CachePut(value = "reservation", key = "'reservation:' + #result.id")
 	public ReservationResponseDto createReservation(ReservationRequestDto requestDto, User user) {
 		Slot slot = getSlotByIdWithPopup(requestDto.getSlotId());
 		
@@ -77,6 +80,7 @@ public class ReservationService {
 	 * @param user 로그인 사용자 정보
 	 * @return 예약 정보
 	 */
+	@Cacheable(value = "reservation", key = "'reservation:' + #reservationId")
 	public ReservationResponseDto findReservation(Long reservationId, User user) {
 		Reservation reservation = getReservationAndSlotPopup(reservationId, user);
 		
@@ -92,6 +96,7 @@ public class ReservationService {
 	 * @param user 로그인 사용자 정보
 	 */
 	@Transactional
+	@CacheEvict(value = "reservation", key = "'reservation:' + #reservationId")
 	public void cancelReservation(Long reservationId, User user) {
 		Reservation reservation = getReservationAndSlot(reservationId, user);
 		
