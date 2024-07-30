@@ -63,4 +63,24 @@ public class CouponServiceTest {
         System.out.println("Actual = " + remainingCount);
     }
 
+    @Test
+    @DisplayName("성공 - 쿠폰 다운로드 동시성 테스트")
+    void downloadCouponWithConcurrencyLock() {
+        // given
+        given(userCouponRepository.existsByUserAndCoupon(any(User.class), any(Coupon.class)))
+                .willReturn(false);
+        given(userCouponRepository.save(any(UserCoupon.class)))
+                .willReturn(UserCoupon.of(
+                        User.of(new SignupRequestDto(), "password"),
+                        Coupon.of(100)));
+
+        // when
+        IntStream.range(0, 100).parallel()
+                .forEach(i -> couponService.downloadCoupon(coupon.getId(), user));
+
+        // then
+        int remainingCount = couponRepository.findById(coupon.getId()).orElseThrow().getRemainingCount();
+        assertThat(remainingCount).isEqualTo(0);
+    }
+
 }
