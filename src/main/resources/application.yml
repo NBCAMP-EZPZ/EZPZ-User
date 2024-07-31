@@ -26,6 +26,8 @@ spring:
 
   data:
     redis:
+      mode: cluster  # single, cluster
+      password: ${REDIS_PASSWORD}
       cluster:
         max-redirects: 3
         connect-ip: 127.0.0.1
@@ -36,9 +38,6 @@ spring:
           - 127.0.0.1:6003
           - 127.0.0.1:6004
           - 127.0.0.1:6005
-#      host: ${REDIS_HOST}
-#      port: ${REDIS_PORT}
-#      password: ${REDIS_PASSWORD}
 
 logging.level:
   org.hibernate.SQL: debug  # Hibernate SQL 쿼리를 debug 레벨로 설정하여 로깅합니다.
