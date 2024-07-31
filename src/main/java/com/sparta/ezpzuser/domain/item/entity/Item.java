@@ -5,23 +5,17 @@ import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.item.enums.ItemStatus;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Table(name = "item", indexes = @Index(name = "idx_item_popup", columnList = "popup_id"))
 public class Item extends Timestamped {
 
     @Id

@@ -2,12 +2,18 @@ package com.sparta.ezpzuser.domain.order.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderRequestDto {
 
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class CartIdRequest {
 
         private Long cartId;

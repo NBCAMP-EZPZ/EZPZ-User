@@ -4,15 +4,18 @@ import com.sparta.ezpzuser.common.entity.Timestamped;
 import com.sparta.ezpzuser.domain.like.entity.Like;
 import com.sparta.ezpzuser.domain.user.dto.SignupRequestDto;
 import jakarta.persistence.*;
+
+import java.util.List;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Getter
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class User extends Timestamped {
 
     @Id

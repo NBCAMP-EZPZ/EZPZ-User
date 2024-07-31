@@ -7,6 +7,21 @@ spring:
   #  추가로 ddl-auto도 create-drop 모드로 동작한다.
   #  따라서 데이터소스나, JPA 관련된 별도의 추가 설정을 하지 않아도 된다.
 
+  servlet:
+    multipart:
+      maxFileSize: 10MB
+      maxRequestSize: 20MB
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # Hibernate 자동 DDL 생성 옵션
+
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
+        format_sql: true  # SQL 쿼리 포맷팅 여부 - 프로덕션 환경에서는 보안, 성능 고려해서 사용
+        use_sql_comments: true  # SQL 쿼리 주석 사용 여부 - 보안, 성능 이슈, (실행되는 JPQL을 볼 수 있다.)
+
   data:
     redis:
       host: ${REDIS_HOST}
