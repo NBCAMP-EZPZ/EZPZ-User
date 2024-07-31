@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
+    @Query("SELECT c FROM Cart c JOIN FETCH c.item WHERE c.user.id = :userId ORDER BY c.createdAt DESC")
     List<Cart> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 
     // item까지 함께 가져오도록 구현
