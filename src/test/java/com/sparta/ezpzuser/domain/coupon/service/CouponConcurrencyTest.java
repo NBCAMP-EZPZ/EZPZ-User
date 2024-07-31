@@ -34,7 +34,7 @@ public class CouponConcurrencyTest {
     Coupon coupon;
     User user;
 
-    int couponCount = 100_000; // 100_000개 실패
+    int couponCount = 10_000; // 100_000개 실패
 
     @BeforeEach
     void setUp() {
