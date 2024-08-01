@@ -7,6 +7,7 @@ import com.sparta.ezpzuser.domain.host.entity.Host;
 import com.sparta.ezpzuser.domain.popup.enums.ApprovalStatus;
 
 import com.sparta.ezpzuser.domain.popup.enums.PopupStatus;
+import com.sparta.ezpzuser.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -57,8 +58,17 @@ public class Popup extends Timestamped {
     @Enumerated(EnumType.STRING)
     private ApprovalStatus approvalStatus;
 
-    @Column(name = "like_count")
+    @Column(name = "like_count", nullable = false)
     private int likeCount;
+
+    @Column(name = "review_count", nullable = false)
+    private int reviewCount;
+
+    @Column(name = "rating_avg", nullable = false)
+    private float ratingAvg;
+
+    @Transient
+    private int ratingSum;
 
     @Column(name = "start_date", nullable = false)
     private LocalDateTime startDate;
@@ -75,4 +85,11 @@ public class Popup extends Timestamped {
             throw new CustomException(ErrorType.POPUP_ACCESS_FORBIDDEN);
         }
     }
+
+    public void addReview(Review review) {
+        this.reviewCount++;
+        this.ratingSum += review.getRating();
+        this.ratingAvg = (float) ratingSum / this.reviewCount;
+    }
+
 }
