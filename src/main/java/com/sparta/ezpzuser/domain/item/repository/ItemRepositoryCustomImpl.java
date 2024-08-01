@@ -27,9 +27,8 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
         List<Item> items = jpaQueryFactory
                 .selectFrom(item)
                 .where(
-                        hostIdEq(cond.getHostId()),
-                        popupIdEq(cond.getPopupId()),
-                        itemStatusEq(cond.getItemStatus())
+                    popupIdEq(cond.getPopupId()),
+                    itemStatusEq(cond.getItemStatus())
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -41,7 +40,6 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                 .select(Wildcard.count)
                 .from(item)
                 .where(
-                        hostIdEq(cond.getHostId()),
                         popupIdEq(cond.getPopupId()),
                         itemStatusEq(cond.getItemStatus())
                 )
@@ -88,10 +86,10 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
         return Objects.nonNull(popupId) && !"all".equals(popupId) ?
                 item.popup.id.eq(Long.valueOf(popupId)) : null;
     }
-
+    
     // 조건 : 상품 상태
     private BooleanExpression itemStatusEq(String itemStatus) {
         return Objects.nonNull(itemStatus) && !"all".equals(itemStatus) ?
-                item.itemStatus.eq(ItemStatus.valueOf(itemStatus.toUpperCase())) : item.itemStatus.eq(ItemStatus.SALE);
+            item.itemStatus.eq(ItemStatus.valueOf(itemStatus.toUpperCase())) : null;
     }
 }
