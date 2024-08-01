@@ -36,6 +36,7 @@ public class Review extends Timestamped {
         this.content = dto.getContent();
         this.popup = popup;
         this.reservation = reservation;
+        popup.addReview(this);
     }
 
     public static Review of(ReviewRequestDto dto, Popup popup, Reservation reservation) {

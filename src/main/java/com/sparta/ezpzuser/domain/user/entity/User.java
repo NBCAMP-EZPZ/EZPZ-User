@@ -6,6 +6,8 @@ import com.sparta.ezpzuser.domain.user.dto.SignupRequestDto;
 import jakarta.persistence.*;
 
 import java.util.List;
+
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +18,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(name = "users")
 public class User extends Timestamped {
 
     @Id
