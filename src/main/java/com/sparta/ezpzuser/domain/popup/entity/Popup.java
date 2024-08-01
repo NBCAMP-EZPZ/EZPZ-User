@@ -88,7 +88,7 @@ public class Popup extends Timestamped {
 
     /**
      * 리뷰 추가
-     * @param review 추가할 
+     * @param review 추가할 리뷰
      */
     public void addReview(Review review) {
         this.reviewCount++;
