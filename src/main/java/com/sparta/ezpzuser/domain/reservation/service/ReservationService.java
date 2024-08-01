@@ -123,7 +123,7 @@ public class ReservationService {
 		if (slot.isEmpty()) {
 			throw new CustomException(ErrorType.SLOT_NOT_FOUND);
 		}
-		
+
 		return slot.get();
 	}
 	
