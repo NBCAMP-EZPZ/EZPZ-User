@@ -75,6 +75,28 @@ public class Popup extends Timestamped {
 
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
+    
+    private Popup(Host host, String name, String description, String thumbnailUrl, String thumbnailName, String address, String managerName, String phoneNumber, PopupStatus popupStatus, ApprovalStatus approvalStatus, LocalDateTime startDate, LocalDateTime endDate) {
+        this.host = host;
+        this.name = name;
+        this.description = description;
+        this.thumbnailUrl = thumbnailUrl;
+        this.thumbnailName = thumbnailName;
+        this.address = address;
+        this.managerName = managerName;
+        this.phoneNumber = phoneNumber;
+        this.popupStatus = popupStatus;
+        this.approvalStatus = approvalStatus;
+        this.likeCount = 0;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+    
+    public static Popup of(Host host, String name, String description, String thumbnailUrl, String thumbnailName, String address, String managerName, String phoneNumber, PopupStatus popupStatus, ApprovalStatus approvalStatus, LocalDateTime startDate, LocalDateTime endDate) {
+        return new Popup(host, name, description, thumbnailUrl, thumbnailName, address, managerName, phoneNumber, popupStatus, approvalStatus, startDate, endDate);
+    }
+    
+    
 
     /**
      * 상태 확인
