@@ -70,7 +70,7 @@ public class WebSecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-    
+  
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 설정
@@ -94,7 +94,7 @@ public class WebSecurityConfig {
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-        
+      
         return http.build();
     }
     
