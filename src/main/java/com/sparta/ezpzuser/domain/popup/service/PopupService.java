@@ -8,12 +8,11 @@ import com.sparta.ezpzuser.domain.popup.dto.PopupPageResponseDto;
 import com.sparta.ezpzuser.domain.popup.dto.PopupResponseDto;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import com.sparta.ezpzuser.domain.popup.repository.popup.PopupRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,8 +23,9 @@ public class PopupService {
 
     /**
      * 팝업 상태별 목록 조회
+     *
      * @param pageable 페이징
-     * @param cond 조회 조건
+     * @param cond     조회 조건
      * @return 팝업 목록
      */
     public Page<?> findAllPopupsByStatus(Pageable pageable, PopupCondition cond) {
@@ -37,6 +37,7 @@ public class PopupService {
 
     /**
      * 팝업 상세 조회
+     *
      * @param popupId 팝업 ID
      * @return 팝업 상세정보
      */
@@ -51,14 +52,15 @@ public class PopupService {
     /**
      * 팝업 찾기
      * <p>
-     *     심사 중 또는 취소된 팝업일 경우 예외처리
+     * 심사 중 또는 취소된 팝업일 경우 예외처리
      * </p>
+     *
      * @param popupId 팝업 ID
      * @return 팝업
      */
     private Popup findPopupById(Long popupId) {
         Popup popup = popupRepository.findById(popupId)
-                .orElseThrow(() -> new CustomException(ErrorType.POPUP_NOT_FOUNT));
+                .orElseThrow(() -> new CustomException(ErrorType.POPUP_NOT_FOUND));
         popup.verifyStatus();
         return popup;
     }

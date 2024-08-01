@@ -5,19 +5,19 @@ import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.host.entity.Host;
 import com.sparta.ezpzuser.domain.popup.enums.ApprovalStatus;
-
 import com.sparta.ezpzuser.domain.popup.enums.PopupStatus;
 import com.sparta.ezpzuser.domain.review.entity.Review;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Popup extends Timestamped {
 
     @Id
@@ -86,10 +86,29 @@ public class Popup extends Timestamped {
         }
     }
 
+    /**
+     * 리뷰 추가
+     * @param review 추가할 
+     */
     public void addReview(Review review) {
         this.reviewCount++;
         this.ratingSum += review.getRating();
         this.ratingAvg = (float) ratingSum / this.reviewCount;
+    }
+
+
+    /**
+     * 좋아요 개수 (true: 증가 / false: 감소)
+     * @param b boolean
+     */
+    public void updateLikeCount(boolean b) {
+        if (b) {
+            this.likeCount++;
+        }else {
+            if (this.likeCount > 0) {
+                this.likeCount--;
+            }
+        }
     }
 
 }

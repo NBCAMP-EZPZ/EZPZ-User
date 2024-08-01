@@ -1,0 +1,46 @@
+# 로그인
+POST http://localhost:8080/api/v1/login
+Content-Type: application/json
+
+{
+  "username":"{{username}}",
+  "password":"{{password}}"
+}
+
+> {%
+  client.log(response.headers.valueOf("Authorization"));
+  client.global.set("Authorization", response.headers.valueOf("Authorization"));
+
+  // 로그로 확인
+  client.log(response.cookies.get("refresh_token"));
+
+  // 글로벌 변수에 저장
+  client.global.set("refresh_token", response.cookies.get("refresh_token"));
+%}
+
+### 장바구니 생성
+POST http://localhost:8080/api/v1/carts
+Content-Type: application/json
+Authorization: {{Authorization}}
+Cookie: refresh_token={{refresh_token}}
+
+{
+  "itemId": 2,
+  "quantity": 3
+}
+
+### 장바구니 조회
+GET http://localhost:8080/api/v1/carts
+Content-Type: application/json
+
+### 장바구니 수량 변경
+PATCH http://localhost:8080/api/v1/carts/1
+Content-Type: application/json
+
+{
+  "quantity": 1
+}
+
+### 장바구니 삭제
+DELETE http://localhost:8080/api/v1/carts/1
+Content-Type: application/json

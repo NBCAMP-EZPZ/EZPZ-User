@@ -25,8 +25,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     public Page<Item> findAllItemsByHostAndPopupAndStatus(Pageable pageable, ItemCondition cond) {
         // 데이터 조회 쿼리
         List<Item> items = jpaQueryFactory
-                .select(item)
-                .from(item)
+                .selectFrom(item)
                 .where(
                         hostIdEq(cond.getHostId()),
                         popupIdEq(cond.getPopupId()),
@@ -45,6 +44,33 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                         hostIdEq(cond.getHostId()),
                         popupIdEq(cond.getPopupId()),
                         itemStatusEq(cond.getItemStatus())
+                )
+                .fetchOne();
+
+        return PageableExecutionUtils.getPage(items, pageable, () -> totalSize);
+    }
+
+    @Override
+    public Page<Item> findItemByIdList(Pageable pageable, List<Long> itemIdList) {
+        // 데이터 조회 쿼리
+        List<Item> items = jpaQueryFactory
+                .selectFrom(item)
+                .where(
+                        item.itemStatus.ne(ItemStatus.SALE_END),
+                        item.id.in(itemIdList)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(item.createdAt.desc())
+                .fetch();
+
+        // 카운트 쿼리
+        Long totalSize = jpaQueryFactory
+                .select(Wildcard.count)
+                .from(item)
+                .where(
+                        item.itemStatus.ne(ItemStatus.SALE_END),
+                        item.id.in(itemIdList)
                 )
                 .fetchOne();
 

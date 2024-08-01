@@ -3,7 +3,7 @@ package com.sparta.ezpzuser.domain.review.service;
 import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.util.PageUtil;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
-import com.sparta.ezpzuser.domain.popup.repository.PopupRepository;
+import com.sparta.ezpzuser.domain.popup.repository.popup.PopupRepository;
 import com.sparta.ezpzuser.domain.reservation.entity.Reservation;
 import com.sparta.ezpzuser.domain.reservation.enums.ReservationStatus;
 import com.sparta.ezpzuser.domain.reservation.repository.ReservationRepository;
