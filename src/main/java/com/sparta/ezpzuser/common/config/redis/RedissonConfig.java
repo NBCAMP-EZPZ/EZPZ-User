@@ -8,9 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.List;
+
 @Configuration
 @RequiredArgsConstructor
 public class RedissonConfig {
+
+    private final static String REDIS_URL_PREFIX = "redis://";
 
     private final RedisClusterProperties properties;
 
@@ -25,8 +29,10 @@ public class RedissonConfig {
             }
             case "cluster" -> {
                 Config config = new Config();
+                List<String> nodeAddresses = properties.getNodes().stream()
+                        .map(node -> REDIS_URL_PREFIX + node).toList();
                 config.useClusterServers()
-                        .setNodeAddresses(properties.getNodes());
+                        .setNodeAddresses(nodeAddresses);
                 return Redisson.create(config);
             }
             default -> throw new IllegalArgumentException("Invalid redisson mode");
