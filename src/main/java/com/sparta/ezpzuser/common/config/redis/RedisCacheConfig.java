@@ -1,4 +1,4 @@
-package com.sparta.ezpzuser.common.config;
+package com.sparta.ezpzuser.common.config.redis;
 
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
