@@ -9,6 +9,12 @@ public class CartResponseDto {
     private Long cartId;
     private Long itemId;
     private int quantity;
+    
+    //필요에 의해 추가
+    private String itemName;
+    private int itemPrice;
+    private String imageUrl;
+    private Long cartId;
 
     /**
      * CartResponseDto 생성자
@@ -19,6 +25,10 @@ public class CartResponseDto {
         this.cartId = cart.getId();
         this.itemId = cart.getItem().getId();
         this.quantity = cart.getQuantity();
+        this.itemName = cart.getItem().getName();
+        this.itemPrice = cart.getItem().getPrice();
+        this.imageUrl = cart.getItem().getImageUrl();
+        this.cartId = cart.getId();
     }
 
     /**

@@ -40,6 +40,7 @@ public class ReviewService {
     public ReviewResponseDto createReview(ReviewRequestDto dto, User user) {
         Reservation reservation = reservationRepository.findById(dto.getReservationId())
                 .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
+        
         // 해당 예약의 예약자가 아닌 경우
         if (!reservation.getUser().getId().equals(user.getId())) {
             throw new CustomException(DIFFERENT_RESERVATION_USER);
@@ -48,7 +49,10 @@ public class ReviewService {
         if (!reservation.getReservationStatus().equals(ReservationStatus.FINISHED)) {
             throw new CustomException(UNVISITED_USER);
         }
-        Popup popup = popupRepository.findByReservationId(reservation.getId());
+        
+        Popup popup = reservation.getSlot().getPopup();
+        
+        // Popup popup = popupRepository.findByReservationId(reservation.getId());
         Review review = reviewRepository.save(Review.of(dto, popup, reservation));
         return ReviewResponseDto.of(review);
     }

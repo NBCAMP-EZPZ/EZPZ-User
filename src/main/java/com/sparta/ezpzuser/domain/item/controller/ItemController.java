@@ -21,7 +21,6 @@ public class ItemController {
     /**
      * 호스트, 팝업 및 상태별 상품 목록 조회
      * @param pageable 페이징
-     * @param hostId 호스트 ID
      * @param popupId 팝업 ID
      * @param itemStatus 상품 상태
      * @return 상품 목록
@@ -29,10 +28,9 @@ public class ItemController {
     @GetMapping("/v1/items")
     public ResponseEntity<?> findAllItemsByHostAndPopupAndStatus(
             Pageable pageable,
-            @RequestParam(defaultValue = "all") String hostId,
             @RequestParam(defaultValue = "all") String popupId,
             @RequestParam(defaultValue = "all") String itemStatus) {
-        ItemCondition cond = ItemCondition.of(hostId, popupId, itemStatus);
+        ItemCondition cond = ItemCondition.of(popupId, itemStatus);
 
         Page<?> itemList = itemService.findAllItemsByHostAndPopupAndStatus(pageable, cond);
         return getResponseEntity(itemList, "굿즈 목록 조회 성공");

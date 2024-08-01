@@ -28,6 +28,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
+import com.sparta.ezpzuser.common.entity.RestPage;
 import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.host.entity.Host;
@@ -163,7 +164,7 @@ class ReservationServiceTest {
 	    //given
 		Pageable pageable = PageRequest.of(0, 10);
 		List<Reservation> reservations = List.of(reservation);
-		Page<Reservation> reservationPage = new PageImpl<>(reservations, pageable, reservations.size());
+		RestPage<Reservation> reservationPage = new RestPage<>(new PageImpl<>(reservations, pageable, 1L));
 		
 	    //when
 		when(reservationRepository.findByUserIdAndStatus(anyLong(), any(), any())).thenReturn(reservationPage);
@@ -182,7 +183,7 @@ class ReservationServiceTest {
 		Pageable pageable = PageRequest.of(0, 10);
 		
 	    //when
-		when(reservationRepository.findByUserIdAndStatus(anyLong(), any(), any())).thenReturn(new PageImpl<>(List.of()));
+		when(reservationRepository.findByUserIdAndStatus(anyLong(), any(), any())).thenReturn(new RestPage<>(new PageImpl<>(List.of())));
 		CustomException exception = assertThrows(CustomException.class, () -> reservationService.findReservations(pageable, "READY", user));
 	    
 	    //then

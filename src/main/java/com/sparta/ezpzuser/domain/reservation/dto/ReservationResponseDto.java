@@ -4,8 +4,10 @@ import com.sparta.ezpzuser.domain.reservation.entity.Reservation;
 import com.sparta.ezpzuser.domain.slot.entity.Slot;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class ReservationResponseDto {
 	private Long id;
 	private String name;

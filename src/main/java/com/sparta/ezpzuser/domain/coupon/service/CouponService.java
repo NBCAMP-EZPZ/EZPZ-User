@@ -1,6 +1,7 @@
 package com.sparta.ezpzuser.domain.coupon.service;
 
 import com.sparta.ezpzuser.common.exception.CustomException;
+import com.sparta.ezpzuser.common.lock.DistributedLock;
 import com.sparta.ezpzuser.domain.coupon.dto.CouponResponseDto;
 import com.sparta.ezpzuser.domain.coupon.dto.UserCouponResponseDto;
 import com.sparta.ezpzuser.domain.coupon.entity.Coupon;
@@ -20,11 +21,24 @@ import static com.sparta.ezpzuser.common.util.PageUtil.validatePageableWithPage;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 public class CouponService {
 
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
+
+    @Transactional
+    public UserCouponResponseDto downloadCouponWithoutLock(Long couponId, User user) {
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(() -> new CustomException(COUPON_NOT_FOUND));
+        // 이미 다운로드 받은 쿠폰인지 확인
+        if (userCouponRepository.existsByUserAndCoupon(user, coupon)) {
+            throw new CustomException(ALREADY_DOWNLOADED_COUPON);
+        }
+        coupon.download();
+        UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
+        return UserCouponResponseDto.of(userCoupon);
+    }
 
     /**
      * 쿠폰 다운로드
@@ -33,11 +47,10 @@ public class CouponService {
      * @param user     다운로드 요청한 이용자 객체
      * @return 다운로드 후 생성된 UserCoupon 객체
      */
-    @Transactional
+    @DistributedLock(key = "'downloadCoupon'.concat(#couponId)")
     public UserCouponResponseDto downloadCoupon(Long couponId, User user) {
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new CustomException(COUPON_NOT_FOUND));
-
         // 이미 다운로드 받은 쿠폰인지 확인
         if (userCouponRepository.existsByUserAndCoupon(user, coupon)) {
             throw new CustomException(ALREADY_DOWNLOADED_COUPON);

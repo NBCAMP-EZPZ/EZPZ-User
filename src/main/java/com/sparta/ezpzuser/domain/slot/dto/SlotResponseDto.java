@@ -3,8 +3,10 @@ package com.sparta.ezpzuser.domain.slot.dto;
 import com.sparta.ezpzuser.domain.slot.entity.Slot;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class SlotResponseDto {
 	private Long id;
 	private String slotDate;

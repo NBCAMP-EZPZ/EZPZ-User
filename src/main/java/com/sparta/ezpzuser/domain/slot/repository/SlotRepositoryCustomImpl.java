@@ -24,6 +24,10 @@ public class SlotRepositoryCustomImpl implements SlotRepositoryCustom {
 	
 	@Override
 	public Optional<Slot> findSlotByIdWithPopup(Long slotId) {
+		if (slotId == null) {
+			return Optional.empty();
+		}
+		
 		Slot findSlot = queryFactory
 			.selectFrom(slot)
 			.join(slot.popup).fetchJoin()

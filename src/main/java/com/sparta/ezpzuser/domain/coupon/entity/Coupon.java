@@ -30,12 +30,21 @@ public class Coupon {
 
     private LocalDate expiredAt;
 
+    // 테스트용 생성자
+    public Coupon(String name, int totalCount) {
+        this.name = name;
+        this.discountAmount = 0;
+        this.totalCount = totalCount;
+        this.remainingCount = totalCount;
+        this.expiredAt = LocalDate.now();
+    }
+
     /**
      * 쿠폰 다운로드
      */
     public void download() {
         // 남은 수량이 있는지 확인
-        if (this.remainingCount == 0) {
+        if (this.remainingCount < 1) {
             throw new CustomException(SOLD_OUT_COUPON);
         }
         // 남은 수량 감소

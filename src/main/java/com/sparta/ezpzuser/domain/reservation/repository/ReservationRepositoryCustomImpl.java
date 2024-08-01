@@ -29,8 +29,8 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
 			.selectOne()
 			.from(reservation)
 			.where(reservation.user.id.eq(userId)
-				.and(reservation.slot.popup.id.eq(popupId))
-				.and(reservation.reservationStatus.ne(ReservationStatus.CANCEL)))
+				.and(reservation.reservationStatus.ne(ReservationStatus.CANCEL))
+				.and(reservation.slot.popup.id.eq(popupId)))
 			.fetchFirst() != null;
 	}
 	
