@@ -25,6 +25,16 @@ spring:
   data:
     redis:
       mode: standalone  # 테스트에서는 로컬 Redis 사용
+      cluster:
+        max-redirects: 3
+        connect-ip: ${CLUSTER_CONNECT_IP}
+        nodes:
+          - ${CLUSTER_NODE_1}
+          - ${CLUSTER_NODE_2}
+          - ${CLUSTER_NODE_3}
+          - ${CLUSTER_NODE_4}
+          - ${CLUSTER_NODE_5}
+          - ${CLUSTER_NODE_6}
 
 logging.level:
   org.hibernate.SQL: debug  # Hibernate SQL 쿼리를 debug 레벨로 설정하여 로깅합니다.
