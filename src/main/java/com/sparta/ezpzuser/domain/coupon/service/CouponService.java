@@ -21,7 +21,6 @@ import static com.sparta.ezpzuser.common.util.PageUtil.validatePageableWithPage;
 
 @Service
 @RequiredArgsConstructor
-//@Transactional(readOnly = true)
 public class CouponService {
 
     private final CouponRepository couponRepository;
@@ -59,6 +58,33 @@ public class CouponService {
         UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
         return UserCouponResponseDto.of(userCoupon);
     }
+
+//    @Transactional
+//    public UserCouponResponseDto downloadCoupon(Long couponId, User user) {
+//        RLock lock = redissonClient.getFairLock("couponDownloadLock_" + couponId); // 요청 들어온 순서대로 처리
+//        boolean locked = false;
+//        try {
+//            locked = lock.tryLock(10, 60, TimeUnit.SECONDS);
+//            if (locked) {
+//                Coupon coupon = couponRepository.findById(couponId)
+//                        .orElseThrow(() -> new CustomException(COUPON_NOT_FOUND));
+//                // 이미 다운로드 받은 쿠폰인지 확인
+//                if (userCouponRepository.existsByUserAndCoupon(user, coupon)) {
+//                    throw new CustomException(ALREADY_DOWNLOADED_COUPON);
+//                }
+//                coupon.download();
+//                UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
+//                return UserCouponResponseDto.of(userCoupon);
+//            }
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//        } finally {
+//            if (locked && lock.isHeldByCurrentThread()) {
+//                lock.unlock(); // 락을 획득했을 때만 해제
+//            }
+//        }
+//        return null;
+//    }
 
     /**
      * 다운로드 가능한 쿠폰 목록 조회
