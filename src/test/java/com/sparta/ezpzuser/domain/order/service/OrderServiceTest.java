@@ -114,6 +114,9 @@ public class OrderServiceTest {
                 PopupStatus.IN_PROGRESS,    // popupStatus
                 ApprovalStatus.APPROVED, // approvalStatus
                 0,                     // likeCount
+                0,                     // viewCount
+                0,
+            0,
                 LocalDateTime.now(),   // startDate
                 LocalDateTime.now().plusDays(7) // endDate
         );
