@@ -1,9 +1,26 @@
 package com.sparta.ezpzuser.common.security;
 
+import static com.sparta.ezpzuser.common.exception.ErrorType.INVALID_REFRESH_TOKEN;
+
+import java.security.Key;
+import java.util.Base64;
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
 import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.domain.user.entity.RefreshToken;
 import com.sparta.ezpzuser.domain.user.repository.RefreshTokenRepository;
-import io.jsonwebtoken.*;
+
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
@@ -11,17 +28,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import java.security.Key;
-import java.util.Base64;
-import java.util.Date;
-
-import static com.sparta.ezpzuser.common.exception.ErrorType.INVALID_REFRESH_TOKEN;
 
 @Slf4j
 @Component
@@ -31,9 +37,9 @@ public class TokenProvider {
     public static final String JWT_PREFIX = "Bearer ";
     public static final String ACCESS_TOKEN_HEADER = "Authorization";
     public static final String REFRESH_TOKEN_COOKIE = "refresh_token";
-
+    
     private final RefreshTokenRepository refreshTokenRepository;
-
+    
     @Value("${jwt.access-token.ttl}")
     private int accessTokenTtl;
 
@@ -146,6 +152,11 @@ public class TokenProvider {
     public String getUsernameFromRefreshToken(String refreshToken) {
         RefreshToken token = refreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new CustomException(INVALID_REFRESH_TOKEN));
+        
+        if (token == null) {
+            throw new CustomException(INVALID_REFRESH_TOKEN);
+        }
+        
         return token.getUsername();
     }
 
