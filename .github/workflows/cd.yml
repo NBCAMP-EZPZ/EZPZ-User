@@ -41,6 +41,8 @@ jobs:
       # main 브랜치에 develop 브랜치를 merge, main 브랜치 push
       - name: merge the dev into the main and push changes
         run: |
+          git config user.name "ydh5017"
+          git config user.email "ydh5017@naver.com"
           git merge origin/develop --no-edit
           git push origin main
         env:
