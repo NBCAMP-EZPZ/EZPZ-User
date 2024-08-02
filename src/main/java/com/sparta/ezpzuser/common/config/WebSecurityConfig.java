@@ -6,7 +6,6 @@ import com.sparta.ezpzuser.common.security.JwtAuthenticationFilter;
 import com.sparta.ezpzuser.common.security.JwtAuthorizationFilter;
 import com.sparta.ezpzuser.common.security.TokenProvider;
 import com.sparta.ezpzuser.common.security.UserDetailsServiceImpl;
-import com.sparta.ezpzuser.domain.user.repository.RefreshTokenRepository;
 import com.sparta.ezpzuser.domain.user.service.RefreshTokenService;
 
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class WebSecurityConfig {
     
     private final TokenProvider tokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final RefreshTokenService refreshTokenService;
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
@@ -58,7 +56,7 @@ public class WebSecurityConfig {
     
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(tokenProvider, refreshTokenRepository, userDetailsService);
+        return new JwtAuthorizationFilter(tokenProvider, refreshTokenService, userDetailsService);
     }
     
     @Bean

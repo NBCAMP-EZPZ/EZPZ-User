@@ -3,7 +3,7 @@ package com.sparta.ezpzuser.common.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.ezpzuser.common.security.dto.AuthenticatedResponse;
 import com.sparta.ezpzuser.common.security.dto.UnauthenticatedResponse;
-import com.sparta.ezpzuser.domain.user.repository.RefreshTokenRepository;
+import com.sparta.ezpzuser.domain.user.service.RefreshTokenService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,7 +30,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
     private final UserDetailsServiceImpl userDetailsService;
 
     @Override
@@ -63,7 +63,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 } else {
                     log.error("리프레시 토큰 검증 실패");
                     // 리프레시 토큰이 공격당한 것으로 간주, 리프레시 토큰 삭제
-                    refreshTokenRepository.deleteByRefreshToken(refreshToken);
+                    refreshTokenService.deleteByRefreshToken(refreshToken);
                     unverifiedRefreshTokenHandler(res);
                     return;
                 }
