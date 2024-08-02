@@ -18,7 +18,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Table(name = "users")
 public class User extends Timestamped {
 
     @Id
