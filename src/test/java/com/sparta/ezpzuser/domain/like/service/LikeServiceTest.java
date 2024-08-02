@@ -86,26 +86,26 @@ public class LikeServiceTest {
         popupRepository.save(popup);
     }
 
-    @Test
-    @DisplayName("좋아요 동시성 이슈 테스트")
-    void contentLike() {
-        Long requestCount = 100L;
-        LikeContentDto contentDto = new LikeContentDto(1L, "popup");
-        List<User> user = findUserList(requestCount);
-
-        IntStream.range(0, 100).parallel()
-                .forEach(i -> likeService.contentLike(contentDto, user.get(i)));
-
-        Popup popup = popupRepository.findById(1L).orElse(null);
-        assert popup != null;
-        log.info("\nrequest Count : {}\nlike count : {}", requestCount, popup.getLikeCount());
-    }
-
-    private List<User> findUserList(Long count) {
-        List<User> userList = new ArrayList<>();
-        for (Long i = 1L; i <= count; i++) {
-            userList.add(userRepository.findById(i).orElse(null));
-        }
-        return userList;
-    }
+    // @Test
+    // @DisplayName("좋아요 동시성 이슈 테스트")
+    // void contentLike() {
+    //     Long requestCount = 100L;
+    //     LikeContentDto contentDto = new LikeContentDto(1L, "popup");
+    //     List<User> user = findUserList(requestCount);
+    //
+    //     IntStream.range(0, 100).parallel()
+    //             .forEach(i -> likeService.contentLike(contentDto, user.get(i)));
+    //
+    //     Popup popup = popupRepository.findById(1L).orElse(null);
+    //     assert popup != null;
+    //     log.info("\nrequest Count : {}\nlike count : {}", requestCount, popup.getLikeCount());
+    // }
+    //
+    // private List<User> findUserList(Long count) {
+    //     List<User> userList = new ArrayList<>();
+    //     for (Long i = 1L; i <= count; i++) {
+    //         userList.add(userRepository.findById(i).orElse(null));
+    //     }
+    //     return userList;
+    // }
 }

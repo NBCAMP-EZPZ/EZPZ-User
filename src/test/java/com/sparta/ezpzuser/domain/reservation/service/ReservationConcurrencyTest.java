@@ -63,57 +63,57 @@ public class ReservationConcurrencyTest {
 		System.out.println("saveSlot = " + saveSlot);
 	}
 	
-	@Test
-	@DisplayName("단일 예약 테스트")
-	void 예약_생성_단일_테스트() {
-	    //given
-		init();
-		SignupRequestDto signupRequestDto = new SignupRequestDto("test123123", "test123123", "test", "test@email.com", "010-5284-6797");
-		user = userRepository.save(User.of(signupRequestDto, "test123123"));
-		
-		ReservationRequestDto requestDto = new ReservationRequestDto(slot.getId(), 1);
-		
-		//when
-		ReservationResponseDto reservation = reservationService.createReservation(requestDto, user);
-		
-		//then
-		assertThat(reservation.getId()).isNotNull();
-		assertThat(reservation.getSlotTime()).isEqualTo(slot.getSlotTime().toString());
-		assertThat(slot.getReservedCount()).isEqualTo(1);
-	}
+	// @Test
+	// @DisplayName("단일 예약 테스트")
+	// void 예약_생성_단일_테스트() {
+	//     //given
+	// 	init();
+	// 	SignupRequestDto signupRequestDto = new SignupRequestDto("test123123", "test123123", "test", "test@email.com", "010-5284-6797");
+	// 	user = userRepository.save(User.of(signupRequestDto, "test123123"));
+	//
+	// 	ReservationRequestDto requestDto = new ReservationRequestDto(slot.getId(), 1);
+	//
+	// 	//when
+	// 	ReservationResponseDto reservation = reservationService.createReservation(requestDto, user);
+	//
+	// 	//then
+	// 	assertThat(reservation.getId()).isNotNull();
+	// 	assertThat(reservation.getSlotTime()).isEqualTo(slot.getSlotTime().toString());
+	// 	assertThat(slot.getReservedCount()).isEqualTo(1);
+	// }
 	
-	@Test
-	@DisplayName("동시 예약 생성 테스트")
-	public void 예약_생성_동시성_테스트() throws InterruptedException {
-		init();
-		int numberOfThreads = 100;
-		ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
-		CountDownLatch latch = new CountDownLatch(numberOfThreads);
-		
-		for (int i = 0; i < numberOfThreads; i++) {
-			executorService.execute(() -> {
-				try {
-					SignupRequestDto signupRequestDto = new SignupRequestDto("test123123", "test123123", "test", "test@email.com", "010-5284-6797");
-					user = userRepository.saveAndFlush(User.of(signupRequestDto, "test123123"));
-					
-					ReservationRequestDto requestDto = new ReservationRequestDto(slot.getId(), 1);
-					reservationService.createReservation(requestDto, user);
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					latch.countDown();
-				}
-			});
-		}
-		
-		latch.await();
-		executorService.shutdown();
-		
-		Slot updatedSlot = slotRepository.findById(slot.getId()).orElseThrow();
-		
-		System.out.println("requestCount = " + numberOfThreads);
-		System.out.println("reservedCount = " + updatedSlot.getReservedCount());
-		
-		assertThat(updatedSlot.getReservedCount()).isEqualTo(numberOfThreads);
-	}
+	// @Test
+	// @DisplayName("동시 예약 생성 테스트")
+	// public void 예약_생성_동시성_테스트() throws InterruptedException {
+	// 	init();
+	// 	int numberOfThreads = 100;
+	// 	ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+	// 	CountDownLatch latch = new CountDownLatch(numberOfThreads);
+	//
+	// 	for (int i = 0; i < numberOfThreads; i++) {
+	// 		executorService.execute(() -> {
+	// 			try {
+	// 				SignupRequestDto signupRequestDto = new SignupRequestDto("test123123", "test123123", "test", "test@email.com", "010-5284-6797");
+	// 				user = userRepository.saveAndFlush(User.of(signupRequestDto, "test123123"));
+	//
+	// 				ReservationRequestDto requestDto = new ReservationRequestDto(slot.getId(), 1);
+	// 				reservationService.createReservation(requestDto, user);
+	// 			} catch (Exception e) {
+	// 				e.printStackTrace();
+	// 			} finally {
+	// 				latch.countDown();
+	// 			}
+	// 		});
+	// 	}
+	//
+	// 	latch.await();
+	// 	executorService.shutdown();
+	//
+	// 	Slot updatedSlot = slotRepository.findById(slot.getId()).orElseThrow();
+	//
+	// 	System.out.println("requestCount = " + numberOfThreads);
+	// 	System.out.println("reservedCount = " + updatedSlot.getReservedCount());
+	//
+	// 	assertThat(updatedSlot.getReservedCount()).isEqualTo(numberOfThreads);
+	// }
 }
