@@ -76,7 +76,10 @@ public class LikeServiceTest {
                 "010-1234-5678",       // phoneNumber
                 PopupStatus.IN_PROGRESS,    // popupStatus
                 ApprovalStatus.APPROVED, // approvalStatus
-                0,                     // likeCount
+                0,
+                0,
+                0,
+            0,// likeCount
                 LocalDateTime.now(),   // startDate
                 LocalDateTime.now().plusDays(7) // endDate
         );

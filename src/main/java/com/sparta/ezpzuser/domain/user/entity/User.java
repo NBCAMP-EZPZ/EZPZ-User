@@ -6,6 +6,8 @@ import com.sparta.ezpzuser.domain.user.dto.SignupRequestDto;
 import jakarta.persistence.*;
 
 import java.util.List;
+
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

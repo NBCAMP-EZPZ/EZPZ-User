@@ -1,19 +1,20 @@
 spring:
+  profiles:
+    active:
+      test
 
-  datasource:
-    url: ${TEST_DATASOURCE_URL}
-    username: ${TEST_DATASOURCE_USERNAME}
-    password: ${TEST_DATASOURCE_PASSWORD}
-    driver-class-name: org.h2.Driver
+  #  스프링 부트는 datasource 설정이 없으면 기본적으로 메모리 DB를 사용하고, driver-class도 현재 등록된 라이브러리를 보고 찾아준다.
+  #  추가로 ddl-auto도 create-drop 모드로 동작한다.
+  #  따라서 데이터소스나, JPA 관련된 별도의 추가 설정을 하지 않아도 된다.
 
   servlet:
     multipart:
       maxFileSize: 10MB
       maxRequestSize: 20MB
 
-  jpa:
-    hibernate:
-      ddl-auto: update  # Hibernate 자동 DDL 생성 옵션
+    #  jpa:
+    #    hibernate:
+    #      ddl-auto: update  # Hibernate 자동 DDL 생성 옵션
 
     properties:
       hibernate:
@@ -23,8 +24,21 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+      mode: standalone  # 테스트에서는 로컬 Redis 사용
+      cluster:
+        max-redirects: 3
+        connect-ip: ${CLUSTER_CONNECT_IP}
+        nodes:
+          - ${CLUSTER_NODE_1}
+          - ${CLUSTER_NODE_2}
+          - ${CLUSTER_NODE_3}
+          - ${CLUSTER_NODE_4}
+          - ${CLUSTER_NODE_5}
+          - ${CLUSTER_NODE_6}
+
+logging.level:
+  org.hibernate.SQL: debug  # Hibernate SQL 쿼리를 debug 레벨로 설정하여 로깅합니다.
+  org.hibernate.orm.jdbc.bind: trace  # 스프링 부트 3.x, Hibernate 6.x에서 JDBC 바인딩을 trace 레벨로 설정합니다.
 
 jwt:
   secret:
