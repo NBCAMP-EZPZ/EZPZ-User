@@ -1,18 +1,21 @@
 package com.sparta.ezpzuser.domain.popup.service;
 
 import com.sparta.ezpzuser.common.exception.CustomException;
-import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.common.util.PageUtil;
 import com.sparta.ezpzuser.domain.popup.dto.PopupCondition;
 import com.sparta.ezpzuser.domain.popup.dto.PopupPageResponseDto;
 import com.sparta.ezpzuser.domain.popup.dto.PopupResponseDto;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import com.sparta.ezpzuser.domain.popup.repository.popup.PopupRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static com.sparta.ezpzuser.common.exception.ErrorType.POPUP_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +31,11 @@ public class PopupService {
      * @param cond     조회 조건
      * @return 팝업 목록
      */
-    public Page<?> findAllPopupsByStatus(Pageable pageable, PopupCondition cond) {
-        Page<?> popupList = popupRepository.findAllPopupsByStatus(pageable, cond)
-                .map(PopupPageResponseDto::of);
-        PageUtil.validatePageableWithPage(pageable, popupList);
-        return popupList;
+    @Transactional(readOnly = true)
+    public Page<PopupPageResponseDto> findAllPopupsByStatus(Pageable pageable, PopupCondition cond) {
+        Page<Popup> page = popupRepository.findAllByPopupCondition(pageable, cond);
+        PageUtil.validatePageableWithPage(pageable, page);
+        return page.map(PopupPageResponseDto::of);
     }
 
     /**
@@ -41,27 +44,13 @@ public class PopupService {
      * @param popupId 팝업 ID
      * @return 팝업 상세정보
      */
+    @Transactional(readOnly = true)
     public PopupResponseDto findPopup(Long popupId) {
-        Popup popup = findPopupById(popupId);
-
+        Popup popup = popupRepository.findById(popupId)
+                .orElseThrow(() -> new CustomException(POPUP_NOT_FOUND));
+        popup.verifyStatus();
         List<String> imageUrls = imageService.findAllByPopup(popup);
-
         return PopupResponseDto.of(popup, imageUrls);
     }
 
-    /**
-     * 팝업 찾기
-     * <p>
-     * 심사 중 또는 취소된 팝업일 경우 예외처리
-     * </p>
-     *
-     * @param popupId 팝업 ID
-     * @return 팝업
-     */
-    private Popup findPopupById(Long popupId) {
-        Popup popup = popupRepository.findById(popupId)
-                .orElseThrow(() -> new CustomException(ErrorType.POPUP_NOT_FOUND));
-        popup.verifyStatus();
-        return popup;
-    }
 }
