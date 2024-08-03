@@ -41,17 +41,17 @@ public class LikeController {
      * 타입별 좋아요한 컨텐츠 목록 조회
      *
      * @param pageable    페이징
-     * @param type        컨텐츠 타입
+     * @param contentType 컨텐츠 타입
      * @param userDetails 유저
      * @return 컨텐츠 목록
      */
     @GetMapping("/v1/likes")
     public ResponseEntity<?> findAllLikesByContentType(
             Pageable pageable,
-            @RequestParam String type,
+            @RequestParam String contentType,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        Page<?> response = likeService.findAllLikedContentByType(pageable, type, userDetails.getUser());
+        Page<?> response = likeService.findAllLikedContentByType(pageable, contentType, userDetails.getUser());
         return getResponseEntity(response, "타입별 좋아요한 컨텐츠 목록 조회 성공");
     }
 
