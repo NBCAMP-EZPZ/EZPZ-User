@@ -29,7 +29,7 @@ public enum ErrorType {
 
     // Popup
     POPUP_NOT_FOUND(NOT_FOUND, "존재하지 않는 팝업입니다."),
-    POPUP_ACCESS_FORBIDDEN(FORBIDDEN, "해당 팝업이 존재하지 않거나, 팝업에 대한 권한이 없습니다."),
+    POPUP_ACCESS_FORBIDDEN(FORBIDDEN, "해당 팝업에 대한 접근 권한이 없습니다."),
 
     // Order
     ORDER_NOT_FOUND(BAD_REQUEST, "존재하지 않는 주문 내역입니다."),
