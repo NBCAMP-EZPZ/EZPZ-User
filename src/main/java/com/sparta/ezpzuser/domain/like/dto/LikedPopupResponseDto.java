@@ -4,7 +4,7 @@ import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import lombok.Getter;
 
 @Getter
-public class LikePopupPageResponseDto {
+public class LikedPopupResponseDto {
 
     private final Long popupId;
     private final String name;
@@ -12,7 +12,7 @@ public class LikePopupPageResponseDto {
     private final String companyName;
     private final String thumbnail;
 
-    private LikePopupPageResponseDto(Popup popup) {
+    private LikedPopupResponseDto(Popup popup) {
         this.popupId = popup.getId();
         this.name = popup.getName();
         this.likeCount = popup.getLikeCount();
@@ -20,7 +20,8 @@ public class LikePopupPageResponseDto {
         this.thumbnail = popup.getThumbnailUrl();
     }
 
-    public static LikePopupPageResponseDto of(Popup popup) {
-        return new LikePopupPageResponseDto(popup);
+    public static LikedPopupResponseDto of(Popup popup) {
+        return new LikedPopupResponseDto(popup);
     }
+
 }
