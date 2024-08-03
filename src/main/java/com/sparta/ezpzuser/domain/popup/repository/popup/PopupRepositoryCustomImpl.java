@@ -50,7 +50,7 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
     }
 
     @Override
-    public Page<Popup> findAllByPopupIdList(Pageable pageable, List<Long> popupIdList) {
+    public Page<Popup> findAllByIdList(Pageable pageable, List<Long> popupIdList) {
         List<Popup> popups = jpaQueryFactory
                 .selectFrom(popup)
                 .join(popup.host).fetchJoin()

@@ -11,7 +11,7 @@ public interface PopupRepositoryCustom {
 
     Page<Popup> findAllByPopupCondition(Pageable pageable, PopupCondition cond);
 
-    Page<Popup> findAllByPopupIdList(Pageable pageable, List<Long> popupIdList);
+    Page<Popup> findAllByIdList(Pageable pageable, List<Long> popupIdList);
 
     Popup findByReservationId(Long reservationId);
 
