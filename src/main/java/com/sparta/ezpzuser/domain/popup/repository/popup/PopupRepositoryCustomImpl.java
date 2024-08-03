@@ -25,7 +25,7 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<Popup> findAllPopupsByStatus(Pageable pageable, PopupCondition cond) {
+    public Page<Popup> findAllByPopupCondition(Pageable pageable, PopupCondition cond) {
         List<Popup> popups = jpaQueryFactory
                 .selectFrom(popup)
                 .join(popup.host).fetchJoin()
@@ -50,7 +50,7 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
     }
 
     @Override
-    public Page<Popup> findPopupByIdList(Pageable pageable, List<Long> popupIdList) {
+    public Page<Popup> findAllByPopupIdList(Pageable pageable, List<Long> popupIdList) {
         List<Popup> popups = jpaQueryFactory
                 .selectFrom(popup)
                 .join(popup.host).fetchJoin()
@@ -92,4 +92,5 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
         return Objects.nonNull(statusBy) && !"all".equals(statusBy) ?
                 popup.popupStatus.eq(PopupStatus.valueOf(statusBy.toUpperCase())) : null;
     }
+
 }
