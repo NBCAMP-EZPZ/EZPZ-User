@@ -53,7 +53,7 @@ public enum ErrorType {
     UNVISITED_USER(BAD_REQUEST, "예약한 팝업에 방문 완료한 예약자가 아닙니다."),
 
     // Slot
-    SLOT_RESERVATION_FINISHED(BAD_REQUEST, "예약이 마감된 슬롯입니다."),
+    SLOT_RESERVATION_CLOSED(BAD_REQUEST, "예약이 마감된 슬롯입니다."),
     SLOT_NOT_FOUND(NOT_FOUND, "해당 슬롯을 찾을 수 없습니다."),
 
     // Coupon
