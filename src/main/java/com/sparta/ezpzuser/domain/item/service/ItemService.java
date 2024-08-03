@@ -44,7 +44,7 @@ public class ItemService {
     public ItemResponseDto findItem(Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(ErrorType.ITEM_NOT_FOUND));
-        item.checkStatus();
+        item.verifyStatus();
         return ItemResponseDto.of(item);
     }
 
