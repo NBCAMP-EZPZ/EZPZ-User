@@ -11,6 +11,6 @@ public interface ItemRepositoryCustom {
 
     Page<Item> findAllByItemCondition(Pageable pageable, ItemCondition cond);
 
-    Page<Item> findItemByIdList(Pageable pageable, List<Long> itemIdList);
+    Page<Item> findAllByIdList(Pageable pageable, List<Long> itemIdList);
 
 }

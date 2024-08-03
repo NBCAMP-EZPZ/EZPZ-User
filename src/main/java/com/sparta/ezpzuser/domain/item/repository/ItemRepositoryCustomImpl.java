@@ -49,7 +49,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     }
 
     @Override
-    public Page<Item> findItemByIdList(Pageable pageable, List<Long> itemIdList) {
+    public Page<Item> findAllByIdList(Pageable pageable, List<Long> itemIdList) {
         // 데이터 조회 쿼리
         List<Item> items = jpaQueryFactory
                 .selectFrom(item)
