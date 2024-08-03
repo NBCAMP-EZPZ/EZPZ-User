@@ -2,7 +2,6 @@ package com.sparta.ezpzuser.domain.item.entity;
 
 import com.sparta.ezpzuser.common.entity.Timestamped;
 import com.sparta.ezpzuser.common.exception.CustomException;
-import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.item.enums.ItemStatus;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import jakarta.persistence.*;
@@ -10,6 +9,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.sparta.ezpzuser.common.exception.ErrorType.INSUFFICIENT_STOCK;
+import static com.sparta.ezpzuser.common.exception.ErrorType.ITEM_ACCESS_FORBIDDEN;
 
 @Entity
 @Getter
@@ -52,12 +54,24 @@ public class Item extends Timestamped {
     @Enumerated(EnumType.STRING)
     private ItemStatus itemStatus;
 
+    // 테스트용 생성자
+    private Item(Popup popup, int price, int stock) {
+        this.popup = popup;
+        this.price = price;
+        this.stock = stock;
+        this.itemStatus = ItemStatus.SALE;
+    }
+
+    public static Item createMockItem(Popup popup, int price, int stock) {
+        return new Item(popup, price, stock);
+    }
+
     /**
      * 상태 확인
      */
-    public void checkStatus() {
+    public void verifyStatus() {
         if (this.itemStatus.equals(ItemStatus.SALE_END)) {
-            throw new CustomException(ErrorType.ITEM_ACCESS_FORBIDDEN);
+            throw new CustomException(ITEM_ACCESS_FORBIDDEN);
         }
     }
 
@@ -71,6 +85,17 @@ public class Item extends Timestamped {
             this.likeCount++;
         } else if (this.likeCount > 0) {
             this.likeCount--;
+        }
+    }
+
+    /**
+     * 재고 확인
+     *
+     * @param quantity 요청한 수량
+     */
+    public void checkStock(int quantity) {
+        if (this.stock < quantity) {
+            throw new CustomException(INSUFFICIENT_STOCK);
         }
     }
 
