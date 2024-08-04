@@ -37,7 +37,7 @@ public class CartController {
     public ResponseEntity<CommonResponse<?>> findCartsAll(
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        List<CartResponseDto> response = cartService.findCartsAll(userDetails.getUser());
+        List<CartResponseDto> response = cartService.findAllCarts(userDetails.getUser());
         return getResponseEntity(response, "장바구니 조회 성공");
     }
 
