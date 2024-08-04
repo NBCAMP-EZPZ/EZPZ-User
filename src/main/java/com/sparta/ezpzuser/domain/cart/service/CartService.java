@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.sparta.ezpzuser.common.exception.ErrorType.*;
 
@@ -37,7 +36,7 @@ public class CartService {
     public CartResponseDto createCart(CartCreateRequestDto dto, User user) {
         Item item = getItem(dto.getItemId());
         item.checkStock(dto.getQuantity());
-        Cart cart = cartRepository.save(Cart.of(dto.getQuantity(), user, item));
+        Cart cart = cartRepository.save(Cart.of(user, item, dto.getQuantity()));
         return CartResponseDto.of(cart);
     }
 
@@ -48,11 +47,11 @@ public class CartService {
      * @return 장바구니 내역 리스트
      */
     @Transactional(readOnly = true)
-    public List<CartResponseDto> findCartsAll(User user) {
+    public List<CartResponseDto> findAllCarts(User user) {
         List<Cart> cartList = cartRepository.findAllByUserIdOrderByCreatedAtDesc(user.getId());
         return cartList.stream()
                 .map(CartResponseDto::of)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
