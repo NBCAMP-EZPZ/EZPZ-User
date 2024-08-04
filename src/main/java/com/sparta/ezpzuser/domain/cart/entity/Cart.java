@@ -3,14 +3,7 @@ package com.sparta.ezpzuser.domain.cart.entity;
 import com.sparta.ezpzuser.common.entity.Timestamped;
 import com.sparta.ezpzuser.domain.item.entity.Item;
 import com.sparta.ezpzuser.domain.user.entity.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,40 +18,35 @@ public class Cart extends Timestamped {
     @Column(name = "cart_id")
     private Long id;
 
-    @Column
     private int quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "item_id")
     private Item item;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     /**
-     * Cart 생성자
-     *
-     * @param quantity 장바구니에 담을 굿즈의 개수
-     * @param user     장바구니를 생성하는 사용자
-     * @param item     장바구니에 담을 굿즈
+     * 생성자
      */
-    private Cart(int quantity, User user, Item item) {
-        this.quantity = quantity;
+    private Cart(User user, Item item, int quantity) {
         this.user = user;
         this.item = item;
+        this.quantity = quantity;
     }
 
     /**
      * Cart 정적 팩토리 메서드
      *
-     * @param quantity 장바구니에 담을 굿즈의 개수
      * @param user     장바구니를 생성하는 사용자
      * @param item     장바구니에 담을 굿즈
+     * @param quantity 장바구니에 담을 굿즈의 개수
      * @return cart
      */
-    public static Cart of(int quantity, User user, Item item) {
-        return new Cart(quantity, user, item);
+    public static Cart of(User user, Item item, int quantity) {
+        return new Cart(user, item, quantity);
     }
 
     /**
@@ -69,4 +57,5 @@ public class Cart extends Timestamped {
     public void updateCart(int quantity) {
         this.quantity = quantity;
     }
+
 }
