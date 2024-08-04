@@ -4,27 +4,14 @@ import com.sparta.ezpzuser.common.entity.Timestamped;
 import com.sparta.ezpzuser.domain.order.enums.OrderStatus;
 import com.sparta.ezpzuser.domain.orderline.entity.Orderline;
 import com.sparta.ezpzuser.domain.user.entity.User;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,18 +25,16 @@ public class Order extends Timestamped {
     @Column(name = "order_id")
     private Long id;
 
-    @Column(nullable = false)
     private int totalPrice;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private OrderStatus orderStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Orderline> orderlineList = new ArrayList<>();
 
     /**
@@ -62,12 +47,6 @@ public class Order extends Timestamped {
         this.orderStatus = OrderStatus.ORDER_COMPLETED;
     }
 
-    /**
-     * Order 정적 팩토리 메서드
-     *
-     * @param user 주문자
-     * @return
-     */
     public static Order of(User user) {
         return new Order(user);
     }
