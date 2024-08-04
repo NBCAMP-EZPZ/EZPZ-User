@@ -51,11 +51,11 @@ public class OrderController {
     }
 
     @PatchMapping("/{orderId}")
-    public ResponseEntity<CommonResponse<?>> deleteOrder(
+    public ResponseEntity<CommonResponse<?>> cancelOrder(
             @PathVariable Long orderId,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        orderService.deleteOrder(orderId, userDetails.getUser());
+        orderService.cancelOrder(orderId, userDetails.getUser());
         return getResponseEntity("주문 취소 성공");
     }
 
