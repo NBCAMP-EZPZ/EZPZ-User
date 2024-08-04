@@ -2,22 +2,22 @@ package com.sparta.ezpzuser.domain.popup.entity;
 
 import com.sparta.ezpzuser.common.entity.Timestamped;
 import com.sparta.ezpzuser.common.exception.CustomException;
-import com.sparta.ezpzuser.common.exception.ErrorType;
 import com.sparta.ezpzuser.domain.host.entity.Host;
 import com.sparta.ezpzuser.domain.popup.enums.ApprovalStatus;
 import com.sparta.ezpzuser.domain.popup.enums.PopupStatus;
 import com.sparta.ezpzuser.domain.review.entity.Review;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+import static com.sparta.ezpzuser.common.exception.ErrorType.POPUP_ACCESS_FORBIDDEN;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class Popup extends Timestamped {
 
     @Id
@@ -25,57 +25,43 @@ public class Popup extends Timestamped {
     @Column(name = "popup_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "host_id", nullable = false)
-    private Host host;
-
-    @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(nullable = false)
     private String description;
 
-    @Column(name = "thumbnail_url", nullable = false)
     private String thumbnailUrl;
 
-    @Column(name = "thumbnail_name", nullable = false)
     private String thumbnailName;
 
-    @Column(nullable = false)
     private String address;
 
-    @Column(name = "manager_name", nullable = false)
     private String managerName;
 
-    @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
 
-    @Column(name = "popup_status", nullable = false)
+    private LocalDateTime startDate;
+
+    private LocalDateTime endDate;
+
+    private int likeCount;
+
+    private int reviewCount;
+
+    private double ratingAvg;
+
+    @Transient
+    private int ratingSum = 0;
+
     @Enumerated(EnumType.STRING)
     private PopupStatus popupStatus;
 
-    @Column(name = "approval_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private ApprovalStatus approvalStatus;
 
-    @Column(name = "like_count", nullable = false)
-    private int likeCount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "host_id")
+    private Host host;
 
-    @Column(name = "review_count", nullable = false)
-    private int reviewCount;
-
-    @Column(name = "rating_avg", nullable = false)
-    private float ratingAvg;
-
-    @Transient
-    private int ratingSum;
-
-    @Column(name = "start_date", nullable = false)
-    private LocalDateTime startDate;
-
-    @Column(name = "end_date", nullable = false)
-    private LocalDateTime endDate;
-    
     private Popup(Host host, String name, String description, String thumbnailUrl, String thumbnailName, String address, String managerName, String phoneNumber, PopupStatus popupStatus, ApprovalStatus approvalStatus, LocalDateTime startDate, LocalDateTime endDate) {
         this.host = host;
         this.name = name;
@@ -91,25 +77,41 @@ public class Popup extends Timestamped {
         this.startDate = startDate;
         this.endDate = endDate;
     }
-    
+
     public static Popup of(Host host, String name, String description, String thumbnailUrl, String thumbnailName, String address, String managerName, String phoneNumber, PopupStatus popupStatus, ApprovalStatus approvalStatus, LocalDateTime startDate, LocalDateTime endDate) {
         return new Popup(host, name, description, thumbnailUrl, thumbnailName, address, managerName, phoneNumber, popupStatus, approvalStatus, startDate, endDate);
     }
-    
-    
+
+    // 테스트용 생성자
+    private Popup(Host host) {
+        this.host = host;
+        this.approvalStatus = ApprovalStatus.APPROVED;
+        this.popupStatus = PopupStatus.IN_PROGRESS;
+        this.startDate = LocalDateTime.now();
+        this.endDate = LocalDateTime.now().plusDays(1);
+    }
+
+    public static Popup createMockPopup() {
+        return new Popup(null);
+    }
+
+    public static Popup createMockPopup(Host host) {
+        return new Popup(host);
+    }
 
     /**
      * 상태 확인
      */
     public void verifyStatus() {
-        if (this.approvalStatus == ApprovalStatus.REVIEWING ||
-                this.popupStatus == PopupStatus.CANCELED) {
-            throw new CustomException(ErrorType.POPUP_ACCESS_FORBIDDEN);
+        if (!this.approvalStatus.equals(ApprovalStatus.APPROVED)
+                || this.popupStatus.equals(PopupStatus.CANCELED)) {
+            throw new CustomException(POPUP_ACCESS_FORBIDDEN);
         }
     }
 
     /**
      * 리뷰 추가
+     *
      * @param review 추가할 리뷰
      */
     public void addReview(Review review) {
@@ -121,12 +123,13 @@ public class Popup extends Timestamped {
 
     /**
      * 좋아요 개수 (true: 증가 / false: 감소)
+     *
      * @param b boolean
      */
     public void updateLikeCount(boolean b) {
         if (b) {
             this.likeCount++;
-        }else {
+        } else {
             if (this.likeCount > 0) {
                 this.likeCount--;
             }
