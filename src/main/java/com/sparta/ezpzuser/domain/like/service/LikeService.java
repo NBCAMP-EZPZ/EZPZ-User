@@ -41,6 +41,10 @@ public class LikeService {
      * @param dto  컨텐츠 타입, ID
      * @param user 유저
      */
+    @DistributedLock(
+            key = "'toggleLike-contentType-'.concat(#dto.contentType)" +
+                    ".concat('-contentId-').concat(#dto.contentId)"
+    )
     public LikeResponseDto toggleLike(LikeRequestDto dto, User user) {
         LikeContentType contentType = dto.getContentType();
         Long contentId = dto.getContentId();
@@ -89,7 +93,6 @@ public class LikeService {
      * @param user    이용자
      * @return 좋아요 여부 (true: 좋아요, false: 좋아요 취소)
      */
-    @DistributedLock(key = "'togglePopupLike-popupId-'.concat(#popupId)")
     private boolean togglePopupLike(Long popupId, User user) {
         Popup popup = popupRepository.findById(popupId)
                 .orElseThrow(() -> new CustomException(POPUP_NOT_FOUND));
@@ -107,7 +110,6 @@ public class LikeService {
      * @param user   이용자
      * @return 좋아요 여부 (true: 좋아요, false: 좋아요 취소)
      */
-    @DistributedLock(key = "'toggleItemLike-itemId-'.concat(#itemId)")
     private boolean toggleItemLike(Long itemId, User user) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(ITEM_NOT_FOUND));
