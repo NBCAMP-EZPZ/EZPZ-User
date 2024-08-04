@@ -16,7 +16,19 @@ public class CartRepositoryCustomImpl implements CartRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Cart> findAllByIdListAndUser(List<Long> cartIdList, User user) {
+    public List<Cart> findAllWithItemByUser(User user) {
+        return queryFactory
+                .selectFrom(cart)
+                .join(cart.item, item).fetchJoin()
+                .where(
+                        cart.user.eq(user)
+                )
+                .orderBy(cart.createdAt.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<Cart> findAllWithItemByIdListAndUser(List<Long> cartIdList, User user) {
         return queryFactory
                 .selectFrom(cart)
                 .join(cart.item, item).fetchJoin()

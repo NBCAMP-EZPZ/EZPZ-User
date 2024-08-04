@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface CartRepositoryCustom {
 
-    List<Cart> findAllByIdListAndUser(List<Long> cartIdList, User user);
+    List<Cart> findAllWithItemByUser(User user);
+
+    List<Cart> findAllWithItemByIdListAndUser(List<Long> cartIdList, User user);
 
 }
