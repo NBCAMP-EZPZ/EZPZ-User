@@ -40,7 +40,7 @@ public class OrderService {
     @DistributedLock(key = "createOrder")
     public OrderResponseDto createOrder(OrderRequestDto dto, User user) {
         // 장바구니 목록 가져오기
-        List<Cart> cartList = cartRepository.findAllByIdListAndUser(dto.getCartIdList(), user);
+        List<Cart> cartList = cartRepository.findAllWithItemByIdListAndUser(dto.getCartIdList(), user);
         // 장바구니 목록을 통해 주문상품 목록 생성
         List<Orderline> orderlineList = new ArrayList<>();
         for (Cart cart : cartList) {
