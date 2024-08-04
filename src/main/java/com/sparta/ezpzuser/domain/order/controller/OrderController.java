@@ -2,7 +2,7 @@ package com.sparta.ezpzuser.domain.order.controller;
 
 import com.sparta.ezpzuser.common.dto.CommonResponse;
 import com.sparta.ezpzuser.common.security.UserDetailsImpl;
-import com.sparta.ezpzuser.domain.order.dto.OrderFindAllResponseDto;
+import com.sparta.ezpzuser.domain.order.dto.OrderPageResponseDto;
 import com.sparta.ezpzuser.domain.order.dto.OrderRequestDto;
 import com.sparta.ezpzuser.domain.order.dto.OrderResponseDto;
 import com.sparta.ezpzuser.domain.order.service.OrderService;
@@ -37,7 +37,7 @@ public class OrderController {
             Pageable pageable,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        Page<OrderFindAllResponseDto> response = orderService.findOrdersAll(pageable, userDetails.getUser());
+        Page<OrderPageResponseDto> response = orderService.findAllOrders(pageable, userDetails.getUser());
         return getResponseEntity(response, "주문 목록 조회 성공");
     }
 
