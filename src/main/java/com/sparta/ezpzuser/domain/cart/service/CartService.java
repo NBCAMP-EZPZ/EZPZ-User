@@ -35,8 +35,10 @@ public class CartService {
     @DistributedLock(key = "'createCart-userId-'.concat(#user.id)")
     public CartResponseDto createCart(CartCreateRequestDto dto, User user) {
         Item item = getItem(dto.getItemId());
-        item.checkStock(dto.getQuantity());
-        Cart cart = cartRepository.save(Cart.of(user, item, dto.getQuantity()));
+        int quantity = dto.getQuantity();
+        item.checkStock(quantity);
+
+        Cart cart = cartRepository.save(Cart.of(user, item, quantity));
         return CartResponseDto.of(cart);
     }
 
@@ -48,7 +50,7 @@ public class CartService {
      */
     @Transactional(readOnly = true)
     public List<CartResponseDto> findAllCarts(User user) {
-        List<Cart> cartList = cartRepository.findAllByUserIdOrderByCreatedAtDesc(user.getId());
+        List<Cart> cartList = cartRepository.findAllWithItemByUser(user);
         return cartList.stream()
                 .map(CartResponseDto::of)
                 .toList();
@@ -66,8 +68,11 @@ public class CartService {
     public CartResponseDto updateCart(Long cartId, CartUpdateRequestDto dto, User user) {
         Cart cart = getUserCart(cartId, user);
         Item item = getItem(cart.getItem().getId());
-        item.checkStock(dto.getQuantity());
-        cart.updateCart(dto.getQuantity());
+
+        int quantity = dto.getQuantity();
+        item.checkStock(quantity);
+        cart.updateCart(quantity);
+
         return CartResponseDto.of(cart);
     }
 
@@ -85,11 +90,6 @@ public class CartService {
 
     /* UTIL */
 
-    private Item getItem(Long itemId) {
-        return itemRepository.findById(itemId)
-                .orElseThrow(() -> new CustomException(ITEM_NOT_FOUND));
-    }
-
     /**
      * 해당 장바구니가 존재하고, 요청한 사용자의 장바구니가 맞는지 확인하는 메서드
      *
@@ -105,6 +105,11 @@ public class CartService {
             throw new CustomException(UNAUTHORIZED_CART_ACCESS);
         }
         return cart;
+    }
+
+    private Item getItem(Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new CustomException(ITEM_NOT_FOUND));
     }
 
 }

@@ -68,9 +68,7 @@ public class Item extends Timestamped {
      * @param quantity 주문 수량
      */
     public void removeStock(int quantity) {
-        if (this.stock < quantity) {
-            throw new CustomException(STOCK_NOT_ENOUGH);
-        }
+        checkStock(quantity);
         this.stock -= quantity;
         if (this.stock == 0) {
             this.itemStatus = ItemStatus.SOLD_OUT;
@@ -87,6 +85,18 @@ public class Item extends Timestamped {
         // 품절 상태였다면 다시 판매 중 상태로 변경
         if (this.itemStatus.equals(ItemStatus.SOLD_OUT)) {
             this.itemStatus = ItemStatus.ON_SALE;
+        }
+    }
+
+    /**
+     * 해당 수량만큼 재고가 있는지 확인
+     *
+     * @param quantity 확인할 수량
+     */
+    public void checkStock(int quantity) {
+        // 남은 재고가 해당 수량보다 적은 경우
+        if (this.stock < quantity) {
+            throw new CustomException(STOCK_NOT_ENOUGH);
         }
     }
 
