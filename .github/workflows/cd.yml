@@ -76,7 +76,7 @@ jobs:
       - name: Build with Gradle Wrapper
         run: |
           ./gradlew clean
-          ./gradlew build
+          ./gradlew build --info
 
       # Docker 이미지 생성
       - name: Docker build
