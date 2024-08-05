@@ -72,8 +72,11 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: clear gradle cache
-        run: rm -rf ~/.gradle/caches/
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}-v2
 
       # build
       - name: Build with Gradle Wrapper
