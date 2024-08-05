@@ -62,3 +62,12 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+def querydslSrcDir = "$projectDir/build/generated"
+clean {
+    delete file(querydslSrcDir)
+}
+
+tasks.withType(JavaCompile) {
+    options.generatedSourceOutputDirectory = file(querydslSrcDir)
+}
