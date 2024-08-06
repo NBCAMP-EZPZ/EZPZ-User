@@ -26,19 +26,6 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final UserCouponRepository userCouponRepository;
 
-    @Transactional
-    public UserCouponResponseDto downloadCouponWithoutLock(Long couponId, User user) {
-        Coupon coupon = couponRepository.findById(couponId)
-                .orElseThrow(() -> new CustomException(COUPON_NOT_FOUND));
-        // 이미 다운로드 받은 쿠폰인지 확인
-        if (userCouponRepository.existsByUserAndCoupon(user, coupon)) {
-            throw new CustomException(ALREADY_DOWNLOADED_COUPON);
-        }
-        coupon.download();
-        UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
-        return UserCouponResponseDto.of(userCoupon);
-    }
-
     /**
      * 쿠폰 다운로드
      *
@@ -46,45 +33,24 @@ public class CouponService {
      * @param user     다운로드 요청한 이용자 객체
      * @return 다운로드 후 생성된 UserCoupon 객체
      */
-    @DistributedLock(key = "'downloadCoupon'.concat(#couponId)")
+    @DistributedLock(key = "'downloadCoupon-couponId-'.concat(#couponId)")
     public UserCouponResponseDto downloadCoupon(Long couponId, User user) {
-        Coupon coupon = couponRepository.findById(couponId)
-                .orElseThrow(() -> new CustomException(COUPON_NOT_FOUND));
-        // 이미 다운로드 받은 쿠폰인지 확인
-        if (userCouponRepository.existsByUserAndCoupon(user, coupon)) {
-            throw new CustomException(ALREADY_DOWNLOADED_COUPON);
-        }
+        Coupon coupon = getCoupon(couponId);
+        validateDuplicateCoupon(user, coupon);
         coupon.download();
         UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
         return UserCouponResponseDto.of(userCoupon);
     }
 
-//    @Transactional
-//    public UserCouponResponseDto downloadCoupon(Long couponId, User user) {
-//        RLock lock = redissonClient.getFairLock("couponDownloadLock_" + couponId); // 요청 들어온 순서대로 처리
-//        boolean locked = false;
-//        try {
-//            locked = lock.tryLock(10, 60, TimeUnit.SECONDS);
-//            if (locked) {
-//                Coupon coupon = couponRepository.findById(couponId)
-//                        .orElseThrow(() -> new CustomException(COUPON_NOT_FOUND));
-//                // 이미 다운로드 받은 쿠폰인지 확인
-//                if (userCouponRepository.existsByUserAndCoupon(user, coupon)) {
-//                    throw new CustomException(ALREADY_DOWNLOADED_COUPON);
-//                }
-//                coupon.download();
-//                UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
-//                return UserCouponResponseDto.of(userCoupon);
-//            }
-//        } catch (InterruptedException e) {
-//            Thread.currentThread().interrupt();
-//        } finally {
-//            if (locked && lock.isHeldByCurrentThread()) {
-//                lock.unlock(); // 락을 획득했을 때만 해제
-//            }
-//        }
-//        return null;
-//    }
+    // 분산락 미적용 테스트 메서드
+    @Transactional
+    public UserCouponResponseDto downloadCouponWithoutLock(Long couponId, User user) {
+        Coupon coupon = getCoupon(couponId);
+        validateDuplicateCoupon(user, coupon);
+        coupon.download();
+        UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
+        return UserCouponResponseDto.of(userCoupon);
+    }
 
     /**
      * 다운로드 가능한 쿠폰 목록 조회
@@ -92,6 +58,7 @@ public class CouponService {
      * @param pageable Pageable 객체
      * @return 다운로드 가능한 쿠폰 목록
      */
+    @Transactional(readOnly = true)
     public Page<CouponResponseDto> findAllDownloadableCoupons(Pageable pageable) {
         Page<Coupon> page = couponRepository.findByRemainingCountGreaterThan(0, pageable);
         validatePageableWithPage(pageable, page);
@@ -105,10 +72,30 @@ public class CouponService {
      * @param pageable Pageable 객체
      * @return 마이 쿠폰 목록
      */
+    @Transactional(readOnly = true)
     public Page<CouponResponseDto> findAllMyCoupons(User user, Pageable pageable) {
         Page<Coupon> page = userCouponRepository.findAllMyCoupons(user, pageable);
         validatePageableWithPage(pageable, page);
         return page.map(CouponResponseDto::of);
+    }
+
+    /* UTIL */
+
+    private Coupon getCoupon(Long couponId) {
+        return couponRepository.findById(couponId)
+                .orElseThrow(() -> new CustomException(COUPON_NOT_FOUND));
+    }
+
+    /**
+     * 이미 다운로드 받은 쿠폰인지 확인
+     *
+     * @param user   이용자 객체
+     * @param coupon 쿠폰 객체
+     */
+    private void validateDuplicateCoupon(User user, Coupon coupon) {
+        if (userCouponRepository.existsByUserAndCoupon(user, coupon)) {
+            throw new CustomException(ALREADY_DOWNLOADED_COUPON);
+        }
     }
 
 }

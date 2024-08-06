@@ -22,13 +22,13 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<Item> findAllItemsByHostAndPopupAndStatus(Pageable pageable, ItemCondition cond) {
+    public Page<Item> findAllByItemCondition(Pageable pageable, ItemCondition cond) {
         // 데이터 조회 쿼리
         List<Item> items = jpaQueryFactory
                 .selectFrom(item)
                 .where(
-                    popupIdEq(cond.getPopupId()),
-                    itemStatusEq(cond.getItemStatus())
+                        popupIdEq(cond.getPopupId()),
+                        itemStatusEq(cond.getItemStatus())
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -49,7 +49,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     }
 
     @Override
-    public Page<Item> findItemByIdList(Pageable pageable, List<Long> itemIdList) {
+    public Page<Item> findAllByIdList(Pageable pageable, List<Long> itemIdList) {
         // 데이터 조회 쿼리
         List<Item> items = jpaQueryFactory
                 .selectFrom(item)
@@ -86,10 +86,11 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
         return Objects.nonNull(popupId) && !"all".equals(popupId) ?
                 item.popup.id.eq(Long.valueOf(popupId)) : null;
     }
-    
+
     // 조건 : 상품 상태
     private BooleanExpression itemStatusEq(String itemStatus) {
         return Objects.nonNull(itemStatus) && !"all".equals(itemStatus) ?
-            item.itemStatus.eq(ItemStatus.valueOf(itemStatus.toUpperCase())) : null;
+                item.itemStatus.eq(ItemStatus.valueOf(itemStatus.toUpperCase())) : null;
     }
+
 }

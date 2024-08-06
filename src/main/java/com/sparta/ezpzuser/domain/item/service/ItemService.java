@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ItemService {
 
     private final ItemRepository itemRepository;
@@ -28,11 +27,11 @@ public class ItemService {
      * @param cond     조회 조건
      * @return 상품
      */
-    public Page<?> findAllItemsByHostAndPopupAndStatus(Pageable pageable, ItemCondition cond) {
-        Page<?> itemList = itemRepository.findAllItemsByHostAndPopupAndStatus(pageable, cond)
-                .map(ItemPageResponseDto::of);
-        PageUtil.validatePageableWithPage(pageable, itemList);
-        return itemList;
+    @Transactional(readOnly = true)
+    public Page<ItemPageResponseDto> findAllByItemCondition(Pageable pageable, ItemCondition cond) {
+        Page<Item> page = itemRepository.findAllByItemCondition(pageable, cond);
+        PageUtil.validatePageableWithPage(pageable, page);
+        return page.map(ItemPageResponseDto::of);
     }
 
     /**
@@ -41,10 +40,12 @@ public class ItemService {
      * @param itemId 상품 ID
      * @return 상품 상세
      */
+    @Transactional(readOnly = true)
     public ItemResponseDto findItem(Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new CustomException(ErrorType.ITEM_NOT_FOUND));
-        item.checkStatus();
+        item.verifyStatus();
         return ItemResponseDto.of(item);
     }
+
 }

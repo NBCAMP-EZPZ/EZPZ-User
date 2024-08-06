@@ -29,7 +29,7 @@ public enum ErrorType {
 
     // Popup
     POPUP_NOT_FOUND(NOT_FOUND, "존재하지 않는 팝업입니다."),
-    POPUP_ACCESS_FORBIDDEN(FORBIDDEN, "해당 팝업이 존재하지 않거나, 팝업에 대한 권한이 없습니다."),
+    POPUP_ACCESS_FORBIDDEN(FORBIDDEN, "해당 팝업에 대한 접근 권한이 없습니다."),
 
     // Order
     ORDER_NOT_FOUND(BAD_REQUEST, "존재하지 않는 주문 내역입니다."),
@@ -53,7 +53,7 @@ public enum ErrorType {
     UNVISITED_USER(BAD_REQUEST, "예약한 팝업에 방문 완료한 예약자가 아닙니다."),
 
     // Slot
-    SLOT_RESERVATION_FINISHED(BAD_REQUEST, "예약이 마감된 슬롯입니다."),
+    SLOT_RESERVATION_CLOSED(BAD_REQUEST, "예약이 마감된 슬롯입니다."),
     SLOT_NOT_FOUND(NOT_FOUND, "해당 슬롯을 찾을 수 없습니다."),
 
     // Coupon
@@ -62,7 +62,7 @@ public enum ErrorType {
     SOLD_OUT_COUPON(BAD_REQUEST, "이미 매진된 쿠폰입니다."),
 
     // Cart
-    INSUFFICIENT_STOCK(BAD_REQUEST, "재고량이 부족합니다."),
+    STOCK_NOT_ENOUGH(BAD_REQUEST, "재고량이 부족합니다."),
     STOCK_UNAVAILABLE(BAD_REQUEST, "장바구니에 담긴 상품의 재고가 현재 없거나 부족합니다."),
     CART_NOT_FOUND(NOT_FOUND, "존재하지 않는 장바구니 내역입니다."),
     UNAUTHORIZED_CART_ACCESS(FORBIDDEN, "본인의 장바구니만 수정할 수 있습니다."),

@@ -4,20 +4,17 @@ import com.sparta.ezpzuser.common.entity.Timestamped;
 import com.sparta.ezpzuser.domain.like.entity.Like;
 import com.sparta.ezpzuser.domain.user.dto.SignupRequestDto;
 import jakarta.persistence.*;
-
-import java.util.List;
-
-import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class User extends Timestamped {
 
     @Id
@@ -36,7 +33,14 @@ public class User extends Timestamped {
     private String phoneNumber;
 
     @OneToMany(mappedBy = "user")
-    private List<Like> likeList;
+    private List<Like> likeList = new ArrayList<>();
+
+    /**
+     * 연관관계 편의 메서드
+     */
+    public void addLike(Like like) {
+        this.likeList.add(like);
+    }
 
     private User(SignupRequestDto dto, String encodedPassword) {
         username = dto.getUsername();
@@ -49,4 +53,9 @@ public class User extends Timestamped {
     public static User of(SignupRequestDto dto, String encodedPassword) {
         return new User(dto, encodedPassword);
     }
+
+    public static User createMockUser() {
+        return new User();
+    }
+
 }

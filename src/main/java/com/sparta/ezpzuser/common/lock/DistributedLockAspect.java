@@ -40,14 +40,14 @@ public class DistributedLockAspect {
         RLock rLock = redissonClient.getFairLock(key); // 선착순 보장
 
         try {
+            log.info("try lock for key: {}", key);
             boolean available = rLock.tryLock(
                     distributedLock.waitTime(),
                     distributedLock.leaseTime(),
                     distributedLock.timeUnit()
             );
             if (!available) {
-                log.error("lock failed for key: {}", key);
-                return false;
+                throw new RuntimeException("lock failed for key: " + key);
             }
             // DistributedLock 어노테이션이 선언된 메서드를 별도의 트랜잭션으로 실행
             return transactionForAop.proceed(joinPoint);

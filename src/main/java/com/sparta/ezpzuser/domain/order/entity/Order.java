@@ -1,30 +1,19 @@
 package com.sparta.ezpzuser.domain.order.entity;
 
 import com.sparta.ezpzuser.common.entity.Timestamped;
+import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.domain.order.enums.OrderStatus;
-import com.sparta.ezpzuser.domain.orderline.entity.Orderline;
 import com.sparta.ezpzuser.domain.user.entity.User;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.sparta.ezpzuser.common.exception.ErrorType.ORDER_CANCELLATION_NOT_ALLOWED;
 
 @Entity
 @Getter
@@ -38,69 +27,54 @@ public class Order extends Timestamped {
     @Column(name = "order_id")
     private Long id;
 
-    @Column(nullable = false)
     private int totalPrice;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private OrderStatus orderStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Orderline> orderlineList = new ArrayList<>();
 
     /**
-     * Order 생성자
-     *
-     * @param user 주문자
-     */
-    private Order(User user) {
-        this.user = user;
-        this.orderStatus = OrderStatus.ORDER_COMPLETED;
-    }
-
-    /**
-     * Order 정적 팩토리 메서드
-     *
-     * @param user 주문자
-     * @return
-     */
-    public static Order of(User user) {
-        return new Order(user);
-    }
-
-
-    /**
-     * orderline 추가
-     *
-     * @param orderline 추가할 orderline
+     * 연관관계 편의 메서드
      */
     public void addOrderline(Orderline orderline) {
-        orderlineList.add(orderline);
-        calculateTotalPrice();
-    }
-
-
-    /**
-     * 이 주문라인의 총 금액을 계산하여 반환, 엔티티가 새로 생성되거나 업데이트될 때 호출됨
-     */
-    @PrePersist
-    @PreUpdate
-    public void calculateTotalPrice() {
-        this.totalPrice = orderlineList.stream()
-                .mapToInt(orderline -> orderline.getItem().getPrice() * orderline.getQuantity())
-                .sum();
+        this.orderlineList.add(orderline);
+        orderline.setOrderTo(this);
     }
 
     /**
-     * 주문 상태 변경 메서드
-     *
-     * @param orderStatus 변경할 상태
+     * 생성자
      */
-    public void updateStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    private Order(User user, List<Orderline> orderlineList) {
+        this.user = user;
+        this.orderStatus = OrderStatus.ORDER_COMPLETED;
+        for (Orderline orderline : orderlineList) {
+            this.addOrderline(orderline);
+            this.totalPrice += orderline.getOrderPrice();
+        }
     }
+
+    public static Order of(User user, List<Orderline> orderlineList) {
+        return new Order(user, orderlineList);
+    }
+
+    /**
+     * 주문 취소
+     */
+    public void cancel() {
+        // 배송 전 상태인 주문만 취소 가능
+        if (!this.orderStatus.equals(OrderStatus.ORDER_COMPLETED)) {
+            throw new CustomException(ORDER_CANCELLATION_NOT_ALLOWED);
+        }
+        this.orderStatus = OrderStatus.CANCELLED;
+        for (Orderline orderline : this.orderlineList) {
+            orderline.cancel();
+        }
+    }
+
 }

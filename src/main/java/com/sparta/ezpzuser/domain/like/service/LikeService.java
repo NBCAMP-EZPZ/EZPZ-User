@@ -1,32 +1,35 @@
 package com.sparta.ezpzuser.domain.like.service;
 
 import com.sparta.ezpzuser.common.exception.CustomException;
-import com.sparta.ezpzuser.common.exception.ErrorType;
-import com.sparta.ezpzuser.common.util.PageUtil;
+import com.sparta.ezpzuser.common.lock.DistributedLock;
 import com.sparta.ezpzuser.domain.item.entity.Item;
 import com.sparta.ezpzuser.domain.item.repository.ItemRepository;
-import com.sparta.ezpzuser.domain.like.dto.LikeContentDto;
-import com.sparta.ezpzuser.domain.like.dto.LikeItemPageResponseDto;
-import com.sparta.ezpzuser.domain.like.dto.LikePopupPageResponseDto;
+import com.sparta.ezpzuser.domain.like.dto.LikeRequestDto;
+import com.sparta.ezpzuser.domain.like.dto.LikeResponseDto;
+import com.sparta.ezpzuser.domain.like.dto.LikedItemResponseDto;
+import com.sparta.ezpzuser.domain.like.dto.LikedPopupResponseDto;
 import com.sparta.ezpzuser.domain.like.entity.Like;
+import com.sparta.ezpzuser.domain.like.entity.LikeContentType;
 import com.sparta.ezpzuser.domain.like.repository.LikeRepository;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import com.sparta.ezpzuser.domain.popup.repository.popup.PopupRepository;
 import com.sparta.ezpzuser.domain.user.entity.User;
 import com.sparta.ezpzuser.domain.user.repository.UserRepository;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static com.sparta.ezpzuser.common.exception.ErrorType.*;
+import static com.sparta.ezpzuser.common.util.PageUtil.validatePageableWithPage;
+import static com.sparta.ezpzuser.domain.like.entity.LikeContentType.ITEM;
+import static com.sparta.ezpzuser.domain.like.entity.LikeContentType.POPUP;
+
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
-@Slf4j
 public class LikeService {
 
     private final LikeRepository likeRepository;
@@ -35,121 +38,121 @@ public class LikeService {
     private final UserRepository userRepository;
 
     /**
-     * 컨텐츠 좋아요 토글
+     * 좋아요 토글
      *
-     * @param content 컨텐츠 타입, ID
-     * @param user    유저
+     * @param dto  컨텐츠 타입, ID
+     * @param user 유저
      */
-    @Transactional
-    public void contentLike(LikeContentDto content, User user) {
-
-        // 좋아요 가능한 상태인지 확인
-        switch (content.getContentType()) {
-            case "popup" -> popupLike(content, user);
-            case "item" -> itemLike(content, user);
-            default -> throw new CustomException(ErrorType.INVALID_CONTENT_TYPE);
+    @DistributedLock(
+            key = "'toggleLike-contentType-'.concat(#dto.contentType)" +
+                    ".concat('-contentId-').concat(#dto.contentId)"
+    )
+    public LikeResponseDto toggleLike(LikeRequestDto dto, User user) {
+        LikeContentType contentType = dto.getContentType();
+        Long contentId = dto.getContentId();
+        User requestUser = userRepository.findById(user.getId()).orElseThrow();
+        boolean toggleResult;
+        switch (contentType) {
+            case POPUP -> toggleResult = togglePopupLike(contentId, requestUser);
+            case ITEM -> toggleResult = toggleItemLike(contentId, requestUser);
+            default -> throw new CustomException(INVALID_CONTENT_TYPE);
         }
+        return LikeResponseDto.of(toggleResult, contentType, contentId);
     }
 
     /**
      * 타입별 좋아요한 컨텐츠 목록 조회
      *
-     * @param pageable    페이징
-     * @param contentType 컨텐츠 타입
-     * @param user        유저
+     * @param pageable 페이징
+     * @param type     컨텐츠 타입
+     * @param user     유저
      * @return 컨텐츠 목록
      */
-    public Page<?> findAllLikesByContentType(Pageable pageable, String contentType, User user) {
-
-        User findUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new CustomException(ErrorType.DUPLICATED_USERNAME));
-
-        // 유저 좋아요 목록
-        List<Like> likeList = findUser.getLikeList();
-
+    @Transactional(readOnly = true)
+    public Page<?> findAllLikedContentByType(Pageable pageable, String type, User user) {
+        LikeContentType contentType = LikeContentType.valueOf(type.toUpperCase());
+        List<Like> likeList = likeRepository.findByUserAndContentType(user, contentType);
         switch (contentType) {
-            case "popup" -> {
-                // 팝업 Id 목록
-                List<Long> popupIdList = contentIdList(likeList, contentType);
-
-                // 좋아요한 팝업 목록
-                Page<?> popupList = popupRepository.findPopupByIdList(pageable, popupIdList)
-                        .map(LikePopupPageResponseDto::of);
-                PageUtil.validatePageableWithPage(pageable, popupList);
-                return popupList;
+            case POPUP -> {
+                List<Long> likedPopupIdList = getLikedContentIdList(likeList);
+                Page<Popup> page = popupRepository.findAllByIdList(pageable, likedPopupIdList);
+                validatePageableWithPage(pageable, page);
+                return page.map(LikedPopupResponseDto::of);
             }
-            case "item" -> {
-                // 굿즈 ID 목록
-                List<Long> itemIdList = contentIdList(likeList, contentType);
-
-                // 좋아요한 굿즈 목록
-                Page<?> itemList = itemRepository.findItemByIdList(pageable, itemIdList)
-                        .map(LikeItemPageResponseDto::of);
-                PageUtil.validatePageableWithPage(pageable, itemList);
-                return itemList;
+            case ITEM -> {
+                List<Long> likedItemIdList = getLikedContentIdList(likeList);
+                Page<Item> page = itemRepository.findAllByIdList(pageable, likedItemIdList);
+                validatePageableWithPage(pageable, page);
+                return page.map(LikedItemResponseDto::of);
             }
-            default -> throw new CustomException(ErrorType.INVALID_CONTENT_TYPE);
+            default -> throw new CustomException(INVALID_CONTENT_TYPE);
         }
     }
 
     /**
-     * 팝업 좋아요
+     * 팝업 좋아요 토글
      *
-     * @param content 팝업 ID
-     * @param user    유저
+     * @param popupId 팝업 ID
+     * @param user    이용자
+     * @return 좋아요 여부 (true: 좋아요, false: 좋아요 취소)
      */
-    private void popupLike(LikeContentDto content, User user) {
-        Popup popup = popupRepository.findById(content.getContentId())
-                .orElseThrow(() -> new CustomException(ErrorType.POPUP_NOT_FOUND));
-        popup.verifyStatus();
-        popup.updateLikeCount(toggleLike(content, user));
+    private boolean togglePopupLike(Long popupId, User user) {
+        Popup popup = popupRepository.findById(popupId)
+                .orElseThrow(() -> new CustomException(POPUP_NOT_FOUND));
+        popup.verifyStatus(); // 좋아요 토글 가능한 상태인지 검증
+
+        boolean toggleResult = executeToggleLike(POPUP, popupId, user);
+        popup.updateLikeCount(toggleResult);
+        return toggleResult;
     }
 
     /**
-     * 굿즈 좋아요
+     * 굿즈 좋아요 토글
      *
-     * @param content 굿즈 ID
-     * @param user    유저
+     * @param itemId 굿즈 ID
+     * @param user   이용자
+     * @return 좋아요 여부 (true: 좋아요, false: 좋아요 취소)
      */
-    private void itemLike(LikeContentDto content, User user) {
-        Item item = itemRepository.findById(content.getContentId())
-                .orElseThrow(() -> new CustomException(ErrorType.ITEM_NOT_FOUND));
-        item.checkStatus();
-        item.updateLikeCount(toggleLike(content, user));
+    private boolean toggleItemLike(Long itemId, User user) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new CustomException(ITEM_NOT_FOUND));
+        item.verifyStatus(); // 좋아요 토글 가능한 상태인지 검증
+
+        boolean toggleResult = executeToggleLike(ITEM, itemId, user);
+        item.updateLikeCount(toggleResult);
+        return toggleResult;
     }
 
     /**
-     * 좋아요 토글
+     * 좋아요 토글 수행
      *
-     * @param content 컨텐츠 타입, ID
-     * @param user    유저
+     * @param contentType 컨텐츠 타입
+     * @param contentId   컨텐츠 ID
+     * @param user        이용자
+     * @return 좋아요 여부 (true: 좋아요, false: 좋아요 취소)
      */
-    private boolean toggleLike(LikeContentDto content, User user) {
-        Optional<Like> like = likeRepository.findByUserAndContentIdAndContentType(
-                user, content.getContentId(), content.getContentType());
-
-        // 좋아요 등록/취소 토글
-        if (like.isEmpty()) {
-            Like saveLike = Like.of(user, content.getContentId(), content.getContentType());
-            likeRepository.save(saveLike);
+    private boolean executeToggleLike(LikeContentType contentType, Long contentId, User user) {
+        Like like = likeRepository.findByContentTypeAndContentIdAndUser(contentType, contentId, user)
+                .orElse(null);
+        if (like == null) {  // 좋아요인 경우
+            likeRepository.save(Like.of(contentType, contentId, user));
             return true;
-        } else {
-            likeRepository.delete(like.get());
+        } else {  // 좋아요 취소인 경우
+            likeRepository.delete(like);
             return false;
         }
     }
 
     /**
-     * 컨텐츠 ID 목록
+     * 컨텐츠 타입별 좋아요한 컨텐츠 ID 목록 조회
      *
-     * @param likeList    좋아요 목록
-     * @param contentType 컨텐츠 타입
-     * @return ID 목록
+     * @param likeList 좋아요 목록
+     * @return 컨텐츠 ID 목록
      */
-    private List<Long> contentIdList(List<Like> likeList, String contentType) {
+    private List<Long> getLikedContentIdList(List<Like> likeList) {
         return likeList.stream()
-                .filter(like -> contentType.equals(like.getContentType()))
                 .map(Like::getContentId)
                 .toList();
     }
+
 }

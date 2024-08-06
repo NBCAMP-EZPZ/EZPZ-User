@@ -1,6 +1,7 @@
 package com.sparta.ezpzuser.domain.review.service;
 
 import com.sparta.ezpzuser.common.exception.CustomException;
+import com.sparta.ezpzuser.common.lock.DistributedLock;
 import com.sparta.ezpzuser.common.util.PageUtil;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import com.sparta.ezpzuser.domain.popup.repository.popup.PopupRepository;
@@ -22,7 +23,6 @@ import static com.sparta.ezpzuser.common.exception.ErrorType.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -36,11 +36,11 @@ public class ReviewService {
      * @param user 리뷰 남길 이용자
      * @return 생성된 리뷰 정보
      */
-    @Transactional
+    @DistributedLock(key = "'createReview-userId-'.concat(#user.id)")
     public ReviewResponseDto createReview(ReviewRequestDto dto, User user) {
         Reservation reservation = reservationRepository.findById(dto.getReservationId())
                 .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
-        
+
         // 해당 예약의 예약자가 아닌 경우
         if (!reservation.getUser().getId().equals(user.getId())) {
             throw new CustomException(DIFFERENT_RESERVATION_USER);
@@ -49,10 +49,7 @@ public class ReviewService {
         if (!reservation.getReservationStatus().equals(ReservationStatus.FINISHED)) {
             throw new CustomException(UNVISITED_USER);
         }
-        
-        Popup popup = reservation.getSlot().getPopup();
-        
-        // Popup popup = popupRepository.findByReservationId(reservation.getId());
+        Popup popup = popupRepository.findByReservationId(reservation.getId());
         Review review = reviewRepository.save(Review.of(dto, popup, reservation));
         return ReviewResponseDto.of(review);
     }
@@ -64,6 +61,7 @@ public class ReviewService {
      * @param pageable Pageable 객체
      * @return 리뷰 정보 목록
      */
+    @Transactional(readOnly = true)
     public Page<ReviewResponseDto> findAllPopupReviews(Long popupId, Pageable pageable) {
         Page<Review> page = reviewRepository.findByPopupId(popupId, pageable);
         PageUtil.validatePageableWithPage(pageable, page);

@@ -4,7 +4,6 @@ import com.sparta.ezpzuser.domain.coupon.entity.Coupon;
 import com.sparta.ezpzuser.domain.coupon.entity.UserCoupon;
 import com.sparta.ezpzuser.domain.coupon.repository.CouponRepository;
 import com.sparta.ezpzuser.domain.coupon.repository.UserCouponRepository;
-import com.sparta.ezpzuser.domain.user.dto.SignupRequestDto;
 import com.sparta.ezpzuser.domain.user.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +39,7 @@ public class CouponConcurrencyTest {
     void setUp() {
         coupon = new Coupon("coupon", couponCount);
         couponRepository.save(coupon);
-        user = User.of(new SignupRequestDto(), "password");
+        user = User.createMockUser();
     }
 
     // @Test

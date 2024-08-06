@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +12,6 @@ import java.time.LocalDateTime;
 @Getter
 @Table(name = "likes")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
 public class Like {
 
     @Id
@@ -22,28 +19,27 @@ public class Like {
     @Column(name = "like_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Enumerated(EnumType.STRING)
+    private LikeContentType contentType;
 
-    @Column(name = "content_id", nullable = false)
     private Long contentId;
 
-    @Column(name = "content_type", nullable = false)
-    private String contentType;
-
-    @CreatedDate
-    @Column(name = "liked_at", nullable = false, updatable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime likedAt;
 
-    private Like(User user, Long contentId, String contentType) {
-        this.user = user;
-        this.contentId = contentId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    private Like(LikeContentType contentType, Long contentId, User user) {
+        this.likedAt = LocalDateTime.now();
         this.contentType = contentType;
+        this.contentId = contentId;
+        this.user = user;
+        user.addLike(this);
     }
 
-    public static Like of(User user, Long contentId, String contentType) {
-        return new Like(user, contentId, contentType);
+    public static Like of(LikeContentType contentType, Long contentId, User user) {
+        return new Like(contentType, contentId, user);
     }
+
 }
