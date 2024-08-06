@@ -50,10 +50,11 @@ public class LikeService {
     public LikeResponseDto toggleLike(LikeRequestDto dto, User user) {
         LikeContentType contentType = dto.getContentType();
         Long contentId = dto.getContentId();
+        User requestUser = userRepository.findById(user.getId()).orElseThrow();
         boolean toggleResult;
         switch (contentType) {
-            case POPUP -> toggleResult = togglePopupLike(contentId, user);
-            case ITEM -> toggleResult = toggleItemLike(contentId, user);
+            case POPUP -> toggleResult = togglePopupLike(contentId, requestUser);
+            case ITEM -> toggleResult = toggleItemLike(contentId, requestUser);
             default -> throw new CustomException(INVALID_CONTENT_TYPE);
         }
         return LikeResponseDto.of(toggleResult, contentType, contentId);

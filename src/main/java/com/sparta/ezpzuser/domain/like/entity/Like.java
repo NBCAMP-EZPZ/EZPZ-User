@@ -35,7 +35,7 @@ public class Like {
         this.contentType = contentType;
         this.contentId = contentId;
         this.user = user;
-        user.getLikeList().add(this);
+        user.addLike(this);
     }
 
     public static Like of(LikeContentType contentType, Long contentId, User user) {

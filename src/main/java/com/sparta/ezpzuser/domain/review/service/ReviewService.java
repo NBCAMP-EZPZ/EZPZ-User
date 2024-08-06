@@ -46,7 +46,7 @@ public class ReviewService {
             throw new CustomException(DIFFERENT_RESERVATION_USER);
         }
         // 예약한 팝업에 방문 완료한 예약자가 아닌 경우
-        if (!reservation.getReservationStatus().equals(ReservationStatus.VISITED)) {
+        if (!reservation.getReservationStatus().equals(ReservationStatus.FINISHED)) {
             throw new CustomException(UNVISITED_USER);
         }
         Popup popup = popupRepository.findByReservationId(reservation.getId());

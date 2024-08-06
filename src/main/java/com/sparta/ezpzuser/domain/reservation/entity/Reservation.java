@@ -37,7 +37,7 @@ public class Reservation extends Timestamped {
 
     private Reservation(int numberOfPersons, User user, Slot slot) {
         this.numberOfPersons = numberOfPersons;
-        this.reservationStatus = ReservationStatus.RESERVED;
+        this.reservationStatus = ReservationStatus.READY;
         this.user = user;
         this.slot = slot;
     }
@@ -47,7 +47,7 @@ public class Reservation extends Timestamped {
     }
 
     public void cancel() {
-        this.reservationStatus = ReservationStatus.CANCELED;
+        this.reservationStatus = ReservationStatus.CANCEL;
     }
 
 }

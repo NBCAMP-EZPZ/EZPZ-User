@@ -35,6 +35,13 @@ public class User extends Timestamped {
     @OneToMany(mappedBy = "user")
     private List<Like> likeList = new ArrayList<>();
 
+    /**
+     * 연관관계 편의 메서드
+     */
+    public void addLike(Like like) {
+        this.likeList.add(like);
+    }
+
     private User(SignupRequestDto dto, String encodedPassword) {
         username = dto.getUsername();
         password = encodedPassword;
