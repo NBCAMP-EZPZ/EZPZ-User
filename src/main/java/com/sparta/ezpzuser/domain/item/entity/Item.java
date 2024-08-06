@@ -51,7 +51,7 @@ public class Item extends Timestamped {
         this.popup = popup;
         this.price = price;
         this.stock = stock;
-        this.itemStatus = ItemStatus.ON_SALE;
+        this.itemStatus = ItemStatus.SALE;
     }
 
     public static Item createMockItem(Popup popup, int price, int stock) {
@@ -84,7 +84,7 @@ public class Item extends Timestamped {
         this.stock += quantity;
         // 품절 상태였다면 다시 판매 중 상태로 변경
         if (this.itemStatus.equals(ItemStatus.SOLD_OUT)) {
-            this.itemStatus = ItemStatus.ON_SALE;
+            this.itemStatus = ItemStatus.SALE;
         }
     }
 

@@ -10,7 +10,7 @@ public enum ItemStatus {
     /**
      * 판매 중
      */
-    ON_SALE,
+    SALE,
 
     /**
      * 판매 종료
