@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.ezpzuser.common.security.dto.AuthenticatedResponse;
 import com.sparta.ezpzuser.common.security.dto.UnauthenticatedResponse;
 import com.sparta.ezpzuser.domain.user.service.RefreshTokenService;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,7 +63,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 } else {
                     log.error("리프레시 토큰 검증 실패");
                     // 리프레시 토큰이 공격당한 것으로 간주, 리프레시 토큰 삭제
-                    refreshTokenService.delete(refreshToken);
+                    refreshTokenService.deleteByRefreshToken(refreshToken);
                     unverifiedRefreshTokenHandler(res);
                     return;
                 }

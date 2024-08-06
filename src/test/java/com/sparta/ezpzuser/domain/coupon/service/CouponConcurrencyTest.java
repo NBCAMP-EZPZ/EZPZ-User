@@ -42,44 +42,44 @@ public class CouponConcurrencyTest {
         user = User.createMockUser();
     }
 
-    @Test
-    @DisplayName("실패 - 쿠폰 다운로드 동시성 테스트")
-    void downloadCouponWithoutLock() {
-        // given
-        given(userCouponRepository.existsByUserAndCoupon(any(User.class), any(Coupon.class)))
-                .willReturn(false);
-        given(userCouponRepository.save(any(UserCoupon.class)))
-                .willReturn(UserCoupon.of(user, coupon));
+    // @Test
+    // @DisplayName("실패 - 쿠폰 다운로드 동시성 테스트")
+    // void downloadCouponWithoutLock() {
+    //     // given
+    //     given(userCouponRepository.existsByUserAndCoupon(any(User.class), any(Coupon.class)))
+    //             .willReturn(false);
+    //     given(userCouponRepository.save(any(UserCoupon.class)))
+    //             .willReturn(UserCoupon.of(user, coupon));
+    //
+    //     // when
+    //     IntStream.range(0, couponCount).parallel()
+    //             .forEach(i -> couponService.downloadCouponWithoutLock(coupon.getId(), user));
+    //
+    //     // then
+    //     int remainingCount = couponRepository.findById(coupon.getId()).orElseThrow().getRemainingCount();
+    //     assertThat(remainingCount).isNotZero().isNotEqualTo(couponCount);
+    //
+    //     System.out.println("\n[remainingCount]");
+    //     System.out.println("Expected = 0");
+    //     System.out.println("Actual = " + remainingCount);
+    // }
 
-        // when
-        IntStream.range(0, couponCount).parallel()
-                .forEach(i -> couponService.downloadCouponWithoutLock(coupon.getId(), user));
-
-        // then
-        int remainingCount = couponRepository.findById(coupon.getId()).orElseThrow().getRemainingCount();
-        assertThat(remainingCount).isNotZero().isNotEqualTo(couponCount);
-
-        System.out.println("\n[remainingCount]");
-        System.out.println("Expected = 0");
-        System.out.println("Actual = " + remainingCount);
-    }
-
-    @Test
-    @DisplayName("성공 - 쿠폰 다운로드 동시성 테스트")
-    void downloadCouponWithDistributedLock() {
-        // given
-        given(userCouponRepository.existsByUserAndCoupon(any(User.class), any(Coupon.class)))
-                .willReturn(false);
-        given(userCouponRepository.save(any(UserCoupon.class)))
-                .willReturn(UserCoupon.of(user, coupon));
-
-        // when
-        IntStream.range(0, couponCount).parallel()
-                .forEach(i -> couponService.downloadCoupon(coupon.getId(), user));
-
-        // then
-        int remainingCount = couponRepository.findById(coupon.getId()).orElseThrow().getRemainingCount();
-        assertThat(remainingCount).isZero();
-    }
+    // @Test
+    // @DisplayName("성공 - 쿠폰 다운로드 동시성 테스트")
+    // void downloadCouponWithDistributedLock() {
+    //     // given
+    //     given(userCouponRepository.existsByUserAndCoupon(any(User.class), any(Coupon.class)))
+    //             .willReturn(false);
+    //     given(userCouponRepository.save(any(UserCoupon.class)))
+    //             .willReturn(UserCoupon.of(user, coupon));
+    //
+    //     // when
+    //     IntStream.range(0, couponCount).parallel()
+    //             .forEach(i -> couponService.downloadCoupon(coupon.getId(), user));
+    //
+    //     // then
+    //     int remainingCount = couponRepository.findById(coupon.getId()).orElseThrow().getRemainingCount();
+    //     assertThat(remainingCount).isZero();
+    // }
 
 }

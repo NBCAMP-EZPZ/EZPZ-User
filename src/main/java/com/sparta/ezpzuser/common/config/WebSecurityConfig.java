@@ -7,6 +7,7 @@ import com.sparta.ezpzuser.common.security.JwtAuthorizationFilter;
 import com.sparta.ezpzuser.common.security.TokenProvider;
 import com.sparta.ezpzuser.common.security.UserDetailsServiceImpl;
 import com.sparta.ezpzuser.domain.user.service.RefreshTokenService;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;

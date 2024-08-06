@@ -1,26 +1,29 @@
 package com.sparta.ezpzuser.domain.user.service;
 
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.sparta.ezpzuser.domain.user.entity.RefreshToken;
 import com.sparta.ezpzuser.domain.user.repository.RefreshTokenRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class RefreshTokenService {
-
-    private final RefreshTokenRepository refreshTokenRepository;
-
-    @Transactional
-    public void save(String username, String refreshToken) {
-        refreshTokenRepository.save(new RefreshToken(username, refreshToken));
-    }
-
-    @Transactional
-    public void delete(String refreshToken) {
-        refreshTokenRepository.deleteByRefreshToken(refreshToken);
-    }
-
+	
+	private final RefreshTokenRepository refreshTokenRepository;
+	
+	public void save(String username, String refreshToken) {
+		refreshTokenRepository.save(new RefreshToken(username, refreshToken));
+	}
+	
+	public Optional<RefreshToken> findByRefreshToken(String refreshToken) {
+		return refreshTokenRepository.findByRefreshToken(refreshToken);
+	}
+	
+	public void deleteByRefreshToken(String refreshToken) {
+		refreshTokenRepository.deleteByRefreshToken(refreshToken);
+	}
 }
