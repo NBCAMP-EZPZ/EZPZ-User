@@ -37,7 +37,7 @@ public class OrderService {
      * @param user 주문 요청한 사용자
      * @return 완료된 주문 정보
      */
-    @DistributedLock(key = "createOrder")
+    @DistributedLock(key = "'createOrder'")
     public OrderResponseDto createOrder(OrderRequestDto dto, User user) {
         // 장바구니 목록 가져오기
         List<Cart> cartList = cartRepository.findAllWithItemByIdListAndUser(dto.getCartIdList(), user);
@@ -86,7 +86,7 @@ public class OrderService {
      * @param orderId 취소할 주문 id
      * @param user    요청 이용자
      */
-    @DistributedLock(key = "cancelOrder")
+    @DistributedLock(key = "'cancelOrder'")
     public void cancelOrder(Long orderId, User user) {
         Order order = getOrder(orderId, user);
         order.cancel();
