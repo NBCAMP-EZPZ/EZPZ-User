@@ -3,10 +3,12 @@ package com.sparta.ezpzuser.domain.popup.repository.popup;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Wildcard;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sparta.ezpzuser.domain.like.entity.LikeContentType;
 import com.sparta.ezpzuser.domain.popup.dto.PopupCondition;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import com.sparta.ezpzuser.domain.popup.enums.ApprovalStatus;
 import com.sparta.ezpzuser.domain.popup.enums.PopupStatus;
+import com.sparta.ezpzuser.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,8 @@ import org.springframework.data.support.PageableExecutionUtils;
 import java.util.List;
 import java.util.Objects;
 
+import static com.sparta.ezpzuser.common.util.RepositoryUtil.getTotal;
+import static com.sparta.ezpzuser.domain.like.entity.QLike.like;
 import static com.sparta.ezpzuser.domain.popup.entity.QPopup.popup;
 import static com.sparta.ezpzuser.domain.reservation.entity.QReservation.reservation;
 import static com.sparta.ezpzuser.domain.slot.entity.QSlot.slot;
@@ -22,11 +26,11 @@ import static com.sparta.ezpzuser.domain.slot.entity.QSlot.slot;
 @RequiredArgsConstructor
 public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
 
-    private final JPAQueryFactory jpaQueryFactory;
+    private final JPAQueryFactory queryFactory;
 
     @Override
     public Page<Popup> findAllByPopupCondition(Pageable pageable, PopupCondition cond) {
-        List<Popup> popups = jpaQueryFactory
+        List<Popup> popups = queryFactory
                 .selectFrom(popup)
                 .join(popup.host).fetchJoin()
                 .where(
@@ -38,7 +42,7 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
                 .orderBy(popup.createdAt.desc())
                 .fetch();
 
-        Long totalSize = jpaQueryFactory.select(Wildcard.count)
+        Long totalCount = queryFactory.select(Wildcard.count)
                 .from(popup)
                 .where(
                         popup.approvalStatus.eq(ApprovalStatus.APPROVED),
@@ -46,39 +50,50 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
                 )
                 .fetchOne();
 
-        return PageableExecutionUtils.getPage(popups, pageable, () -> totalSize);
+        return PageableExecutionUtils.getPage(popups, pageable, () -> getTotal(totalCount));
     }
 
     @Override
-    public Page<Popup> findAllByIdList(Pageable pageable, List<Long> popupIdList) {
-        List<Popup> popups = jpaQueryFactory
+    public Page<Popup> findAllLikedPopupByUser(User user, Pageable pageable) {
+        List<Popup> popups = queryFactory
                 .selectFrom(popup)
                 .join(popup.host).fetchJoin()
+                .join(like).fetchJoin()
+                .on(
+                        like.contentType.eq(LikeContentType.POPUP),
+                        like.contentId.eq(popup.id)
+                )
                 .where(
-                        popup.approvalStatus.eq(ApprovalStatus.APPROVED),
+                        like.user.eq(user),
                         popup.popupStatus.ne(PopupStatus.CANCELED),
-                        popup.id.in(popupIdList)
+                        popup.approvalStatus.eq(ApprovalStatus.APPROVED)
                 )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(popup.createdAt.desc())
+                .orderBy(like.likedAt.desc())
                 .fetch();
 
-        Long totalSize = jpaQueryFactory.select(Wildcard.count)
+        Long totalCount = queryFactory
+                .select(Wildcard.count)
                 .from(popup)
+                .join(like).fetchJoin()
+                .on(
+                        like.contentType.eq(LikeContentType.POPUP),
+                        like.contentId.eq(popup.id)
+                )
                 .where(
-                        popup.approvalStatus.eq(ApprovalStatus.APPROVED),
+                        like.user.eq(user),
                         popup.popupStatus.ne(PopupStatus.CANCELED),
-                        popup.id.in(popupIdList)
+                        popup.approvalStatus.eq(ApprovalStatus.APPROVED)
                 )
                 .fetchOne();
 
-        return PageableExecutionUtils.getPage(popups, pageable, () -> totalSize);
+        return PageableExecutionUtils.getPage(popups, pageable, () -> getTotal(totalCount));
     }
 
     @Override
     public Popup findByReservationId(Long reservationId) {
-        return jpaQueryFactory
+        return queryFactory
                 .select(popup)
                 .from(reservation)
                 .join(reservation.slot, slot).fetchJoin()
