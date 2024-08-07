@@ -7,9 +7,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ReservationRequestDto {
-	@NotNull(message = "예약할 시간을 선택해 주세요")
-	private Long slotId;
-	
-	@NotNull(message = "예약 인원을 선택해 주세요")
-	private int numberOfPersons;
+
+    @NotNull(message = "예약할 슬롯의 ID를 선택해 주세요")
+    private Long slotId;
+
+    @NotNull(message = "예약 인원을 선택해 주세요")
+    private int numberOfPersons;
+
 }
