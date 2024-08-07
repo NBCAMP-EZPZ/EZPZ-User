@@ -1,5 +1,6 @@
 package com.sparta.ezpzuser.domain.slot.entity;
 
+import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import com.sparta.ezpzuser.domain.slot.enums.SlotStatus;
 import jakarta.persistence.*;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import static com.sparta.ezpzuser.common.exception.ErrorType.*;
 
 @Entity
 @Getter
@@ -27,11 +30,11 @@ public class Slot {
 
     private LocalTime slotTime;
 
-    private int availableCount;
+    private int availableCount; // 한 팀당 예약 가능한 최대 인원 수
 
-    private int totalCount;
+    private int totalCount; // 예약 가능한 총 팀 수
 
-    private int reservedCount;
+    private int reservedCount; // 예약된 팀 수
 
     @Enumerated(value = EnumType.STRING)
     private SlotStatus slotStatus;
@@ -52,6 +55,27 @@ public class Slot {
 
     public static Slot of(LocalDate slotDate, LocalTime slotTime, int totalCount, Popup popup, SlotStatus slotStatus) {
         return new Slot(slotDate, slotTime, totalCount, popup, slotStatus);
+    }
+
+    /**
+     * 예약 가능한지 검증
+     *
+     * @param numberOfPersons 예약 인원 수
+     */
+    public void verifyReservationAvailability(int numberOfPersons) {
+        // 아직 진행 전인 슬롯이 맞는지 확인
+        if (!this.slotStatus.equals(SlotStatus.READY)) {
+            throw new CustomException(SLOT_RESERVATION_CLOSED);
+        }
+        // 예약이 다 찼는지 확인
+        if (this.reservedCount == this.totalCount) {
+            throw new CustomException(SLOT_FULL);
+        }
+        // 예약 가능한 인원 수인지 확인
+        if (this.reservedCount + numberOfPersons > this.totalCount
+                || numberOfPersons > this.availableCount) {
+            throw new CustomException(RESERVATION_EXCEEDS_AVAILABLE_SLOTS);
+        }
     }
 
     public void increaseReservedCount(int numberOfPersons) {
