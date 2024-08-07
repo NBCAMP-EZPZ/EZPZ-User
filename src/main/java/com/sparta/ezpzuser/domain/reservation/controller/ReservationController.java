@@ -47,12 +47,12 @@ public class ReservationController {
      * @return 예약 목록
      */
     @GetMapping
-    public ResponseEntity<CommonResponse<?>> findReservations(
+    public ResponseEntity<CommonResponse<?>> findAllReservations(
             Pageable pageable,
             @RequestParam String status,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        Page<ReservationResponseDto> response = reservationService.findReservations(pageable, status, userDetails.getUser());
+        Page<ReservationResponseDto> response = reservationService.findAllReservations(pageable, status, userDetails.getUser());
         return getResponseEntity(response, "예약 목록 조회 성공");
     }
 
@@ -69,7 +69,6 @@ public class ReservationController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         ReservationResponseDto responseDto = reservationService.findReservation(reservationId, userDetails.getUser());
-
         return getResponseEntity(responseDto, "예약 조회 성공");
     }
 
@@ -87,7 +86,6 @@ public class ReservationController {
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         reservationService.cancelReservation(reservationId, userDetails.getUser());
-
         return getResponseEntity("예약 취소 성공");
     }
 
