@@ -3,17 +3,17 @@ package com.sparta.ezpzuser.domain.slot.enums;
 public enum SlotStatus {
 
     /**
-     * 진행 전
+     * 예약 진행 전
      */
     READY,
 
     /**
-     * 진행 중
+     * 예약 진행 중
      */
     PROCEEDING,
 
     /**
-     * 진행 완료
+     * 예약 마감
      */
     FINISHED;
 
