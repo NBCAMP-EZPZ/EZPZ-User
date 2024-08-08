@@ -3,6 +3,7 @@ package com.sparta.ezpzuser.domain.cart.service;
 import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.lock.DistributedLock;
 import com.sparta.ezpzuser.domain.cart.dto.CartCreateRequestDto;
+import com.sparta.ezpzuser.domain.cart.dto.CartCreateResponseDto;
 import com.sparta.ezpzuser.domain.cart.dto.CartResponseDto;
 import com.sparta.ezpzuser.domain.cart.dto.CartUpdateRequestDto;
 import com.sparta.ezpzuser.domain.cart.entity.Cart;
@@ -33,17 +34,17 @@ public class CartService {
      * @return 생성된 장바구니 정보
      */
     @DistributedLock(key = "'createCart-userId-'.concat(#user.id)")
-    public CartResponseDto createCart(CartCreateRequestDto dto, User user) {
+    public CartCreateResponseDto createCart(CartCreateRequestDto dto, User user) {
         Item item = getItem(dto.getItemId());
         int quantity = dto.getQuantity();
         item.checkStock(quantity);
 
         Cart cart = cartRepository.save(Cart.of(user, item, quantity));
-        return CartResponseDto.of(cart);
+        return CartCreateResponseDto.of(cart);
     }
 
     /**
-     * 장바구니 내역 조회
+     * 장바구니 목록 조회
      *
      * @param user 요청한 사용자
      * @return 장바구니 내역 리스트
