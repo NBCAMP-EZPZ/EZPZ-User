@@ -14,14 +14,11 @@ import com.sparta.ezpzuser.domain.like.repository.LikeRepository;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import com.sparta.ezpzuser.domain.popup.repository.popup.PopupRepository;
 import com.sparta.ezpzuser.domain.user.entity.User;
-import com.sparta.ezpzuser.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.sparta.ezpzuser.common.exception.ErrorType.*;
 import static com.sparta.ezpzuser.common.util.PageUtil.validatePageableWithPage;
@@ -35,7 +32,6 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final PopupRepository popupRepository;
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
 
     /**
      * 좋아요 토글
@@ -50,13 +46,14 @@ public class LikeService {
     public LikeResponseDto toggleLike(LikeRequestDto dto, User user) {
         LikeContentType contentType = dto.getContentType();
         Long contentId = dto.getContentId();
-        User requestUser = userRepository.findById(user.getId()).orElseThrow();
         boolean toggleResult;
+
         switch (contentType) {
-            case POPUP -> toggleResult = togglePopupLike(contentId, requestUser);
-            case ITEM -> toggleResult = toggleItemLike(contentId, requestUser);
+            case POPUP -> toggleResult = togglePopupLike(contentId, user);
+            case ITEM -> toggleResult = toggleItemLike(contentId, user);
             default -> throw new CustomException(INVALID_CONTENT_TYPE);
         }
+
         return LikeResponseDto.of(toggleResult, contentType, contentId);
     }
 
@@ -71,17 +68,14 @@ public class LikeService {
     @Transactional(readOnly = true)
     public Page<?> findAllLikedContentByType(Pageable pageable, String type, User user) {
         LikeContentType contentType = LikeContentType.valueOf(type.toUpperCase());
-        List<Like> likeList = likeRepository.findByUserAndContentType(user, contentType);
         switch (contentType) {
             case POPUP -> {
-                List<Long> likedPopupIdList = getLikedContentIdList(likeList);
-                Page<Popup> page = popupRepository.findAllByIdList(pageable, likedPopupIdList);
+                Page<Popup> page = popupRepository.findAllLikedPopupByUser(user, pageable);
                 validatePageableWithPage(pageable, page);
                 return page.map(LikedPopupResponseDto::of);
             }
             case ITEM -> {
-                List<Long> likedItemIdList = getLikedContentIdList(likeList);
-                Page<Item> page = itemRepository.findAllByIdList(pageable, likedItemIdList);
+                Page<Item> page = itemRepository.findAllLikedItemByUser(user, pageable);
                 validatePageableWithPage(pageable, page);
                 return page.map(LikedItemResponseDto::of);
             }
@@ -141,18 +135,6 @@ public class LikeService {
             likeRepository.delete(like);
             return false;
         }
-    }
-
-    /**
-     * 컨텐츠 타입별 좋아요한 컨텐츠 ID 목록 조회
-     *
-     * @param likeList 좋아요 목록
-     * @return 컨텐츠 ID 목록
-     */
-    private List<Long> getLikedContentIdList(List<Like> likeList) {
-        return likeList.stream()
-                .map(Like::getContentId)
-                .toList();
     }
 
 }

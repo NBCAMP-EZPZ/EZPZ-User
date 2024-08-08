@@ -1,15 +1,11 @@
 package com.sparta.ezpzuser.domain.user.entity;
 
 import com.sparta.ezpzuser.common.entity.Timestamped;
-import com.sparta.ezpzuser.domain.like.entity.Like;
 import com.sparta.ezpzuser.domain.user.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -31,16 +27,6 @@ public class User extends Timestamped {
     private String email;
 
     private String phoneNumber;
-
-    @OneToMany(mappedBy = "user")
-    private List<Like> likeList = new ArrayList<>();
-
-    /**
-     * 연관관계 편의 메서드
-     */
-    public void addLike(Like like) {
-        this.likeList.add(like);
-    }
 
     private User(SignupRequestDto dto, String encodedPassword) {
         username = dto.getUsername();

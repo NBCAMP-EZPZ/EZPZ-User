@@ -13,6 +13,8 @@ import com.sparta.ezpzuser.domain.order.entity.Orderline;
 import com.sparta.ezpzuser.domain.order.repository.OrderRepository;
 import com.sparta.ezpzuser.domain.user.entity.User;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -75,6 +77,7 @@ public class OrderService {
      * @return 주문 상세 정보
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "orders", key = "'orders:' + #orderId")
     public OrderResponseDto findOrder(Long orderId, User user) {
         Order order = getOrder(orderId, user);
         return OrderResponseDto.of(order, order.getOrderlineList());
@@ -87,6 +90,7 @@ public class OrderService {
      * @param user    요청 이용자
      */
     @DistributedLock(key = "'cancelOrder'")
+    @CacheEvict(value = "orders", key = "'orders:' + #orderId")
     public void cancelOrder(Long orderId, User user) {
         Order order = getOrder(orderId, user);
         order.cancel();

@@ -9,7 +9,6 @@ import com.sparta.ezpzuser.domain.reservation.entity.Reservation;
 import com.sparta.ezpzuser.domain.reservation.enums.ReservationStatus;
 import com.sparta.ezpzuser.domain.reservation.repository.ReservationRepository;
 import com.sparta.ezpzuser.domain.slot.entity.Slot;
-import com.sparta.ezpzuser.domain.slot.enums.SlotStatus;
 import com.sparta.ezpzuser.domain.slot.repository.SlotRepository;
 import com.sparta.ezpzuser.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -38,17 +37,19 @@ public class ReservationService {
      * @param user 로그인 사용자 정보
      * @return 생성된 예약 정보
      */
-    @DistributedLock(key = "'createReservation-userId-'.concat(#user.id)")
+    @DistributedLock(key = "'createReservation-slotId-'.concat(#dto.slotId)")
     @CachePut(value = "reservation", key = "'reservation:' + #result.id")
     public ReservationResponseDto createReservation(ReservationRequestDto dto, User user) {
+        // 예약할 슬롯 가져오기
         Slot slot = getSlot(dto.getSlotId());
         validateDuplicateReservation(user, slot.getPopup());
-        validateSlotStatus(slot);
-        validateReservationCapacity(dto, slot);
 
-        // 예약 생성
-        Reservation reservation = reservationRepository.save(Reservation.of(dto.getNumberOfPersons(), user, slot));
-        slot.increaseReservedCount(dto.getNumberOfPersons());
+        int numberOfPersons = dto.getNumberOfPersons();
+        slot.verifyReservationAvailability(numberOfPersons);
+
+        Reservation reservation = Reservation.of(numberOfPersons, user, slot);
+        reservationRepository.save(reservation);
+        slot.increaseReservedCount(numberOfPersons);
         slotRepository.save(slot);
 
         return ReservationResponseDto.of(reservation, slot);
@@ -63,7 +64,7 @@ public class ReservationService {
      * @return 예약 목록
      */
     @Transactional(readOnly = true)
-    public Page<ReservationResponseDto> findReservations(Pageable pageable, String status, User user) {
+    public Page<ReservationResponseDto> findAllReservations(Pageable pageable, String status, User user) {
         Page<Reservation> page;
         if (status == null) {
             page = reservationRepository.findByUserId(user.getId(), pageable);
@@ -120,32 +121,7 @@ public class ReservationService {
     }
 
     /**
-     * 슬롯 예약 가능 여부 확인
-     *
-     * @param slot 예약 슬롯 정보
-     */
-    private void validateSlotStatus(Slot slot) {
-        // 아직 진행 전인 슬롯만 예약 가능
-        if (!slot.getSlotStatus().equals(SlotStatus.READY)) {
-            throw new CustomException(SLOT_RESERVATION_CLOSED);
-        }
-    }
-
-    /**
-     * 예약 가능 인원 확인
-     *
-     * @param dto  예약 요청 DTO
-     * @param slot 예약 슬롯 정보
-     */
-    private void validateReservationCapacity(ReservationRequestDto dto, Slot slot) {
-        if (slot.getReservedCount() + dto.getNumberOfPersons() > slot.getTotalCount()
-                || slot.getAvailableCount() < dto.getNumberOfPersons()) {
-            throw new CustomException(RESERVATION_EXCEEDS_AVAILABLE_SLOTS);
-        }
-    }
-
-    /**
-     * 이미 예약한 내역 있는지 확인
+     * 이미 예약한 내역이 있는지 확인
      *
      * @param user  로그인 사용자 정보
      * @param popup 팝업 정보
