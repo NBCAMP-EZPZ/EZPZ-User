@@ -63,8 +63,8 @@ public class Slot {
      * @param numberOfPersons 예약 인원 수
      */
     public void verifyReservationAvailability(int numberOfPersons) {
-        // 아직 진행 전인 슬롯이 맞는지 확인
-        if (!this.slotStatus.equals(SlotStatus.READY)) {
+        // 예약 진행 중인 슬롯인지 확인
+        if (!this.slotStatus.equals(SlotStatus.PROCEEDING)) {
             throw new CustomException(SLOT_RESERVATION_CLOSED);
         }
         // 예약이 다 찼는지 확인
