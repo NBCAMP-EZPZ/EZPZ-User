@@ -3,7 +3,7 @@ package com.sparta.ezpzuser.domain.cart.service;
 import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.lock.DistributedLock;
 import com.sparta.ezpzuser.domain.cart.dto.CartCreateRequestDto;
-import com.sparta.ezpzuser.domain.cart.dto.CartCreateResponseDto;
+import com.sparta.ezpzuser.domain.cart.dto.CartListResponseDto;
 import com.sparta.ezpzuser.domain.cart.dto.CartResponseDto;
 import com.sparta.ezpzuser.domain.cart.dto.CartUpdateRequestDto;
 import com.sparta.ezpzuser.domain.cart.entity.Cart;
@@ -34,13 +34,13 @@ public class CartService {
      * @return 생성된 장바구니 정보
      */
     @DistributedLock(key = "'createCart-userId-'.concat(#user.id)")
-    public CartCreateResponseDto createCart(CartCreateRequestDto dto, User user) {
+    public CartResponseDto createCart(CartCreateRequestDto dto, User user) {
         Item item = getItem(dto.getItemId());
         int quantity = dto.getQuantity();
         item.checkStock(quantity);
 
         Cart cart = cartRepository.save(Cart.of(user, item, quantity));
-        return CartCreateResponseDto.of(cart);
+        return CartResponseDto.of(cart);
     }
 
     /**
@@ -50,10 +50,10 @@ public class CartService {
      * @return 장바구니 내역 리스트
      */
     @Transactional(readOnly = true)
-    public List<CartResponseDto> findAllCarts(User user) {
+    public List<CartListResponseDto> findAllCarts(User user) {
         List<Cart> cartList = cartRepository.findAllWithItemByUser(user);
         return cartList.stream()
-                .map(CartResponseDto::of)
+                .map(CartListResponseDto::of)
                 .toList();
     }
 
