@@ -52,8 +52,9 @@ public class CouponConcurrencyTest {
                 .willReturn(UserCoupon.of(user, coupon));
 
         // when
-        IntStream.range(0, couponCount).parallel()
-                .forEach(i -> couponService.downloadCouponWithoutLock(coupon.getId(), user));
+        IntStream.range(0, couponCount).parallel().forEach(i ->
+                couponService.downloadCouponWithoutLock(coupon.getId(), user)
+        );
 
         // then
         int remainingCount = couponRepository.findById(coupon.getId()).orElseThrow().getRemainingCount();
