@@ -9,17 +9,11 @@ public class CartResponseDto {
     private final Long cartId;
     private final Long itemId;
     private final int quantity;
-    private final String itemName;
-    private final int itemPrice;
-    private final String imageUrl;
 
     private CartResponseDto(Cart cart) {
         this.cartId = cart.getId();
         this.itemId = cart.getItem().getId();
-        this.itemName = cart.getItem().getName();
-        this.itemPrice = cart.getItem().getPrice();
         this.quantity = cart.getQuantity();
-        this.imageUrl = cart.getItem().getImageUrl();
     }
 
     public static CartResponseDto of(Cart cart) {
