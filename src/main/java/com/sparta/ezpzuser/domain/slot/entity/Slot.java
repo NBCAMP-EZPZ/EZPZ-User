@@ -43,18 +43,32 @@ public class Slot {
     @JoinColumn(name = "popup_id")
     private Popup popup;
 
-    public Slot(LocalDate slotDate, LocalTime slotTime, int totalCount, Popup popup, SlotStatus slotStatus) {
-        this.slotDate = slotDate;
-        this.slotTime = slotTime;
-        this.availableCount = totalCount;
+    private Slot(int availableCount, int totalCount, Popup popup, SlotStatus slotStatus) {
+        this.slotDate = LocalDate.now();
+        this.slotTime = LocalTime.now();
+        this.availableCount = availableCount;
         this.totalCount = totalCount;
         this.reservedCount = 0;
         this.slotStatus = slotStatus;
         this.popup = popup;
     }
 
-    public static Slot of(LocalDate slotDate, LocalTime slotTime, int totalCount, Popup popup, SlotStatus slotStatus) {
-        return new Slot(slotDate, slotTime, totalCount, popup, slotStatus);
+    private Slot(int availableCount, int totalCount, int reservedCount, Popup popup) {
+        this.slotDate = LocalDate.now();
+        this.slotTime = LocalTime.now();
+        this.availableCount = availableCount;
+        this.totalCount = totalCount;
+        this.reservedCount = reservedCount;
+        this.slotStatus = SlotStatus.PROCEEDING;
+        this.popup = popup;
+    }
+
+    public static Slot createMockSlot(int availableCount, int totalCount, Popup popup, SlotStatus slotStatus) {
+        return new Slot(availableCount, totalCount, popup, slotStatus);
+    }
+
+    public static Slot createMockSlot(int availableCount, int totalCount, int reservedCount, Popup popup) {
+        return new Slot(availableCount, totalCount, reservedCount, popup);
     }
 
     /**
