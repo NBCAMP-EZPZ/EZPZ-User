@@ -8,9 +8,9 @@ public class CartResponseDto {
 
     private final Long cartId;
     private final Long itemId;
+    private final int quantity;
     private final String itemName;
     private final int itemPrice;
-    private final int quantity;
     private final String imageUrl;
 
     private CartResponseDto(Cart cart) {
