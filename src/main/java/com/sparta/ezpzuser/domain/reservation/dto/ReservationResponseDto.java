@@ -1,6 +1,7 @@
 package com.sparta.ezpzuser.domain.reservation.dto;
 
 import com.sparta.ezpzuser.domain.reservation.entity.Reservation;
+import com.sparta.ezpzuser.domain.reservation.enums.ReservationStatus;
 import com.sparta.ezpzuser.domain.slot.entity.Slot;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,18 +10,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationResponseDto {
 
-    private Long id;
-    private String name;
+    private Long reservationId;
+    private ReservationStatus reservationStatus;
+    private String popupName;
     private String slotDate;
     private String slotTime;
-    private String reservationStatus;
 
     private ReservationResponseDto(Reservation reservation, Slot slot) {
-        this.id = reservation.getId();
-        this.name = slot.getPopup().getName();
+        this.reservationId = reservation.getId();
+        this.popupName = slot.getPopup().getName();
         this.slotDate = slot.getSlotDate().toString();
         this.slotTime = slot.getSlotTime().toString();
-        this.reservationStatus = reservation.getReservationStatus().toString();
+        this.reservationStatus = reservation.getReservationStatus();
     }
 
     public static ReservationResponseDto of(Reservation reservation, Slot slot) {
