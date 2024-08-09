@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 public class ItemResponseDto {
 
-    private final Long id;
+    private final Long itemId;
     private final String name;
     private final String description;
     private final int price;
@@ -17,7 +17,7 @@ public class ItemResponseDto {
     private final String imageName;
 
     private ItemResponseDto(Item item) {
-        this.id = item.getId();
+        this.itemId = item.getId();
         this.name = item.getName();
         this.description = item.getDescription();
         this.price = item.getPrice();
