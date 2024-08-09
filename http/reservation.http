@@ -9,7 +9,7 @@ Authorization: {{Authorization}}
 Cookie: {{Cookie}}
 
 {
-  "slotId": 31,
+  "slotId": 51,
   "numberOfPersons": 1
 }
 

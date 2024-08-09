@@ -1,0 +1,19 @@
+# Variables
+@popu리pId = 1197
+
+### 리뷰 등록
+POST http://localhost:8080/api/v1/reviews
+Content-Type: application/json
+Authorization: {{Authorization}}
+Cookie: {{Cookie}}
+
+{
+  "reservationId": 2546,
+  "rating": 5,
+  "content": "content..."
+}
+
+### 해당 팝업의 전체 리뷰 목록 조회
+GET http://localhost:8080/api/v1/popups/{{popupId}}/reviews
+Authorization: {{Authorization}}
+Cookie: {{Cookie}}
