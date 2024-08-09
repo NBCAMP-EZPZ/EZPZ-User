@@ -28,13 +28,13 @@ public class ItemController {
      * @return 상품 목록
      */
     @GetMapping("/v1/items")
-    public ResponseEntity<?> findAllItemsByHostAndPopupAndStatus(
-            Pageable pageable,
-            @RequestParam(defaultValue = "all") String popupId,
-            @RequestParam(defaultValue = "all") String itemStatus) {
+    public ResponseEntity<?> findAllByItemCondition(
+            @RequestParam Long popupId,
+            @RequestParam String itemStatus,
+            Pageable pageable) {
 
         ItemCondition cond = ItemCondition.of(popupId, itemStatus);
-        Page<ItemPageResponseDto> response = itemService.findAllByItemCondition(pageable, cond);
+        Page<ItemPageResponseDto> response = itemService.findAllByItemCondition(cond, pageable);
         return getResponseEntity(response, "굿즈 목록 조회 성공");
     }
 

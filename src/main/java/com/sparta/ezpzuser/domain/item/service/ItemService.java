@@ -21,14 +21,14 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     /**
-     * 호스트, 팝업 및 상태별 상품 목록 조회
+     * 팝업 및 상태별 상품 목록 조회
      *
-     * @param pageable 페이징
      * @param cond     조회 조건
+     * @param pageable 페이징
      * @return 상품
      */
     @Transactional(readOnly = true)
-    public Page<ItemPageResponseDto> findAllByItemCondition(Pageable pageable, ItemCondition cond) {
+    public Page<ItemPageResponseDto> findAllByItemCondition(ItemCondition cond, Pageable pageable) {
         Page<Item> page = itemRepository.findAllByItemCondition(pageable, cond);
         PageUtil.validatePageableWithPage(pageable, page);
         return page.map(ItemPageResponseDto::of);

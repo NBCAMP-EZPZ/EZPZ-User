@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.sparta.ezpzuser.common.util.RepositoryUtil.getTotal;
 import static com.sparta.ezpzuser.domain.item.entity.QItem.item;
@@ -84,22 +83,14 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
         return PageableExecutionUtils.getPage(items, pageable, () -> getTotal(totalCount));
     }
 
-    // 조건 : 호스트 ID
-    private BooleanExpression hostIdEq(String hostId) {
-        return Objects.nonNull(hostId) && !"all".equals(hostId) ?
-                item.popup.host.id.eq(Long.valueOf(hostId)) : null;
-    }
-
     // 조건 : 팝업 ID
-    private BooleanExpression popupIdEq(String popupId) {
-        return Objects.nonNull(popupId) && !"all".equals(popupId) ?
-                item.popup.id.eq(Long.valueOf(popupId)) : null;
+    private BooleanExpression popupIdEq(Long popupId) {
+        return popupId != null ? item.popup.id.eq(popupId) : null;
     }
 
     // 조건 : 상품 상태
-    private BooleanExpression itemStatusEq(String itemStatus) {
-        return Objects.nonNull(itemStatus) && !"all".equals(itemStatus) ?
-                item.itemStatus.eq(ItemStatus.valueOf(itemStatus.toUpperCase())) : null;
+    private BooleanExpression itemStatusEq(ItemStatus itemStatus) {
+        return itemStatus != null ? item.itemStatus.eq(itemStatus) : null;
     }
 
 }
