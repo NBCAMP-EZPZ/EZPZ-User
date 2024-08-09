@@ -13,8 +13,8 @@ import java.util.List;
 public class OrderResponseDto {
 
     private Long orderId;
-    private int totalPrice;
     private OrderStatus orderStatus;
+    private int totalPrice;
     private String orderedAt;
     private List<OrderlineResponseDto> orderedItems;
 
