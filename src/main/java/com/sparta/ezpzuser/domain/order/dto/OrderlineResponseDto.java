@@ -2,13 +2,15 @@ package com.sparta.ezpzuser.domain.order.dto;
 
 import com.sparta.ezpzuser.domain.order.entity.Orderline;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class OrderlineResponseDto {
 
-    private final Long itemId;
-    private final int quantity;
-    private final int orderPrice;
+    private Long itemId;
+    private int quantity;
+    private int orderPrice;
 
     private OrderlineResponseDto(Orderline orderline) {
         this.itemId = orderline.getItem().getId();
