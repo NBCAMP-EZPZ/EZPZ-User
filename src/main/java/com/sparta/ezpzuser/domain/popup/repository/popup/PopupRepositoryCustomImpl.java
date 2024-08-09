@@ -39,7 +39,8 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
                 .orderBy(popup.createdAt.desc())
                 .fetch();
 
-        Long totalCount = queryFactory.select(Wildcard.count)
+        Long totalCount = queryFactory
+                .select(Wildcard.count)
                 .from(popup)
                 .where(
                         popup.approvalStatus.eq(ApprovalStatus.APPROVED),
