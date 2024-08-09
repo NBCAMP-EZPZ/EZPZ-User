@@ -50,9 +50,9 @@ public class ReviewService {
             throw new CustomException(UNVISITED_USER);
         }
         // 이미 해당 팝업에 리뷰를 작성한 경우
-        if (reviewRepository.existsByUser(user)) {
-            throw new CustomException(ALREADY_REVIEWED_POPUP);
-        }
+        // if (reviewRepository.existsByUser(user)) {
+        //     throw new CustomException(ALREADY_REVIEWED_POPUP);
+        // }
         Popup popup = popupRepository.findByReservationId(reservation.getId());
         Review review = reviewRepository.save(Review.of(dto, popup, reservation));
         return ReviewResponseDto.of(review);
