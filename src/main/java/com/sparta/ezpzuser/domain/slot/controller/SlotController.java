@@ -33,8 +33,8 @@ public class SlotController {
             @PathVariable Long popupId,
             Pageable pageable) {
 
-        Page<SlotResponseDto> responseDto = slotService.findSlotsByPopupId(popupId, pageable);
-        return getResponseEntity(responseDto, "예약 목록 조회 성공");
+        Page<SlotResponseDto> response = slotService.findSlotsByPopupId(popupId, pageable);
+        return getResponseEntity(response, "예약 목록 조회 성공");
     }
 
 }

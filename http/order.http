@@ -1,0 +1,30 @@
+## Variables
+@popupId = 30
+@itemId = 925
+
+### 주문
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Authorization: {{Authorization}}
+Cookie: {{Cookie}}
+
+{
+  "cartIdList": [
+    18
+  ]
+}
+
+### 주문 목록 조회
+GET http://localhost:8080/api/v1/orders
+Authorization: {{Authorization}}
+Cookie: {{Cookie}}
+
+### 주문 상세 조회
+GET http://localhost:8080/api/v1/orders/6
+Authorization: {{Authorization}}
+Cookie: {{Cookie}}
+
+### 주문 취소
+PATCH http://localhost:8080/api/v1/orders/14
+Authorization: {{Authorization}}
+Cookie: {{Cookie}}

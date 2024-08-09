@@ -49,6 +49,10 @@ public class ReviewService {
         if (!reservation.getReservationStatus().equals(ReservationStatus.FINISHED)) {
             throw new CustomException(UNVISITED_USER);
         }
+        // 이미 해당 팝업에 리뷰를 작성한 경우
+        if (reviewRepository.existsByUser(user)) {
+            throw new CustomException(ALREADY_REVIEWED_POPUP);
+        }
         Popup popup = popupRepository.findByReservationId(reservation.getId());
         Review review = reviewRepository.save(Review.of(dto, popup, reservation));
         return ReviewResponseDto.of(review);
@@ -63,7 +67,7 @@ public class ReviewService {
      */
     @Transactional(readOnly = true)
     public Page<ReviewResponseDto> findAllPopupReviews(Long popupId, Pageable pageable) {
-        Page<Review> page = reviewRepository.findByPopupId(popupId, pageable);
+        Page<Review> page = reviewRepository.findByPopupIdOrderByCreatedAtDesc(popupId, pageable);
         PageUtil.validatePageableWithPage(pageable, page);
         return page.map(ReviewResponseDto::of);
     }

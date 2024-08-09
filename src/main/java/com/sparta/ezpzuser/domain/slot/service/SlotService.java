@@ -26,7 +26,7 @@ public class SlotService {
      */
     @Transactional(readOnly = true)
     public Page<SlotResponseDto> findSlotsByPopupId(Long popupId, Pageable pageable) {
-        Page<Slot> page = slotRepository.findByPopupId(popupId, pageable);
+        Page<Slot> page = slotRepository.findAllByPopupId(popupId, pageable);
         validatePageableWithPage(pageable, page);
         return page.map(SlotResponseDto::of);
     }

@@ -64,7 +64,7 @@ public class OrderService {
      */
     @Transactional(readOnly = true)
     public Page<OrderPageResponseDto> findAllOrders(Pageable pageable, User user) {
-        Page<Order> page = orderRepository.findAllByUser(user, pageable);
+        Page<Order> page = orderRepository.findAllByUserOrderByCreatedAtDesc(user, pageable);
         PageUtil.validatePageableWithPage(pageable, page);
         return page.map(OrderPageResponseDto::of);
     }

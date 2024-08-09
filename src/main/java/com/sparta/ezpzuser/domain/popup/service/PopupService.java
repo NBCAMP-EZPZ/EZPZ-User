@@ -2,7 +2,6 @@ package com.sparta.ezpzuser.domain.popup.service;
 
 import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.util.PageUtil;
-import com.sparta.ezpzuser.domain.popup.dto.PopupCondition;
 import com.sparta.ezpzuser.domain.popup.dto.PopupPageResponseDto;
 import com.sparta.ezpzuser.domain.popup.dto.PopupResponseDto;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
@@ -27,13 +26,13 @@ public class PopupService {
     /**
      * 팝업 상태별 목록 조회
      *
-     * @param pageable 페이징
-     * @param cond     조회 조건
+     * @param popupStatus 팝업 상태
+     * @param pageable    페이징
      * @return 팝업 목록
      */
     @Transactional(readOnly = true)
-    public Page<PopupPageResponseDto> findAllPopupsByStatus(Pageable pageable, PopupCondition cond) {
-        Page<Popup> page = popupRepository.findAllByPopupCondition(pageable, cond);
+    public Page<PopupPageResponseDto> findAllByPopupStatus(String popupStatus, Pageable pageable) {
+        Page<Popup> page = popupRepository.findAllByPopupStatus(popupStatus, pageable);
         PageUtil.validatePageableWithPage(pageable, page);
         return page.map(PopupPageResponseDto::of);
     }

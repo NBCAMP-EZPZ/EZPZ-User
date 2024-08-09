@@ -31,14 +31,14 @@ public class ReservationService {
     private final SlotRepository slotRepository;
 
     /**
-     * 예약 생성
+     * 예약 등록
      *
      * @param dto  예약 요청 DTO
      * @param user 로그인 사용자 정보
      * @return 생성된 예약 정보
      */
     @DistributedLock(key = "'createReservation-slotId-'.concat(#dto.slotId)")
-    @CachePut(value = "reservation", key = "'reservation:' + #result.id")
+    @CachePut(value = "reservation", key = "'reservation:' + #result.reservationId")
     public ReservationResponseDto createReservation(ReservationRequestDto dto, User user) {
         // 예약할 슬롯 가져오기
         Slot slot = getSlot(dto.getSlotId());

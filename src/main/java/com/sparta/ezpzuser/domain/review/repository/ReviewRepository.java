@@ -5,8 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ReviewRepository extends JpaRepository<Review, Long> {
+public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRepositoryCustom {
 
-    Page<Review> findByPopupId(Long popupId, Pageable pageable);
+    Page<Review> findByPopupIdOrderByCreatedAtDesc(Long popupId, Pageable pageable);
 
 }

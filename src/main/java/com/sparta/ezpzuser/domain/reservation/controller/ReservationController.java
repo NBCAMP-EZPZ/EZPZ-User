@@ -49,7 +49,7 @@ public class ReservationController {
     @GetMapping
     public ResponseEntity<CommonResponse<?>> findAllReservations(
             Pageable pageable,
-            @RequestParam String status,
+            @RequestParam(required = false) String status,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         Page<ReservationResponseDto> response = reservationService.findAllReservations(pageable, status, userDetails.getUser());
@@ -71,7 +71,6 @@ public class ReservationController {
         ReservationResponseDto responseDto = reservationService.findReservation(reservationId, userDetails.getUser());
         return getResponseEntity(responseDto, "예약 조회 성공");
     }
-
 
     /**
      * 예약 취소

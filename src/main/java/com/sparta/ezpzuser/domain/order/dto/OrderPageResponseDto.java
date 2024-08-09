@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 public class OrderPageResponseDto {
 
     private final Long orderId;
-    private final int totalPrice;
     private final OrderStatus orderStatus;
+    private final int totalPrice;
     private final LocalDateTime orderedAt;
 
     private OrderPageResponseDto(Order order) {

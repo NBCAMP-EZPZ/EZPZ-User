@@ -9,8 +9,8 @@ import java.util.List;
 @Getter
 public class PopupResponseDto {
 
-    private final Long id;
-    private final String name;
+    private final Long popupId;
+    private final String popupName;
     private final String description;
     private final String thumbnailUrl;
     private final String address;
@@ -24,8 +24,8 @@ public class PopupResponseDto {
     private final List<String> images;
 
     private PopupResponseDto(Popup popup, List<String> images) {
-        this.id = popup.getId();
-        this.name = popup.getName();
+        this.popupId = popup.getId();
+        this.popupName = popup.getName();
         this.description = popup.getDescription();
         this.thumbnailUrl = popup.getThumbnailUrl();
         this.address = popup.getAddress();

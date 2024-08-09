@@ -52,6 +52,7 @@ public enum ErrorType {
     RESERVATION_NOT_FOUND(NOT_FOUND, "해당 예약을 찾을 수 없습니다."),
     DIFFERENT_RESERVATION_USER(UNAUTHORIZED, "해당 예약의 예약자가 아닙니다."),
     UNVISITED_USER(BAD_REQUEST, "예약한 팝업에 방문 완료한 예약자가 아닙니다."),
+    ALREADY_REVIEWED_POPUP(BAD_REQUEST, "이미 리뷰를 남긴 팝업입니다."),
 
     // Coupon
     COUPON_NOT_FOUND(NOT_FOUND, "해당 쿠폰을 찾을 수 없습니다."),
