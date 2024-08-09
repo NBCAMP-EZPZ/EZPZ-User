@@ -19,7 +19,6 @@ import static com.sparta.ezpzuser.common.util.RepositoryUtil.getTotal;
 import static com.sparta.ezpzuser.domain.like.entity.QLike.like;
 import static com.sparta.ezpzuser.domain.popup.entity.QPopup.popup;
 import static com.sparta.ezpzuser.domain.reservation.entity.QReservation.reservation;
-import static com.sparta.ezpzuser.domain.slot.entity.QSlot.slot;
 
 @RequiredArgsConstructor
 public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
@@ -92,11 +91,12 @@ public class PopupRepositoryCustomImpl implements PopupRepositoryCustom {
     @Override
     public Popup findByReservationId(Long reservationId) {
         return queryFactory
-                .select(popup)
-                .from(reservation)
-                .join(reservation.slot, slot).fetchJoin()
-                .join(slot.popup, popup).fetchJoin()
-                .where(reservation.id.eq(reservationId))
+                .selectFrom(popup)
+                .join(reservation)
+                .on(popup.id.eq(reservation.slot.popup.id))
+                .where(
+                        reservation.id.eq(reservationId)
+                )
                 .fetchOne();
     }
 
