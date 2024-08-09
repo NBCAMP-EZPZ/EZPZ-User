@@ -1,9 +1,17 @@
 ## Variables
 @itemId = 2
+@popupId = 16
 
-### 호스트, 팝업 및 상태별 상품 목록 조회
-### 상품 상태 : itemStatus=(before_sale, sale, sold_out)
+### 팝업 및 상태별 상품 목록 조회 - 팝업별
+GET http://localhost:8080/api/v1/items?popupId={popupId}
+
+### 팝업 및 상태별 상품 목록 조회 - 상태별
+## itemStatus (before_sale, sale, sold_out)
 GET http://localhost:8080/api/v1/items?itemStatus=sale
+
+### 팝업 및 상태별 상품 목록 조회 - 상태별
+## itemStatus (before_sale, sale, sold_out)
+GET http://localhost:8080/api/v1/items?popupId={{popupId}}&itemStatus=sale
 
 ### 상품 상세 조회
 GET http://localhost:8080/api/v1/items/{{itemId}}
