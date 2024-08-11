@@ -17,4 +17,6 @@ public interface ReservationRepositoryCustom {
 
     Optional<Reservation> findReservationAndSlotPopUp(Long reservationId, Long userId);
 
+    Optional<Reservation> findByIdWithSlotAndPopup(Long reservationId);
+
 }
