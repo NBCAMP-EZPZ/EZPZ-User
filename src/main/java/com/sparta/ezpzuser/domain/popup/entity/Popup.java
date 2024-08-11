@@ -117,7 +117,7 @@ public class Popup extends Timestamped {
     public void addReview(Review review) {
         this.reviewCount++;
         this.ratingSum += review.getRating();
-        this.ratingAvg = (float) ratingSum / this.reviewCount;
+        this.ratingAvg = (double) ratingSum / this.reviewCount;
     }
 
 
