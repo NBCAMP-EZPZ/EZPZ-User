@@ -3,10 +3,7 @@ package com.sparta.ezpzuser.domain.review.service;
 import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.common.lock.DistributedLock;
 import com.sparta.ezpzuser.common.util.PageUtil;
-import com.sparta.ezpzuser.domain.popup.entity.Popup;
-import com.sparta.ezpzuser.domain.popup.repository.popup.PopupRepository;
 import com.sparta.ezpzuser.domain.reservation.entity.Reservation;
-import com.sparta.ezpzuser.domain.reservation.enums.ReservationStatus;
 import com.sparta.ezpzuser.domain.reservation.repository.ReservationRepository;
 import com.sparta.ezpzuser.domain.review.dto.ReviewRequestDto;
 import com.sparta.ezpzuser.domain.review.dto.ReviewResponseDto;
@@ -19,7 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.sparta.ezpzuser.common.exception.ErrorType.*;
+import static com.sparta.ezpzuser.common.exception.ErrorType.ALREADY_REVIEWED_POPUP;
+import static com.sparta.ezpzuser.common.exception.ErrorType.RESERVATION_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +25,6 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ReservationRepository reservationRepository;
-    private final PopupRepository popupRepository;
 
     /**
      * 리뷰 등록
@@ -36,25 +33,17 @@ public class ReviewService {
      * @param user 리뷰 남길 이용자
      * @return 생성된 리뷰 정보
      */
-    @DistributedLock(key = "'createReview-userId-'.concat(#user.id)")
+    @DistributedLock(key = "'createReview'")
     public ReviewResponseDto createReview(ReviewRequestDto dto, User user) {
-        Reservation reservation = reservationRepository.findById(dto.getReservationId())
+        Reservation reservation = reservationRepository.findByIdWithSlotAndPopup(dto.getReservationId())
                 .orElseThrow(() -> new CustomException(RESERVATION_NOT_FOUND));
-
-        // 해당 예약의 예약자가 아닌 경우
-        if (!reservation.getUser().getId().equals(user.getId())) {
-            throw new CustomException(DIFFERENT_RESERVATION_USER);
-        }
-        // 예약한 팝업에 방문 완료한 예약자가 아닌 경우
-        if (!reservation.getReservationStatus().equals(ReservationStatus.FINISHED)) {
-            throw new CustomException(UNVISITED_USER);
-        }
+        reservation.verifyReviewAuthority(user);
         // 이미 해당 팝업에 리뷰를 작성한 경우
-        if (reviewRepository.existsByUser(user)) {
+        if (reviewRepository.existsByReservation(reservation)) {
             throw new CustomException(ALREADY_REVIEWED_POPUP);
         }
-        Popup popup = popupRepository.findByReservationId(reservation.getId());
-        Review review = reviewRepository.save(Review.of(dto, popup, reservation));
+        Review review = Review.of(dto, reservation);
+        reviewRepository.save(review);
         return ReviewResponseDto.of(review);
     }
 

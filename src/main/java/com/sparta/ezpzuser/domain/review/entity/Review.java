@@ -31,16 +31,16 @@ public class Review extends Timestamped {
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
-    private Review(ReviewRequestDto dto, Popup popup, Reservation reservation) {
+    private Review(ReviewRequestDto dto, Reservation reservation) {
         this.rating = dto.getRating();
         this.content = dto.getContent();
-        this.popup = popup;
+        this.popup = reservation.getSlot().getPopup();
         this.reservation = reservation;
         popup.addReview(this);
     }
 
-    public static Review of(ReviewRequestDto dto, Popup popup, Reservation reservation) {
-        return new Review(dto, popup, reservation);
+    public static Review of(ReviewRequestDto dto, Reservation reservation) {
+        return new Review(dto, reservation);
     }
 
 }
