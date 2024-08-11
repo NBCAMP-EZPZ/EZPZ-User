@@ -1,6 +1,7 @@
 package com.sparta.ezpzuser.domain.reservation.entity;
 
 import com.sparta.ezpzuser.common.entity.Timestamped;
+import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.domain.reservation.enums.ReservationStatus;
 import com.sparta.ezpzuser.domain.slot.entity.Slot;
 import com.sparta.ezpzuser.domain.user.entity.User;
@@ -8,6 +9,9 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.sparta.ezpzuser.common.exception.ErrorType.UNVISITED_USER;
+import static com.sparta.ezpzuser.common.exception.ErrorType.WRONG_RESERVED_USER;
 
 @Entity
 @Getter
@@ -48,6 +52,22 @@ public class Reservation extends Timestamped {
 
     public void cancel() {
         this.reservationStatus = ReservationStatus.CANCEL;
+    }
+
+    /**
+     * 해당 팝업을 예약 후 방문한 이용자인지 검증
+     *
+     * @param user 이용자
+     */
+    public void verifyReviewAuthority(User user) {
+        // 해당 예약의 예약자가 아닌 경우
+        if (!this.user.getId().equals(user.getId())) {
+            throw new CustomException(WRONG_RESERVED_USER);
+        }
+        // 예약한 팝업에 방문 완료한 예약자가 아닌 경우
+        if (!this.reservationStatus.equals(ReservationStatus.FINISHED)) {
+            throw new CustomException(UNVISITED_USER);
+        }
     }
 
 }
