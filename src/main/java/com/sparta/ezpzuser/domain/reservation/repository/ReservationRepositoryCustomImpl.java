@@ -57,6 +57,19 @@ public class ReservationRepositoryCustomImpl implements ReservationRepositoryCus
     }
 
     @Override
+    public Optional<Reservation> findByIdWithSlotAndPopup(Long reservationId) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(reservation)
+                .join(reservation.slot).fetchJoin()
+                .join(reservation.slot.popup).fetchJoin()
+                .where(
+                        reservation.id.eq(reservationId)
+                )
+                .fetchOne()
+        );
+    }
+
+    @Override
     public Optional<Reservation> findReservationAndSlot(Long reservationId, Long userId) {
         Reservation findReservation = queryFactory
                 .selectFrom(reservation)
