@@ -1,16 +1,28 @@
 package com.sparta.ezpzuser.domain.item.entity;
 
+import static com.sparta.ezpzuser.common.exception.ErrorType.ITEM_ACCESS_FORBIDDEN;
+import static com.sparta.ezpzuser.common.exception.ErrorType.STOCK_NOT_ENOUGH;
+
 import com.sparta.ezpzuser.common.entity.Timestamped;
 import com.sparta.ezpzuser.common.exception.CustomException;
+import com.sparta.ezpzuser.domain.host.entity.Host;
 import com.sparta.ezpzuser.domain.item.enums.ItemStatus;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import static com.sparta.ezpzuser.common.exception.ErrorType.ITEM_ACCESS_FORBIDDEN;
-import static com.sparta.ezpzuser.common.exception.ErrorType.STOCK_NOT_ENOUGH;
 
 @Entity
 @Getter
@@ -43,6 +55,10 @@ public class Item extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "popup_id")
     private Popup popup;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "host_id", nullable = false)
+    private Host host;
 
     /**
      * 테스트용 생성자

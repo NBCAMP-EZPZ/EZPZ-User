@@ -7,7 +7,7 @@ GET http://localhost:8080/api/v1/popups
 
 ### 팝업 상태별 목록 조회
 ### 팝업 상태 : popupStatus=(all, scheduled, in_progress, completed)
-GET http://localhost:8080/api/v1/popups?popupStatus=in_progress
+GET http://localhost:8080/api/v1/popups?popupStatus=IN_PROGRESS
 
 ### 팝업 상세 조회
 GET http://localhost:8080/api/v1/popups/{{popupId}}
