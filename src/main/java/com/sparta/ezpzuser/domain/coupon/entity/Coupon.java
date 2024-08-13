@@ -24,19 +24,25 @@ public class Coupon {
 
     private int discountAmount;
 
-    private int totalCount; // 총 발행 개수
+    private int totalCount; // 발행 개수
 
     private int remainingCount; // 남은 수량
 
     private LocalDate expiredAt;
 
-    // 테스트용 생성자
-    public Coupon(String name, int totalCount) {
-        this.name = name;
-        this.discountAmount = 0;
+    private Coupon(int totalCount) {
         this.totalCount = totalCount;
         this.remainingCount = totalCount;
-        this.expiredAt = LocalDate.now();
+    }
+
+    /**
+     * 테스트용 Mock 쿠폰 생성
+     *
+     * @param couponCount 쿠폰 발행 개수
+     * @return 쿠폰 객체
+     */
+    public static Coupon createMockCoupon(int couponCount) {
+        return new Coupon(couponCount);
     }
 
     /**
