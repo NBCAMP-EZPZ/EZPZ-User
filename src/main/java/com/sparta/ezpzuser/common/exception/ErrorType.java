@@ -38,6 +38,7 @@ public enum ErrorType {
     // Item
     ITEM_NOT_FOUND(NOT_FOUND, "해당 상품을 찾을 수 없습니다."),
     ITEM_ACCESS_FORBIDDEN(FORBIDDEN, "해당 상품에 대한 접근 권한이 없습니다."),
+    NOT_LIKED_ITEM(BAD_REQUEST, "좋아요가 없는 상품입니다."),
 
     // Like
     INVALID_CONTENT_TYPE(BAD_REQUEST, "잘못된 컨테츠 타입입니다."),
