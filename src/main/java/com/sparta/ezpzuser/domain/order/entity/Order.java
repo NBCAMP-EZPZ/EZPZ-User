@@ -77,4 +77,9 @@ public class Order extends Timestamped {
         }
     }
 
+    // 테스트 전용 메서드
+    public void startDelivery() {
+        this.orderStatus = OrderStatus.IN_TRANSIT;
+    }
+
 }
