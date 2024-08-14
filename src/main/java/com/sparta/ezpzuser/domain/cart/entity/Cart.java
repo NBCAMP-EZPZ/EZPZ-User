@@ -28,9 +28,6 @@ public class Cart extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
-    /**
-     * 생성자
-     */
     private Cart(User user, Item item, int quantity) {
         this.user = user;
         this.item = item;
@@ -47,6 +44,10 @@ public class Cart extends Timestamped {
      */
     public static Cart of(User user, Item item, int quantity) {
         return new Cart(user, item, quantity);
+    }
+
+    public static Cart createMockCart(Item item, int quantity) {
+        return new Cart(null, item, quantity);
     }
 
     /**
