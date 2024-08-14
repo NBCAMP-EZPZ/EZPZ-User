@@ -38,7 +38,10 @@ public class CouponService {
         Coupon coupon = getCoupon(couponId);
         validateDuplicateCoupon(user, coupon);
         coupon.download();
-        UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
+
+        UserCoupon userCoupon = UserCoupon.of(user, coupon);
+        userCouponRepository.save(userCoupon);
+
         return UserCouponResponseDto.of(userCoupon);
     }
 
@@ -48,7 +51,10 @@ public class CouponService {
         Coupon coupon = getCoupon(couponId);
         validateDuplicateCoupon(user, coupon);
         coupon.download();
-        UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
+
+        UserCoupon userCoupon = UserCoupon.of(user, coupon);
+        userCouponRepository.save(userCoupon);
+
         return UserCouponResponseDto.of(userCoupon);
     }
 
