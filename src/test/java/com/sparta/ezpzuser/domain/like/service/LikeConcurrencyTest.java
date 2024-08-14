@@ -1,9 +1,8 @@
-package com.sparta.ezpzuser.domain.like;
+package com.sparta.ezpzuser.domain.like.service;
 
 import com.sparta.ezpzuser.domain.like.dto.LikeRequestDto;
 import com.sparta.ezpzuser.domain.like.entity.LikeContentType;
 import com.sparta.ezpzuser.domain.like.repository.LikeRepository;
-import com.sparta.ezpzuser.domain.like.service.LikeService;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
 import com.sparta.ezpzuser.domain.popup.repository.popup.PopupRepository;
 import com.sparta.ezpzuser.domain.user.entity.User;
