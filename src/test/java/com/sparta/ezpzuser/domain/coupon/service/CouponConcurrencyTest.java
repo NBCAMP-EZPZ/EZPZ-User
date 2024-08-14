@@ -1,9 +1,8 @@
-package com.sparta.ezpzuser.domain.coupon;
+package com.sparta.ezpzuser.domain.coupon.service;
 
 import com.sparta.ezpzuser.domain.coupon.entity.Coupon;
 import com.sparta.ezpzuser.domain.coupon.repository.CouponRepository;
 import com.sparta.ezpzuser.domain.coupon.repository.UserCouponRepository;
-import com.sparta.ezpzuser.domain.coupon.service.CouponService;
 import com.sparta.ezpzuser.domain.user.entity.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
