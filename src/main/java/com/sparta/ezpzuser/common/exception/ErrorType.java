@@ -30,6 +30,7 @@ public enum ErrorType {
     // Popup
     POPUP_NOT_FOUND(NOT_FOUND, "존재하지 않는 팝업입니다."),
     POPUP_ACCESS_FORBIDDEN(FORBIDDEN, "해당 팝업에 대한 접근 권한이 없습니다."),
+    NOT_LIKED_POPUP(BAD_REQUEST, "좋아요가 없는 팝업입니다."),
 
     // Order
     ORDER_NOT_FOUND(BAD_REQUEST, "존재하지 않는 주문 내역입니다."),
@@ -48,6 +49,8 @@ public enum ErrorType {
     RESERVATION_EXCEEDS_AVAILABLE_SLOTS(BAD_REQUEST, "예약 가능 인원을 초과하였습니다."), SLOT_FULL(BAD_REQUEST, "이미 예약이 다 찬 슬롯입니다"),
     SLOT_RESERVATION_CLOSED(BAD_REQUEST, "예약 진행 중인 슬롯이 아닙니다."),
     SLOT_NOT_FOUND(NOT_FOUND, "해당 슬롯을 찾을 수 없습니다."),
+    EXCEED_TOTAL_COUNT(BAD_REQUEST, "증가시킬 예약 수가 예약 가능한 총 인원를 초과했습니다."),
+    RESERVED_COUNT_DEFICIENT(BAD_REQUEST, "감소시킬 예약된 인원 수가 모자랍니다."),
 
     // Review
     RESERVATION_NOT_FOUND(NOT_FOUND, "해당 예약을 찾을 수 없습니다."),
@@ -64,9 +67,8 @@ public enum ErrorType {
     STOCK_NOT_ENOUGH(BAD_REQUEST, "재고량이 부족합니다."),
     STOCK_UNAVAILABLE(BAD_REQUEST, "장바구니에 담긴 상품의 재고가 현재 없거나 부족합니다."),
     CART_NOT_FOUND(NOT_FOUND, "존재하지 않는 장바구니 내역입니다."),
-    UNAUTHORIZED_CART_ACCESS(FORBIDDEN, "본인의 장바구니만 수정할 수 있습니다."),
+    UNAUTHORIZED_CART_ACCESS(FORBIDDEN, "본인의 장바구니만 수정할 수 있습니다.");
 
-    ;
     private final HttpStatus httpStatus;
     private final String message;
 
