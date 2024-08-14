@@ -29,8 +29,8 @@ public class ItemController {
      */
     @GetMapping("/v1/items")
     public ResponseEntity<?> findAllByItemCondition(
-            @RequestParam Long popupId,
-            @RequestParam String itemStatus,
+            @RequestParam(required = false) Long popupId,
+            @RequestParam(required = false) String itemStatus,
             Pageable pageable) {
 
         ItemCondition cond = ItemCondition.of(popupId, itemStatus);
