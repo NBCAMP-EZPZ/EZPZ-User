@@ -50,6 +50,9 @@ public class Reservation extends Timestamped {
         return new Reservation(numberOfPersons, user, slot);
     }
 
+    /**
+     * 예약 취소
+     */
     public void cancel() {
         this.reservationStatus = ReservationStatus.CANCEL;
     }
