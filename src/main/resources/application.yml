@@ -9,7 +9,7 @@ spring:
     password: ${DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      maximum-pool-size: 100
+      maximum-pool-size: 80
       idle-timeout: 60000
       max-lifetime: 600000
       leak-detection-threshold: 1800000
@@ -36,7 +36,7 @@ spring:
       port: ${REDIS_PORT}
 
 logging.level:
-  org.hibernate.SQL: debug  # Hibernate SQL 쿼리를 debug 레벨로 설정하여 로깅합니다.
+  org.hibernate.SQL: warn  # Hibernate SQL 쿼리를 debug 레벨로 설정하여 로깅합니다.
   org.hibernate.orm.jdbc.bind: trace  # 스프링 부트 3.x, Hibernate 6.x에서 JDBC 바인딩을 trace 레벨로 설정합니다.
 
 jwt:
