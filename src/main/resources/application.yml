@@ -8,6 +8,11 @@ spring:
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 100
+      idle-timeout: 60000
+      max-lifetime: 600000
+      leak-detection-threshold: 1800000
 
   servlet:
     multipart:
