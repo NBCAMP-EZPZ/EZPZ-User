@@ -33,7 +33,6 @@ public class LikeConcurrencyTest {
     LikeRepository likeRepository;
 
     User user = User.createMockUser();
-
     Popup popup;
 
     int threadCount = 100;
@@ -45,7 +44,30 @@ public class LikeConcurrencyTest {
     }
 
     @Test
-    void 좋아요_동시성_테스트() {
+    void 좋아요_동시성_테스트_분산락_미적용() {
+        // given
+        given(likeRepository.findByContentTypeAndContentIdAndUser(any(LikeContentType.class), anyLong(), any(User.class)))
+                .willReturn(Optional.empty());
+        LikeContentType contentType = LikeContentType.POPUP;
+        Long contentId = popup.getId();
+
+        // when
+        LikeRequestDto requestDto = LikeRequestDto.of(contentType, contentId);
+        IntStream.range(0, threadCount).parallel().forEach(i ->
+                likeService.toggleLikeWithoutLock(requestDto, user)
+        );
+
+        // then
+        int popupLikeCount = popupRepository.findById(contentId).orElseThrow().getLikeCount();
+        assertThat(popupLikeCount).isNotZero().isNotEqualTo(threadCount);
+
+        System.out.println("\n[likeCount]");
+        System.out.println("Expected = " + threadCount);
+        System.out.println("Actual = " + popupLikeCount);
+    }
+
+    @Test
+    void 좋아요_동시성_테스트_분산락_적용() {
         // given
         given(likeRepository.findByContentTypeAndContentIdAndUser(any(LikeContentType.class), anyLong(), any(User.class)))
                 .willReturn(Optional.empty());
@@ -61,6 +83,10 @@ public class LikeConcurrencyTest {
         // then
         int popupLikeCount = popupRepository.findById(contentId).orElseThrow().getLikeCount();
         assertThat(popupLikeCount).isEqualTo(threadCount);
+
+        System.out.println("\n[likeCount]");
+        System.out.println("Expected = " + threadCount);
+        System.out.println("Actual = " + popupLikeCount);
     }
 
 }

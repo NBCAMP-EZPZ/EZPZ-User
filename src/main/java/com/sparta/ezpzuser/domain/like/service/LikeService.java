@@ -57,6 +57,21 @@ public class LikeService {
         return LikeResponseDto.of(toggleResult, contentType, contentId);
     }
 
+    @Transactional
+    public LikeResponseDto toggleLikeWithoutLock(LikeRequestDto dto, User user) {
+        LikeContentType contentType = dto.getContentType();
+        Long contentId = dto.getContentId();
+        boolean toggleResult;
+
+        switch (contentType) {
+            case POPUP -> toggleResult = togglePopupLike(contentId, user);
+            case ITEM -> toggleResult = toggleItemLike(contentId, user);
+            default -> throw new CustomException(INVALID_CONTENT_TYPE);
+        }
+
+        return LikeResponseDto.of(toggleResult, contentType, contentId);
+    }
+
     /**
      * 타입별 좋아요한 컨텐츠 목록 조회
      *

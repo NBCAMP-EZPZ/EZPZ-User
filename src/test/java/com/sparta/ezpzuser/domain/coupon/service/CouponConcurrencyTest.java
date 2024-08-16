@@ -29,7 +29,6 @@ public class CouponConcurrencyTest {
     UserCouponRepository userCouponRepository;
 
     User user = User.createMockUser();
-
     Coupon coupon;
 
     int threadCount = 100;
@@ -74,6 +73,10 @@ public class CouponConcurrencyTest {
         // then
         int remainingCount = couponRepository.findById(coupon.getId()).orElseThrow().getRemainingCount();
         assertThat(remainingCount).isZero();
+
+        System.out.println("\n[remainingCount]");
+        System.out.println("Expected = 0");
+        System.out.println("Actual = " + remainingCount);
     }
 
 }

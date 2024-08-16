@@ -43,15 +43,21 @@ public class OrderService {
     public OrderResponseDto createOrder(OrderRequestDto dto, User user) {
         // 장바구니 목록 가져오기
         List<Cart> cartList = cartRepository.findAllWithItemByIdListAndUser(dto.getCartIdList(), user);
+
         // 장바구니 목록을 통해 주문상품 목록 생성
         List<Orderline> orderlineList = new ArrayList<>();
         for (Cart cart : cartList) {
-            Orderline orderline = Orderline.of(cart.getItem(), cart.getQuantity());
+            Orderline orderline = Orderline.buildOrderline(cart);
             orderlineList.add(orderline);
         }
-        // 주문 생성
-        Order order = orderRepository.save(Order.of(user, orderlineList));
-        cartRepository.deleteAll(cartList); // 주문 완료된 장바구니 삭제
+
+        // 주문 객체 생성 & 저장
+        Order order = Order.of(user, orderlineList);
+        orderRepository.save(order);
+
+        // 주문 완료된 장바구니들 삭제
+        cartRepository.deleteAll(cartList);
+
         return OrderResponseDto.of(order, orderlineList);
     }
 

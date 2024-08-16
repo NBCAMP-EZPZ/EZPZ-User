@@ -35,15 +35,11 @@ public class ReservationConcurrencyTest {
     SlotRepository slotRepository;
 
     User user = User.createMockUser();
-
     Popup popup;
-
     Slot slot;
 
     int threadCount = 100;
-
     int availableCount = 2;
-
     int totalCount = threadCount * availableCount;
 
     @BeforeEach
@@ -56,7 +52,29 @@ public class ReservationConcurrencyTest {
     }
 
     @Test
-    public void 예약_동시성_테스트() {
+    public void 예약_동시성_테스트_분산락_미적용() {
+        // given
+        given(reservationRepository.existsByUserIdAndPopupId(anyLong(), anyLong()))
+                .willReturn(false);
+        Long slotId = slot.getId();
+
+        // when
+        ReservationRequestDto requestDto = new ReservationRequestDto(slotId, availableCount);
+        IntStream.range(0, threadCount).parallel().forEach(i ->
+                reservationService.createReservationWithoutLock(requestDto, user)
+        );
+
+        // then
+        int reservedCount = slotRepository.findById(slotId).orElseThrow().getReservedCount();
+        assertThat(reservedCount).isNotZero().isNotEqualTo(threadCount);
+
+        System.out.println("\n[reservedCount]");
+        System.out.println("Expected = " + totalCount);
+        System.out.println("Actual = " + reservedCount);
+    }
+
+    @Test
+    public void 예약_동시성_테스트_분산락_적용() {
         // given
         given(reservationRepository.existsByUserIdAndPopupId(anyLong(), anyLong()))
                 .willReturn(false);
@@ -71,6 +89,10 @@ public class ReservationConcurrencyTest {
         // then
         int reservedCount = slotRepository.findById(slotId).orElseThrow().getReservedCount();
         assertThat(reservedCount).isEqualTo(totalCount);
+
+        System.out.println("\n[reservedCount]");
+        System.out.println("Expected = " + totalCount);
+        System.out.println("Actual = " + reservedCount);
     }
 
 }
