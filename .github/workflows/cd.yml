@@ -129,8 +129,9 @@ jobs:
                 -e REDIS_HOST=${{ secrets.REDIS_HOST }} \
                 -e REDIS_PORT=${{ secrets.REDIS_PORT }} \
                 --restart always \
+                --memory=\"768m\" \
                 --name ezpz-user ${{ secrets.ECR_URL }}:latest \
-                java -XX:MinRAMPercentage=50.0 -XX:MaxRAMPercentage=70.0" >> scripts/deploy.sh
+                java -XX:MinRAMPercentage=50.0 -XX:MaxRAMPercentage=70.0 -jar /apps/app.jar" >> scripts/deploy.sh
           
       # deploy files upload to S3
       - name: upload to S3
