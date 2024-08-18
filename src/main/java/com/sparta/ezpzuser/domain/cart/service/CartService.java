@@ -17,7 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.sparta.ezpzuser.common.exception.ErrorType.*;
+import static com.sparta.ezpzuser.common.exception.ErrorType.CART_NOT_FOUND;
+import static com.sparta.ezpzuser.common.exception.ErrorType.ITEM_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -101,10 +102,7 @@ public class CartService {
     private Cart getUserCart(Long cartId, User user) {
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new CustomException(CART_NOT_FOUND));
-        // 본인의 장바구니가 아닌 경우
-        if (!cart.getUser().getId().equals(user.getId())) {
-            throw new CustomException(UNAUTHORIZED_CART_ACCESS);
-        }
+        cart.verifyUser(user.getId());
         return cart;
     }
 
