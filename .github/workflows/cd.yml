@@ -147,4 +147,9 @@ jobs:
       # JVM 메모리 설정 확인
       - name: Check JVM Memory Settings
         run: |
-          docker exec ezpz-user java -XshowSettings:vm -version
+          container_id=$(docker ps -q --filter "name=ezpz-user")
+          if [ -z "$container_id" ]; then
+            echo "Error: No running container found with the name 'ezpz-user'."
+            exit 1
+          fi
+          docker exec $container_id java -XshowSettings:vm -version
