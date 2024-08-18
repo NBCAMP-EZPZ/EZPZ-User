@@ -83,8 +83,8 @@ jobs:
 
       # Docker 이미지 생성
       - name: Docker build
-        run: docker build . --platform linux/amd64 -f docker/Dockerfile -t ${{ env.ECR_URL }}:latest
-
+        run: docker build --no-cache . --platform linux/amd64 -f docker/Dockerfile -t ${{ env.ECR_URL }}:latest
+  
       # AWS CLI 설치
       - name: AWS-cli setup
         run: |
@@ -143,13 +143,3 @@ jobs:
           --deployment-config-name CodeDeployDefault.OneAtATime \
           --deployment-group-name ezpz-user \
           --s3-location bucket=${{ secrets.AWS_BUCKET_NAME }},bundleType=zip,key=scripts/ezpz-user-latest.zip
-      
-      # JVM 메모리 설정 확인
-      - name: Check JVM Memory Settings
-        run: |
-          container_id=$(docker ps -q --filter "name=ezpz-user")
-          if [ -z "$container_id" ]; then
-            echo "Error: No running container found with the name 'ezpz-user'."
-            exit 1
-          fi
-          docker exec $container_id java -XshowSettings:vm -version
