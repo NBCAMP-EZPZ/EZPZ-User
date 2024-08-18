@@ -65,8 +65,8 @@ public class CouponService {
      * @return 다운로드 가능한 쿠폰 목록
      */
     @Transactional(readOnly = true)
-    public Page<CouponResponseDto> findAllDownloadableCoupons(Pageable pageable) {
-        Page<Coupon> page = couponRepository.findByRemainingCountGreaterThan(0, pageable);
+    public Page<CouponResponseDto> findAllDownloadableCoupons(User user, Pageable pageable) {
+        Page<Coupon> page = couponRepository.findAllDownloadableCoupons(user, pageable);
         validatePageableWithPage(pageable, page);
         return page.map(CouponResponseDto::of);
     }

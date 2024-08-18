@@ -45,9 +45,10 @@ public class CouponController {
      */
     @GetMapping("/coupons")
     public ResponseEntity<CommonResponse<?>> findAllDownloadableCoupons(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
             Pageable pageable) {
 
-        Page<CouponResponseDto> response = couponService.findAllDownloadableCoupons(pageable);
+        Page<CouponResponseDto> response = couponService.findAllDownloadableCoupons(userDetails.getUser(), pageable);
         return getResponseEntity(response, "다운로드 가능한 쿠폰 목록 조회 성공");
     }
 
