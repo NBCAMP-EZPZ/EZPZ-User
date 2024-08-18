@@ -49,7 +49,6 @@ public enum ErrorType {
     RESERVATION_EXCEEDS_AVAILABLE_SLOTS(BAD_REQUEST, "예약 가능 인원을 초과하였습니다."), SLOT_FULL(BAD_REQUEST, "이미 예약이 다 찬 슬롯입니다"),
     SLOT_RESERVATION_CLOSED(BAD_REQUEST, "예약 진행 중인 슬롯이 아닙니다."),
     SLOT_NOT_FOUND(NOT_FOUND, "해당 슬롯을 찾을 수 없습니다."),
-    EXCEED_TOTAL_COUNT(BAD_REQUEST, "증가시킬 예약 수가 예약 가능한 총 인원를 초과했습니다."),
     RESERVED_COUNT_DEFICIENT(BAD_REQUEST, "감소시킬 예약된 인원 수가 모자랍니다."),
 
     // Review

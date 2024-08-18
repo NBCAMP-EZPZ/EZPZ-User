@@ -92,9 +92,6 @@ public class Slot {
      * @param numberOfPersons 예약 인원
      */
     public void increaseReservedCount(int numberOfPersons) {
-        if (reservedCount + numberOfPersons > this.totalCount) {
-            throw new CustomException(EXCEED_TOTAL_COUNT);
-        }
         this.reservedCount += numberOfPersons;
     }
 
