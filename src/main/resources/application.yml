@@ -15,6 +15,8 @@ spring:
       connection-timeout: 30000  # 30,000밀리초 = 30초, connect_timeout보다 짧게 설정하여 연결 시도를 제한합니다.
       leak-detection-threshold: 2000  # 2초, 연결이 예상보다 오래 사용되는 경우를 감지하기 위한 설정입니다.
 
+  jackson:
+    time-zone: Asia/Seoul  # Jackson 시간대 설정
 
   servlet:
     multipart:
