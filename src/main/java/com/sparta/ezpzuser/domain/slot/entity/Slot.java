@@ -90,6 +90,9 @@ public class Slot {
                 || numberOfPersons > this.availableCount) {
             throw new CustomException(RESERVATION_EXCEEDS_AVAILABLE_SLOTS);
         }
+        if (numberOfPersons <= 0) {
+            throw new CustomException(RESERVATION_INVALID_NUMBER_OF_PERSONS);
+        }
     }
 
     public void increaseReservedCount(int numberOfPersons) {
