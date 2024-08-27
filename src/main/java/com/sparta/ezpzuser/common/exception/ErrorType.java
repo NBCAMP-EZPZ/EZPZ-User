@@ -44,7 +44,9 @@ public enum ErrorType {
 
     // Reservation & Slot
     RESERVATION_ALREADY_EXISTS(BAD_REQUEST, "이미 예약한 내역이 존재합니다."),
-    RESERVATION_EXCEEDS_AVAILABLE_SLOTS(BAD_REQUEST, "예약 가능 인원을 초과하였습니다."), SLOT_FULL(BAD_REQUEST, "이미 예약이 다 찬 슬롯입니다"),
+    RESERVATION_EXCEEDS_AVAILABLE_SLOTS(BAD_REQUEST, "예약 가능 인원을 초과하였습니다."),
+    RESERVATION_INVALID_NUMBER_OF_PERSONS(BAD_REQUEST, "예약 인원은 1명 이상이어야 합니다."),
+    SLOT_FULL(BAD_REQUEST, "이미 예약이 다 찬 슬롯입니다"),
     SLOT_RESERVATION_CLOSED(BAD_REQUEST, "예약 진행 중인 슬롯이 아닙니다."),
     SLOT_NOT_FOUND(NOT_FOUND, "해당 슬롯을 찾을 수 없습니다."),
 

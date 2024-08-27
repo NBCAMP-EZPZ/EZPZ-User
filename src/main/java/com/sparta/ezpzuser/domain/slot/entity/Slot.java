@@ -87,9 +87,11 @@ public class Slot {
         }
         // 예약 가능한 인원 수인지 확인
         if (this.reservedCount + numberOfPersons > this.totalCount
-                || numberOfPersons > this.availableCount
-                || numberOfPersons <= 0) {
+                || numberOfPersons > this.availableCount) {
             throw new CustomException(RESERVATION_EXCEEDS_AVAILABLE_SLOTS);
+        }
+        if (numberOfPersons <= 0) {
+            throw new CustomException(RESERVATION_INVALID_NUMBER_OF_PERSONS);
         }
     }
 
