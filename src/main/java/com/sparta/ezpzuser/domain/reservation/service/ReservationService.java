@@ -49,6 +49,26 @@ public class ReservationService {
 
         Reservation reservation = Reservation.of(numberOfPersons, user, slot);
         reservationRepository.save(reservation);
+
+        slot.increaseReservedCount(numberOfPersons);
+        slotRepository.save(slot);
+
+        return ReservationResponseDto.of(reservation, slot);
+    }
+
+    @Transactional
+    @CachePut(value = "reservation", key = "'reservation:' + #result.reservationId")
+    public ReservationResponseDto createReservationWithoutLock(ReservationRequestDto dto, User user) {
+        // 예약할 슬롯 가져오기
+        Slot slot = getSlot(dto.getSlotId());
+        validateDuplicateReservation(user, slot.getPopup());
+
+        int numberOfPersons = dto.getNumberOfPersons();
+        slot.verifyReservationAvailability(numberOfPersons);
+
+        Reservation reservation = Reservation.of(numberOfPersons, user, slot);
+        reservationRepository.save(reservation);
+
         slot.increaseReservedCount(numberOfPersons);
         slotRepository.save(slot);
 

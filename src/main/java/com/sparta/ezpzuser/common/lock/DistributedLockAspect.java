@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -16,6 +17,7 @@ import java.lang.reflect.Method;
 @Slf4j
 @Aspect
 @Component
+@Order(1)
 @RequiredArgsConstructor
 public class DistributedLockAspect {
 
@@ -40,7 +42,7 @@ public class DistributedLockAspect {
         RLock rLock = redissonClient.getFairLock(key); // 선착순 보장
 
         try {
-            log.info("try lock for key: {}", key);
+            log.info("try lock for key: {}, {}", key, System.currentTimeMillis());
             boolean available = rLock.tryLock(
                     distributedLock.waitTime(),
                     distributedLock.leaseTime(),

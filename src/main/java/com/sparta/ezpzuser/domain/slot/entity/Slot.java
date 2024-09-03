@@ -30,11 +30,11 @@ public class Slot {
 
     private LocalTime slotTime;
 
-    private int availableCount; // 한 팀당 예약 가능한 최대 인원 수
+    private int availableCount;
 
-    private int totalCount; // 예약 가능한 총 팀 수
+    private int totalCount;
 
-    private int reservedCount; // 예약된 팀 수
+    private int reservedCount;
 
     @Enumerated(value = EnumType.STRING)
     private SlotStatus slotStatus;
@@ -43,36 +43,30 @@ public class Slot {
     @JoinColumn(name = "popup_id")
     private Popup popup;
 
-    private Slot(int availableCount, int totalCount, Popup popup, SlotStatus slotStatus) {
+    private Slot(int availableCount, int totalCount, int reservedCount, SlotStatus slotStatus, Popup popup) {
         this.slotDate = LocalDate.now();
         this.slotTime = LocalTime.now();
         this.availableCount = availableCount;
+        this.reservedCount = reservedCount;
         this.totalCount = totalCount;
-        this.reservedCount = 0;
         this.slotStatus = slotStatus;
         this.popup = popup;
     }
 
-    private Slot(int availableCount, int totalCount, int reservedCount, Popup popup) {
-        this.slotDate = LocalDate.now();
-        this.slotTime = LocalTime.now();
-        this.availableCount = availableCount;
-        this.totalCount = totalCount;
-        this.reservedCount = reservedCount;
-        this.slotStatus = SlotStatus.PROCEEDING;
-        this.popup = popup;
-    }
-
-    public static Slot createMockSlot(int availableCount, int totalCount, Popup popup, SlotStatus slotStatus) {
-        return new Slot(availableCount, totalCount, popup, slotStatus);
-    }
-
     public static Slot createMockSlot(int availableCount, int totalCount, int reservedCount, Popup popup) {
-        return new Slot(availableCount, totalCount, reservedCount, popup);
+        return new Slot(availableCount, totalCount, reservedCount, SlotStatus.PROCEEDING, popup);
+    }
+
+    public static Slot createMockSlot(int availableCount, int totalCount, Popup popup) {
+        return new Slot(availableCount, totalCount, 0, SlotStatus.PROCEEDING, popup);
+    }
+
+    public static Slot createMockFinishedSlot(int availableCount, int totalCount, Popup popup) {
+        return new Slot(availableCount, totalCount, 0, SlotStatus.FINISHED, popup);
     }
 
     /**
-     * 예약 가능한지 검증
+     * 예약 가능 여부 검증
      *
      * @param numberOfPersons 예약 인원 수
      */
@@ -95,11 +89,24 @@ public class Slot {
         }
     }
 
+    /**
+     * 예약 개수 증가
+     *
+     * @param numberOfPersons 예약 인원
+     */
     public void increaseReservedCount(int numberOfPersons) {
         this.reservedCount += numberOfPersons;
     }
 
+    /**
+     * 예약 개수 감소
+     *
+     * @param numberOfPersons 예약 취소 인원
+     */
     public void decreaseReservedCount(int numberOfPersons) {
+        if (reservedCount < numberOfPersons) {
+            throw new CustomException(RESERVED_COUNT_DEFICIENT);
+        }
         this.reservedCount -= numberOfPersons;
     }
 

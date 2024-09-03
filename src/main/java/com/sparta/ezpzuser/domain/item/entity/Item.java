@@ -1,28 +1,16 @@
 package com.sparta.ezpzuser.domain.item.entity;
 
-import static com.sparta.ezpzuser.common.exception.ErrorType.ITEM_ACCESS_FORBIDDEN;
-import static com.sparta.ezpzuser.common.exception.ErrorType.STOCK_NOT_ENOUGH;
-
 import com.sparta.ezpzuser.common.entity.Timestamped;
 import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.domain.host.entity.Host;
 import com.sparta.ezpzuser.domain.item.enums.ItemStatus;
 import com.sparta.ezpzuser.domain.popup.entity.Popup;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.sparta.ezpzuser.common.exception.ErrorType.*;
 
 @Entity
 @Getter
@@ -63,19 +51,28 @@ public class Item extends Timestamped {
     /**
      * 테스트용 생성자
      */
-    private Item(Popup popup, int price, int stock) {
+    private Item(Popup popup, int price, int stock, int likeCount, ItemStatus itemStatus) {
         this.popup = popup;
         this.price = price;
         this.stock = stock;
-        this.itemStatus = ItemStatus.SALE;
-    }
-
-    public static Item createMockItem(Popup popup, int price, int stock) {
-        return new Item(popup, price, stock);
+        this.likeCount = likeCount;
+        this.itemStatus = itemStatus;
     }
 
     public static Item createMockItem(int price, int stock) {
-        return new Item(null, price, stock);
+        return new Item(null, price, stock, 0, ItemStatus.SALE);
+    }
+
+    public static Item createMockItem(int stock) {
+        return new Item(null, 1000, stock, 0, ItemStatus.SALE);
+    }
+
+    public static Item createMockSoldOutItem() {
+        return new Item(null, 1000, 0, 0, ItemStatus.SOLD_OUT);
+    }
+
+    public static Item createMockLikedItem(int likeCount) {
+        return new Item(null, 1000, 0, likeCount, ItemStatus.SOLD_OUT);
     }
 
     /**
@@ -126,14 +123,17 @@ public class Item extends Timestamped {
     }
 
     /**
-     * 좋아요 개수 (true: 증가 / false: 감소)
+     * 좋아요 개수 증감
      *
-     * @param b boolean
+     * @param isLike 좋아요 여부 (true: 좋아요, false: 좋아요 취소)
      */
-    public void updateLikeCount(boolean b) {
-        if (b) {
+    public void updateLikeCount(boolean isLike) {
+        if (isLike) {
             this.likeCount++;
-        } else if (this.likeCount > 0) {
+        } else {
+            if (this.likeCount == 0) {
+                throw new CustomException(NOT_LIKED_ITEM);
+            }
             this.likeCount--;
         }
     }

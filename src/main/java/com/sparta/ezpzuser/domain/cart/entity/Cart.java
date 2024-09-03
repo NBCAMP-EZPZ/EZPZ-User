@@ -1,12 +1,15 @@
 package com.sparta.ezpzuser.domain.cart.entity;
 
 import com.sparta.ezpzuser.common.entity.Timestamped;
+import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.domain.item.entity.Item;
 import com.sparta.ezpzuser.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.sparta.ezpzuser.common.exception.ErrorType.UNAUTHORIZED_CART_ACCESS;
 
 @Entity
 @Getter
@@ -28,9 +31,6 @@ public class Cart extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
-    /**
-     * 생성자
-     */
     private Cart(User user, Item item, int quantity) {
         this.user = user;
         this.item = item;
@@ -49,6 +49,10 @@ public class Cart extends Timestamped {
         return new Cart(user, item, quantity);
     }
 
+    public static Cart createMockCart(Item item, int quantity) {
+        return new Cart(null, item, quantity);
+    }
+
     /**
      * Cart 수량 변경 메서드
      *
@@ -56,6 +60,17 @@ public class Cart extends Timestamped {
      */
     public void updateCart(int quantity) {
         this.quantity = quantity;
+    }
+
+    /**
+     * 본인의 카트가 맞는지 확인
+     *
+     * @param userId 이용자 ID
+     */
+    public void verifyUser(Long userId) {
+        if (!this.user.getId().equals(userId)) {
+            throw new CustomException(UNAUTHORIZED_CART_ACCESS);
+        }
     }
 
 }

@@ -38,7 +38,10 @@ public class CouponService {
         Coupon coupon = getCoupon(couponId);
         validateDuplicateCoupon(user, coupon);
         coupon.download();
-        UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
+
+        UserCoupon userCoupon = UserCoupon.of(user, coupon);
+        userCouponRepository.save(userCoupon);
+
         return UserCouponResponseDto.of(userCoupon);
     }
 
@@ -48,7 +51,10 @@ public class CouponService {
         Coupon coupon = getCoupon(couponId);
         validateDuplicateCoupon(user, coupon);
         coupon.download();
-        UserCoupon userCoupon = userCouponRepository.save(UserCoupon.of(user, coupon));
+
+        UserCoupon userCoupon = UserCoupon.of(user, coupon);
+        userCouponRepository.save(userCoupon);
+
         return UserCouponResponseDto.of(userCoupon);
     }
 
@@ -59,8 +65,8 @@ public class CouponService {
      * @return 다운로드 가능한 쿠폰 목록
      */
     @Transactional(readOnly = true)
-    public Page<CouponResponseDto> findAllDownloadableCoupons(Pageable pageable) {
-        Page<Coupon> page = couponRepository.findByRemainingCountGreaterThan(0, pageable);
+    public Page<CouponResponseDto> findAllDownloadableCoupons(User user, Pageable pageable) {
+        Page<Coupon> page = couponRepository.findAllDownloadableCoupons(user, pageable);
         validatePageableWithPage(pageable, page);
         return page.map(CouponResponseDto::of);
     }

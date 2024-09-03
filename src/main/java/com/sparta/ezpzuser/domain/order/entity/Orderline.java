@@ -1,5 +1,6 @@
 package com.sparta.ezpzuser.domain.order.entity;
 
+import com.sparta.ezpzuser.domain.cart.entity.Cart;
 import com.sparta.ezpzuser.domain.item.entity.Item;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -44,9 +45,18 @@ public class Orderline {
         this.orderPrice = quantity * item.getPrice();
     }
 
-    public static Orderline of(Item item, int quantity) {
-        item.removeStock(quantity);
-        return new Orderline(item, quantity);
+    /**
+     * 장바구니 정보 바탕으로 상품 재고 감소, Orderline 객체 생성
+     *
+     * @param cart 주문한 장바구니 객체
+     * @return 새로운 Orderline 객체
+     */
+    public static Orderline buildOrderline(Cart cart) {
+        Item orderedItem = cart.getItem();
+        int orderedQuantity = cart.getQuantity();
+        // 주문수량 만큼 상품 재고 감소
+        orderedItem.removeStock(orderedQuantity);
+        return new Orderline(orderedItem, orderedQuantity);
     }
 
     /**

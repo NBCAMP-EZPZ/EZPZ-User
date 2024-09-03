@@ -5,7 +5,6 @@ import com.sparta.ezpzuser.common.exception.CustomException;
 import com.sparta.ezpzuser.domain.host.entity.Host;
 import com.sparta.ezpzuser.domain.popup.enums.ApprovalStatus;
 import com.sparta.ezpzuser.domain.popup.enums.PopupStatus;
-import com.sparta.ezpzuser.domain.review.entity.Review;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import static com.sparta.ezpzuser.common.exception.ErrorType.NOT_LIKED_POPUP;
 import static com.sparta.ezpzuser.common.exception.ErrorType.POPUP_ACCESS_FORBIDDEN;
 
 @Entity
@@ -62,41 +62,23 @@ public class Popup extends Timestamped {
     @JoinColumn(name = "host_id")
     private Host host;
 
-    private Popup(Host host, String name, String description, String thumbnailUrl, String thumbnailName, String address, String managerName, String phoneNumber, PopupStatus popupStatus, ApprovalStatus approvalStatus, LocalDateTime startDate, LocalDateTime endDate) {
+    private Popup(Host host, int likeCount) {
         this.host = host;
-        this.name = name;
-        this.description = description;
-        this.thumbnailUrl = thumbnailUrl;
-        this.thumbnailName = thumbnailName;
-        this.address = address;
-        this.managerName = managerName;
-        this.phoneNumber = phoneNumber;
-        this.popupStatus = popupStatus;
-        this.approvalStatus = approvalStatus;
-        this.likeCount = 0;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
-
-    public static Popup of(Host host, String name, String description, String thumbnailUrl, String thumbnailName, String address, String managerName, String phoneNumber, PopupStatus popupStatus, ApprovalStatus approvalStatus, LocalDateTime startDate, LocalDateTime endDate) {
-        return new Popup(host, name, description, thumbnailUrl, thumbnailName, address, managerName, phoneNumber, popupStatus, approvalStatus, startDate, endDate);
-    }
-
-    // 테스트용 생성자
-    private Popup(Host host) {
-        this.host = host;
-        this.approvalStatus = ApprovalStatus.APPROVED;
+        this.likeCount = likeCount;
+        this.reviewCount = 0;
+        this.ratingAvg = 0;
         this.popupStatus = PopupStatus.IN_PROGRESS;
+        this.approvalStatus = ApprovalStatus.APPROVED;
         this.startDate = LocalDateTime.now();
         this.endDate = LocalDateTime.now().plusDays(1);
     }
 
     public static Popup createMockPopup() {
-        return new Popup(null);
+        return new Popup(null, 0);
     }
 
-    public static Popup createMockPopup(Host host) {
-        return new Popup(host);
+    public static Popup createMockLikedPopup(int likeCount) {
+        return new Popup(null, likeCount);
     }
 
     /**
@@ -112,27 +94,27 @@ public class Popup extends Timestamped {
     /**
      * 리뷰 추가
      *
-     * @param review 추가할 리뷰
+     * @param rating 리뷰 별점
      */
-    public void addReview(Review review) {
+    public void addReview(int rating) {
         this.reviewCount++;
-        this.ratingSum += review.getRating();
+        this.ratingSum += rating;
         this.ratingAvg = (double) ratingSum / this.reviewCount;
     }
 
-
     /**
-     * 좋아요 개수 (true: 증가 / false: 감소)
+     * 좋아요 개수 증감
      *
-     * @param b boolean
+     * @param isLike 좋아요 여부 (true: 좋아요, false: 좋아요 취소)
      */
-    public void updateLikeCount(boolean b) {
-        if (b) {
+    public void updateLikeCount(boolean isLike) {
+        if (isLike) {
             this.likeCount++;
         } else {
-            if (this.likeCount > 0) {
-                this.likeCount--;
+            if (this.likeCount == 0) {
+                throw new CustomException(NOT_LIKED_POPUP);
             }
+            this.likeCount--;
         }
     }
 
